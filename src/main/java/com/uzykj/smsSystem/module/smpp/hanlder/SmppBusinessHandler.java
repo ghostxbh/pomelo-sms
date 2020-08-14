@@ -90,7 +90,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     updateEntity.setStatus(sendStatus);
                     smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("resp_message_id", id).eq("phone", phone));
 
-                    SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
+                    /*SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
                     SmsCollect collect = Globle.smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
 
                     SmsCollect set = new SmsCollect();
@@ -106,7 +106,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                         set.setFailNum(collect.getFailNum() + 1);
                     }
                     logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
-                    Globle.smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
+                    Globle.smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));*/
                 }
 
                 // 向 SMSC 发送短信已送达响应信息
@@ -138,7 +138,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     if (collect.getPendingNum() > 0) {
                         set.setPendingNum(collect.getPendingNum() - 1);
                         if (collect.getPendingNum() == 1) {
-                            set.setStatus(SmsEnum.SUCCESS.getStatus());
+                            set.setStatus(SmsEnum.DELIVRD.getStatus());
                         }
                     }
                     if (sendStatus == 10) {
