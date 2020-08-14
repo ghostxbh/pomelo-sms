@@ -1,0 +1,218 @@
+<script type="text/javascript" src="/static/common/js/add.js"></script>
+<div id="loading"></div>
+<div id="supersized"></div>
+<section class="content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="nav-tabs-custom">
+                <div class="nav-tabs-custom" style="margin-bottom: 0;">
+                    <ul class="nav nav-tabs" id="head-nav">
+                        <li class="active">
+                            <a href="#ordinary_send" id="ordinary_send_tab" data-toggle="tab" onclick="cleanVaule('ordinary_send')">
+                                <h4>单个发送</h4></a>
+                        </li>
+                        <li>
+                            <a href="#text_send" id="text_send_tab" data-toggle="tab" onclick="cleanVaule('text_send')">
+                                <h4>文件发送</h4></a>
+                        </li>
+                    </ul>
+                </div>
+                <form id="data-form" enctype="multipart/form-data"><input type="hidden" id="id" name="id">
+                    <input type="hidden" id="check_keyword" name="check_keyword" value="0">
+                    <div class="box box-info ">
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-lg-1 col-md-12 col-sm-3"></div>
+                                <div class="col-lg-6 col-md-8 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-6 tab-content">
+                                            <div class="tab-pane active col-sm-12" id="ordinary_send">
+                                                <div class="text-center g-fz-16">
+                                                    <div class="g-ptb-10 g-fz-18 g-fw-b">
+                                                        <i class="fa fa-tablet"></i>&nbsp;手机号码
+                                                    </div>
+                                                    <div class="g-pb-5"><i class="fa fa-bell-o g-mt-5"></i>手机号码数量: <span
+                                                            id="mobile_number" class="g-c-red g-fw-b">0</span>
+                                                    </div>
+                                                    <div class="g-pb-5">
+                                                        (最大数量不能超过1万条)
+                                                    </div>
+                                                    <div>
+                                                         <textarea style="width:100%;height:480px;overflow-y: scroll;"
+                                                                   name="mobiles" id="mobiles" onblur="updatecount()" placeholder="在这输入手机号码 一行一个手机号码"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                                <div class="tab-pane col-md-12 text-center g-fz-16" id="text_send">
+                                                    <div class="g-pt-10 g-pb-15 g-fz-18 g-fw-b">
+                                                        <i class="fa fa-tablet"></i>上传手机号码文件
+                                                    </div>
+                                                    <div class="panel panel-default">
+                                                        <div class="g-pb-5">(最大数量不能超过2万条)</div>
+                                                    </div>
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            上传Excel文件格式
+                                                        </div>
+                                                        <div class="panel-body g-ptb-10">
+                                                            <img src="/static/common/images/Excel.png?1" border="0">
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            选择上传文件
+                                                        </div>
+                                                        <div class="panel-body g-p-5">
+                                                            <input type="file" class="center-block" name="upfile"
+                                                                   id="upfile" size="16"
+                                                                   accept=".xlsx,.xls,.txt">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        <div class="col-sm-6 text-center g-fz-16">
+                                            <div class="g-ptb-10 g-fz-18 g-fw-b">
+                                                <i class="fa fa-envelope-o"></i>&nbsp;短信内容
+                                            </div>
+                                            <div class="g-pb-5"><i class="fa fa-bell-o"></i>共输入 <span
+                                                    id="text_number">0</span> 个字符
+                                            </div>
+                                            <div class="g-pb-5">&nbsp;</div>
+                                            <div>
+                                                <textarea name="content" id="content"
+                                                          style="height: 480px; width: 100%;" onblur="updatecontent()" placeholder="在这输入发送短信内容"></textarea>
+<!--                                                <textarea id="content2" placeholder="这里是转换繁体后的内容"-->
+<!--                                                          style="display:none; height: 130px; width: 100%;"></textarea>-->
+                                            </div>
+                                            <!--<div class="box box-solid box-default g-mt-10">-->
+                                                <!--<div class="box-header with-border" style="background-color: #ffffff;">-->
+                                                    <!--<span class="g-fz-18 g-fw-b"><i class="fa fa-check-square-o"></i>发送选项</span>-->
+                                                <!--</div>-->
+                                                <!--<div class="box-body text-left ">-->
+                                                    <!--<div class="g-pb-5"><span style="color:#3e97eb;font-size:22px;"><i-->
+                                                            <!--class="fa fa-share-square"></i></span><span>发送通道:</span>-->
+                                                        <!--<select class="select" id="channel_group_id"-->
+                                                                <!--name="channel_group_id" data-flag="urlSelector"-->
+                                                                <!--data-src="/sm/sendSm/getChannelGroupOptions"-->
+                                                                <!--data-value="id" data-text="name"-->
+                                                                <!--data-default-value="cda5c315b5644f62886f8465ac8d34f3"-->
+                                                                <!--data-placeholder="请选择发送通道"-->
+                                                                <!--style="height: 28px; width:58%; color:#0000ff;">-->
+                                                            <!--<option value="cda5c315b5644f62886f8465ac8d34f3"-->
+                                                                    <!--selected="">香港通道组1-->
+                                                            <!--</option>-->
+                                                        <!--</select>-->
+                                                        <!--<span class="g-c-red g-fz-18">*</span>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="">-->
+                                                        <!--<input type="checkbox" class="magic-checkbox"-->
+                                                               <!--name="add_random_str" id="add_random_str" value="2"-->
+                                                               <!--checked="checked">-->
+                                                        <!--<label for="add_random_str" class="g-fw-n"-->
+                                                               <!--id="add_random_str_label">内容未尾增加3个随机字符</label>-->
+                                                        <!--&lt;!&ndash;-->
+                                                        <!--<div>-->
+                                                            <!--<label class="g-fw-n">内容添加3个随机字符</label>&nbsp;-->
+                                                        <!--</div>-->
+                                                        <!--<input class="magic-radio" type="radio" name="add_random_str" value="1"-->
+                                                               <!--id="add_random_str-1">-->
+                                                        <!--<label for="add_random_str-1" class="g-fw-n">放前面</label>&nbsp;-->
+                                                        <!--<input class="magic-radio" type="radio" name="add_random_str" value="2"-->
+                                                               <!--id="add_random_str-2" checked>-->
+                                                        <!--<label for="add_random_str-2" class="g-fw-n">放后面</label>&nbsp;-->
+                                                        <!--&ndash;&gt;-->
+                                                    <!--</div>-->
+                                                    <!--<div class="">-->
+                                                        <!--<input type="checkbox" class="magic-checkbox"-->
+                                                               <!--name="is_duplicate" id="is_duplicate" value="1"-->
+                                                               <!--checked="">-->
+                                                        <!--<label for="is_duplicate" class="g-fw-n">发送时自动去掉重复号码</label>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="">-->
+                                                        <!--<input type="checkbox" class="magic-checkbox" id="is_timing"-->
+                                                               <!--value="1">-->
+                                                        <!--<label for="is_timing" class="g-fw-n">定时发送</label>-->
+                                                        <!--<input disabled="" type="text" style="width:138px"-->
+                                                               <!--autocomplete="off" name="timing_time" id="date"-->
+                                                               <!--datatype="dt,compare_time">-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        </div>
+                                        <div class="col-sm-12 text-center" style="height:50px;">
+                                            <a type="button" class="btn btn-default" data-btn-type="cancel" href="/index?/home">取消
+                                            </a>
+                                            <button type="button" class="btn btn-primary" onclick="add()" data-btn-type="send">发送
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+<!--
+                                <div class="col-lg-4 col-md-4 col-sm-12 g-fz-14">
+                                    <div class="box box-solid box-default g-mt-5" id="tip-box">
+                                        <div class="box-header with-border" id="tip-box-head"
+                                             style="background-color: #ffffff;cursor: pointer;">
+                                            <h3 class="box-title g-fw-b"><i class="fa fa-exclamation-triangle"></i>录入提醒
+                                            </h3>
+                                            <div class="box-tools pull-right">
+                                                <button class="btn btn-box-tool"><i class="fa fa-minus"></i></button>
+                                            </div>&lt;!&ndash; /.box-tools &ndash;&gt;
+                                        </div>&lt;!&ndash; /.box-header &ndash;&gt;
+                                        <div class="box-body">
+                                            <p style="white-space: normal;">1、<strong><span
+                                                    style="color: rgb(255, 0, 0);">禁止</span></strong>录入<strong><span
+                                                    style="color: rgb(255, 0, 0);">兼职网赚</span></strong>、<span
+                                                    style="color: rgb(255, 0, 0);"><strong>彩票6合彩</strong></span>、<span
+                                                    style="color: rgb(255, 0, 0);"><strong>钓鱼网站</strong></span>及<strong><span
+                                                    style="color: rgb(255, 0, 0);">银行诈骗</span></strong>等等任何违法短信，否则法律责任自负，并且一经发现<span
+                                                    style="color: rgb(255, 0, 0);"><strong>删除帐户条数清空。</strong></span></p>
+                                            <p style="white-space: normal;">2、通道对内容没有限制，但有<strong><span
+                                                    style="color: rgb(255, 0, 0);">敏感词</span></strong>的话会被<strong><span
+                                                    style="color: rgb(255, 0, 0);">运营商拦截</span></strong>。平台搜集了一些敏感词并给出了修改建议，但请注意这远远不是所有敏感词。
+                                            </p>
+                                            <p style="white-space: normal;">3、如果内容已经<span
+                                                    style="color: rgb(255, 0, 0);"><strong>没有明显敏感词</strong></span>或敏感词不好修改，但<strong><span
+                                                    style="color: rgb(255, 0, 0);">到达率</span></strong>还是<strong><span
+                                                    style="color: rgb(255, 0, 0);">不行</span></strong>，可以点击下面的插入按钮在<strong><span
+                                                    style="color: rgb(255, 0, 0);">疑似敏感词</span></strong>之间插入一个<strong><span
+                                                    style="color: rgb(255, 0, 0);">不可见字符</span></strong>，这可以提高短信到达率(<span
+                                                    style="color: rgb(255, 0, 0);"><strong>敏感词</strong></span>用一般字符<strong><span
+                                                    style="color: rgb(255, 0, 0);">隔开无效</span></strong>)。<br>
+                                                <button class="btn btn-primary btn-xs btn_insert_char" type="button">
+                                                    插入一个不可见字符
+                                                </button>&nbsp;<button class="btn btn-primary btn-xs btn_clear_char"
+                                                                       type="button">清除不可见字符
+                                                </button>
+                                            </p>
+                                        </div>&lt;!&ndash; /.box-body &ndash;&gt;
+                                    </div>&lt;!&ndash; /.box &ndash;&gt;
+                                </div>
+-->
+                                <div class="col-lg-1 col-md-12"></div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- /.tab-content -->
+            </div>
+            <!-- nav-tabs-task -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+    <div class="modal fade"  id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div >
+            <div >
+                <div id="myModal-div1" style="background: red">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div id="myModal-div2"><span id="cofig"></span></div>
+                <div id="myModal-div3">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</section>

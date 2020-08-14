@@ -1,0 +1,94 @@
+<script src="/static/common/js/channel.js"></script>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="col-md-12">
+                            <input type="hidden" id="channel_id" th:value="${channel != null ? channel.id : ''}">
+                            <div class="form-group">
+                                <label for="channel_code" class="col-sm-2 control-label">通道编号<i>*</i></label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="channel_code"
+                                           placeholder="通道编号：如 xianggang85"
+                                           th:value="${channel != null ? channel.code: ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="channel_url" class="col-sm-2 control-label">通道地址<i>*</i></label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="channel_url" placeholder="通道地址：IP | url"
+                                           th:value="${channel != null ? channel.url : ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="channel_port" class="col-sm-2 control-label">通道端口<i>*</i></label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="channel_port" placeholder="端口号： 2001"
+                                           th:value="${channel != null ? channel.port : ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="channel_systemId">通道账号<i>*</i></label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" type="text" id="channel_systemId"
+                                           placeholder="通道账号：xxxaaa"
+                                           th:value="${channel != null ? channel.systemId : ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="channel_password">通道密码<i>*</i></label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" type="text" id="channel_password" placeholder="通道密码"
+                                           th:value="${channel != null ? channel.password : ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="channel_channelPwd">管理密码<i></i></label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" type="text" id="channel_channelPwd" placeholder="管理密码"
+                                           th:value="${channel != null ? channel.channelPwd : ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="channel_enable">通道启停</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" type="text" id="channel_enable"
+                                            th:value="${channel != null ? channel.enabled + '' : '1'}">
+                                        <option value="1">是</option>
+                                        <option value="0">否</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="channel_description" class="col-sm-2 control-label">通道描述<i></i></label>
+                                <div class="col-sm-4">
+                                    <textarea class="form-control" style="height: 100px; width: 100%;" type="text"
+                                              id="channel_description" placeholder="通道描述"
+                                              th:value="${channel != null ? channel.description : ''}"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="channel_remark">通道备注<i></i></label>
+                                <div class="col-sm-4">
+                                    <textarea class="form-control" style="height: 200px; width: 100%;" type="text"
+                                              id="channel_remark" placeholder="通道备注"
+                                              th:value="${channel != null ? channel.remark : ''}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </form>
+                <div class="box-footer text-center">
+                    <button class="btn btn-default" onclick="resetChannel()">重置</button>
+                    <!--以下两种方式提交验证,根据所需选择-->
+                    <button class="btn btn-primary" onclick="addChannel()">提交</button>
+                </div>
+                <!-- /.box-footer -->
+            </div>
+        </div>
+    </div>
+</section>

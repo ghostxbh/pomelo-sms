@@ -1,0 +1,57 @@
+<script src="/static/common/js/link.js"></script>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="col-md-12">
+                            <input type="hidden" id="link_id" th:value="${link != null ? link.id : ''}">
+                            <div class="form-group">
+                                <label for="link_name" class="col-sm-2 control-label">服务名称<i>*</i></label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="link_name"
+                                           placeholder="服务名称"
+                                           th:value="${link != null ? link.name: ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="link_url" class="col-sm-2 control-label">服务地址<i>*</i></label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="link_url" placeholder="服务地址"
+                                           th:value="${link != null ? link.url : ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="link_enable">服务启停</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" type="text" id="link_enable"
+                                            th:value="${link != null ? link.enable + '' : '1'}">
+                                        <option value="1">是</option>
+                                        <option value="0">否</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="link_remark">服务备注<i></i></label>
+                                <div class="col-sm-4">
+                                    <textarea class="form-control" style="height: 200px; width: 100%;" type="text"
+                                              id="link_remark" placeholder="服务备注"
+                                              th:value="${link != null ? link.remark : ''}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </form>
+                <div class="box-footer text-center">
+                    <button class="btn btn-default" onclick="resetLink()">重置</button>
+                    <!--以下两种方式提交验证,根据所需选择-->
+                    <button class="btn btn-primary" onclick="addLink()">提交</button>
+                </div>
+                <!-- /.box-footer -->
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,146 @@
+<link rel="stylesheet" href="/static/common/css/page.css">
+<script src="/static/common/js/channel-list.js" type="text/javascript"></script>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<section id="table" class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs pull-right">
+                    <li class="active"><a href="#tab-content-list" data-toggle="tab" id="nav-tab-list"><i
+                            class="fa fa-list-ul"></i></a></li>
+                    <li class="pull-left header"><i class="fa fa-bars"></i>
+                        <small>通道列表</small>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab-content-list">
+                        <div class="box">
+                            <!-- /.box-header -->
+                            <div class="dataTables_filter" id="searchDiv">
+                                <div class="btn-group pull-left">
+                                    <span>通道编号:</span>
+                                    <input type="text" size="20" placeholder="输入通道编号" id="searchCode"
+                                           th:value="${searchCode}">
+                                </div>
+                                <div class="pull-left" style="width: 2%">&nbsp;</div>
+                                <div class="btn-group pull-left">
+                                    <span>通道账号:</span>
+                                    <input type="text" size="20" placeholder="输入通道账号" id="searchSystemId"
+                                           th:value="${searchSystemId}">
+                                </div>
+                                <div class="btn-group pull-right">
+                                    <button type="button" class="btn btn-info" id="channel_query_click">
+                                        <i class="fa fa-search"></i>查询
+                                    </button>
+                                    <button type="button" class="btn btn-default" id="channel_reset_click">
+                                        <i class="fa fa-refresh"></i>重置
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="data-table_wrapper"
+                                     class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                    <div id="data-table_processing" class="dataTables_processing"
+                                         style="display: none;">处理中...
+                                    </div>
+                                    <table id="data-table"
+                                           class="table table-bordered table-striped table-hover dataTable no-footer responsive dtr-inline collapsed"
+                                           style="width: 100%;" role="grid" aria-describedby="data-table_info">
+                                        <thead>
+                                        <tr role="row">
+                                            <th class="text-center sorting_disabled" rowspan="1" colspan="1"
+                                                style="width: 5%;" aria-label="序号">序号
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" aria-label="编号">编号
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" aria-label="地址">地址
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" aria-label="端口">端口
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" aria-label="账户">账户
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" aria-label="密码">密码
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 15%;" aria-label="通道密码">通道密码
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 20%;" aria-label="启用">启用
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 15%;" aria-label="创建时间">创建时间
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 15%;" aria-label="操作">操作
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="odd" th:if="${page.records != null && page.records.size()>0}"
+                                            th:each="channel,index:${page.records}">
+                                            <td class="text-center sorting_disabled" rowspan="1" colspan="1"
+                                                style="width: 5%;" th:text="${channel.id}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" th:text="${channel.code}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" th:text="${channel.url}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" th:text="${channel.port}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 15%;" th:text="${channel.systemId}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 20%;" th:text="${channel.password}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 20%;" th:text="${channel.channelPwd}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 20%;"
+                                                th:text="${channel.enabled == 1 ? '是' : '否'}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 15%;"
+                                                th:text="${#dates.format(channel.createTime,'yyyy-MM-dd HH:mm:ss')}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 15%;">
+                                                <button class="btn btn-link" th:onclick="goInfo([[${channel.id}]])"><i
+                                                        class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                                                <button class="btn btn-link" th:onclick="delAccount([[${channel}]])"><i
+                                                        class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${page.records == null || page.records.size() < 1}">
+                                            <td valign="top" colspan="9" class="dataTables_empty">未找到符合条件的数据</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <input type="hidden" th:value="${page.current}" name="current">
+                                    <input type="hidden" th:value="${page.pages}" name="pageCount">
+                                    <div>共 <span th:text="${page.total}"></span> 条</div>
+                                    <div class="information_page"></div>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+                        <!-- /.box -->
+                    </div>
+                </div>
+                <!-- /.tab-content -->
+            </div>
+            <!-- nav-tabs-task -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
