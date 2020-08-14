@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uzykj.smsSystem.core.mapper.SmsDetailsMapper">
+
+    <sql id="Base_Column_List">
+        sms_details.id, sms_details.details_id, sms_details.resp_message_id, sms_details.collect_id,
+        sms_details.user_id, sms_details.direction, sms_details.account_code, sms_details.phone,
+        sms_details.contents, sms_details.status, sms_details.batch_id, sms_details.send_time,
+        sms_details.receive_time, sms_details.report_stat, sms_details.remark, sms_details.create_time,
+        sms_details.update_time
+    </sql>
+
+    <select id="getList" resultType="com.uzykj.smsSystem.core.domain.SmsDetails"
+            parameterType="com.uzykj.smsSystem.core.domain.dto.SmsDetailsDto">
+        select
+        <include refid="Base_Column_List"/>
+        from sms_details
+        left join sys_user on sms_details.user_id=sys_user.id
+        <where>
+            1=1
+            <if test="userId != null">
+                and sms_details.user_id=#{userId}
+            </if>
+            <if test="collectId != null">
+                and sms_details.collect_id=#{collectId}
+            </if>
+            <if test="startTime != null and endTime != null ">
+                and DATE_FORMAT(sms_details.create_time,'%Y-%m-%d %H:%i')
+                between #{startTime}
+                and #{endTime}
+            </if>
+            <if test="searchName != null">
+                and sys_user.name=#{searchName}
+            </if>
+            <if test="searchPhone != null">
+                and sms_details.phone=#{searchPhone}
+            </if>
+        </where>
+        order by sms_details.create_time desc
+        <if test="pageDto != null">
+            limit #{pageDto.page},#{pageDto.pageSize}
+        </if>
+    </select>
+
+    <select id="getListCount" resultType="java.lang.Integer">
+        select
+        count(1)
+        from sms_details
+        left join sys_user on sms_details.user_id=sys_user.id
+        <where>
+            1=1
+            <if test="userId != null">
+                and sms_details.user_id=#{userId}
+            </if>
+            <if test="collectId != null">
+                and sms_details.collect_id=#{collectId}
+            </if>
+            <if test="startTime != null and endTime != null ">
+                and DATE_FORMAT(sms_details.create_time,'%Y-%m-%d %H:%i')
+                between #{startTime}
+                and #{endTime}
+            </if>
+            <if test="searchName != null">
+                and sys_user.name=#{searchName}
+            </if>
+            <if test="searchPhone != null">
+                and sms_details.phone=#{searchPhone}
+            </if>
+        </where>
+    </select>
+</mapper>
