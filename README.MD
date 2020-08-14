@@ -1,4 +1,4 @@
-# mobileproject 短信平台
+# sms-system 短信平台
 
 ## framework
 ### sms_platform
@@ -14,6 +14,3 @@
 - 4.执行打包脚本，`mvn clean install`
 - 5.运行脚本，`nohup java -jar /target/mobileproject.jar &`
 - 6.访问测试[短信平台](http://127.0.0.1:8888)
-
-> 短信回调需要启动`sms-callback-api`
-> 执行 node mobileproject/sms-callback-api/bin/sms-callback-api.js
