@@ -1,0 +1,10 @@
+/* Created by ghostxbh  */
+
+/* 分页*/
+.information_page{text-align:center; padding-top:10px;}
+.information_page a{}
+.information_page p{display:inline-block; font-size:14px; color:#999; border:1px solid #e3e3e3; padding:3px 8px;}
+.information_page p.previous , .information_page p.next{background:#f6f6f6;}
+.information_page p.current{font-weight:bold; color:#fff; background: #cccccc; border:1px solid #cccccc;}
+.information_page input{width:25px; height:20px; border:1px solid #e3e3e3; margin:0 3px; padding:3px; text-align:center;}
+.information_page .btn{background:#ccc; border-radius:3px; font-size:14px; color:#fff; padding:2px 6px;}
