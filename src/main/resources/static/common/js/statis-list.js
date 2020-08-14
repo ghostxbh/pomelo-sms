@@ -30,9 +30,9 @@ function statisQuery() {
 }
 
 function goDetail(msg) {
-    var statisId = msg.id;
+    var collectId = msg.collectId;
     var searchName = msg.user.name;
-    var url = '/sms/list?statisId=' + statisId + '&searchName=' + searchName;
+    var url = '/sms/list?collectId=' + collectId + '&searchName=' + searchName;
     $.get(url, null, function (data) {
         $("#mainDiv").empty();
         $("#mainDiv").append(data);

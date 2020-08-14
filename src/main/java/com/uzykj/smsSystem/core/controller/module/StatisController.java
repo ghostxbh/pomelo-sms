@@ -5,6 +5,7 @@ import com.uzykj.smsSystem.core.controller.BaseController;
 import com.uzykj.smsSystem.core.domain.SmsCollect;
 import com.uzykj.smsSystem.core.domain.SysUser;
 import com.uzykj.smsSystem.core.domain.dto.PageDto;
+import com.uzykj.smsSystem.core.domain.dto.SmsCollectDto;
 import com.uzykj.smsSystem.core.service.SmsCollectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class StatisController extends BaseController {
         try {
             //根据用户id查询总条数
             PageDto dto = new PageDto((page - 1) * pageSize, pageSize);
-            Page<SmsCollect> all = smsCollectService.getAll(user, dto, userName);
+            Page<SmsCollectDto> all = smsCollectService.getAll(user, dto, userName);
 
             model.addAttribute("page", all);
             model.addAttribute("userName", userName);

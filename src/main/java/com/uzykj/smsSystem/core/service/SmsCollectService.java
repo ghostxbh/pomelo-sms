@@ -2,12 +2,17 @@ package com.uzykj.smsSystem.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.uzykj.smsSystem.core.common.SmsStatus;
 import com.uzykj.smsSystem.core.domain.*;
 import com.uzykj.smsSystem.core.domain.dto.PageDto;
+import com.uzykj.smsSystem.core.domain.dto.SmsCollectDto;
 import com.uzykj.smsSystem.core.mapper.SmsCollectMapper;
 import com.uzykj.smsSystem.core.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SmsCollectService {
@@ -17,7 +22,7 @@ public class SmsCollectService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
-    public Page<SmsCollect> getAll(SysUser user, PageDto pageDto, String userName) {
+    public Page<SmsCollectDto> getAll(SysUser user, PageDto pageDto, String userName) {
         QueryWrapper<SmsCollect> query = new QueryWrapper<SmsCollect>();
         query.orderByDesc("create_time");
         if ("admin".equals(user.getRole())) {
@@ -27,8 +32,23 @@ public class SmsCollectService {
             }
         }
         int skip = (pageDto.getPage() - 1) * pageDto.getPageSize();
-        Page<SmsCollect> page = new Page<SmsCollect>(skip, pageDto.getPageSize());
-        return smsCollectMapper.selectPage(page, query);
+        Page<SmsCollect> smsCollectPage = smsCollectMapper.selectPage(new Page<SmsCollect>(skip, pageDto.getPageSize()), query);
+        List<SmsCollect> collectList = smsCollectPage.getRecords();
+        List<SmsCollectDto> collectDtos = new ArrayList<>(collectList.size());
+        collectList.forEach(collect -> {
+            collect.setStatus(SmsStatus.switchSmsStatus(collect.getStatus()));
+            SysUser sysUser = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("id", collect.getUserId()));
+            SmsCollectDto dto = new SmsCollectDto(collect, sysUser);
+            collectDtos.add(dto);
+        });
+
+        Page<SmsCollectDto> page = new Page<SmsCollectDto>();
+        page.setRecords(collectDtos);
+        page.setTotal(smsCollectPage.getTotal());
+        page.setPages(smsCollectPage.getPages());
+        page.setCurrent(smsCollectPage.getCurrent());
+        page.setSize(smsCollectPage.getSize());
+        return page;
     }
 
 

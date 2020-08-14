@@ -67,7 +67,7 @@ public class SmsController extends BaseController {
         searchName = OtherUtils.checkNull(searchName);
         searchPhone = OtherUtils.checkNull(searchPhone);
         collectId = OtherUtils.checkNull(collectId);
-        int userId = searchName != null ? null : user.getId();
+        Integer userId = searchName != null ? null : user.getId();
         //根据用户id查询总条数
         try {
             //起始索引

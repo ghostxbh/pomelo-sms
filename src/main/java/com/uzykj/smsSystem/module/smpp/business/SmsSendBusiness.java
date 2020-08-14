@@ -54,6 +54,8 @@ public class SmsSendBusiness extends Globle {
         Address destAddress = new Address();
         destAddress.setAddress(details.getPhone());
         submitSm.setDestAddress(destAddress);
+        submitSm.setSourceAddress(sourceAddress);
+
         // 送达报告
         submitSm.setRegisteredDelivery((byte) 1);
         logger.info("待发送短信 sequenceNo: {}", submitSm.getSequenceNo());

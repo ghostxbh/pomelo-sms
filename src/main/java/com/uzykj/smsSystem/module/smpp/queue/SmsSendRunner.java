@@ -49,7 +49,7 @@ public class SmsSendRunner extends Globle {
                     final List<SmsDetails> sendList = getSendList();
                     if (sendList.size() == 0) {
                         try {
-                            TimeUnit.SECONDS.sleep(2);
+                            TimeUnit.SECONDS.sleep(5);
                         } catch (Exception e) {
                             log.log(Level.WARNING, "thread sleep error {}", e);
                         }

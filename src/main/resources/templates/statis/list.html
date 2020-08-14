@@ -16,23 +16,27 @@
                             <!-- /.box-header -->
                             <div class="dataTables_filter" id="searchDiv">
                                 <!--<form onkeydown="if(event.keyCode==13){$('[data-btn-type=search]').click();return false;}">-->
-                                    <!--<div class="panel panel-default g-c-666">
-                                        <div class="panel-body">
-                                            <label id="mark_status">发送状态:</label> 
-                                            <input class="magic-radio" type="radio" name="push_state" value="pending" id="push_state-1">
-                                            <label for="push_state-1">已发送</label>&nbsp;
-                                            <input class="magic-radio" type="radio" name="push_state" value="other" id="push_state-0">
-                                            <label for="push_state-0">其他</label>&nbsp;
-                                        </div>
-                                    </div>-->
-                                    用户账号：<input type="text" class="form-control" id="statis_userName" placeholder="用户账号: zhangsan" th:value="${userName}">
-                                    <!--手机号码：<input type="text" class="form-control" name="mobile" placeholder="手机号码: 8613899998888">-->
-                                    <!--短信内容：<input type="text" class="form-control" name="mo_msg" placeholder="短信内容: 你好">-->
-                                    <!--<input type="search" placeholder="发送时间：2020-01-01" name="receive_time" data-flag="daterangepicker" class="form-control" style="width:240px;" ignore="ignore" datatype="dr" autocomplete="off">-->
-                                    <div class="btn-group">
-                                        <button class="btn btn-info" onclick="statisQuery()"><i class="fa fa-search"></i>查询</button>
-                                        <button class="btn btn-default" onclick="statisReset()"><i class="fa fa-refresh"></i>重置</button>
+                                <!--<div class="panel panel-default g-c-666">
+                                    <div class="panel-body">
+                                        <label id="mark_status">发送状态:</label> 
+                                        <input class="magic-radio" type="radio" name="push_state" value="pending" id="push_state-1">
+                                        <label for="push_state-1">已发送</label>&nbsp;
+                                        <input class="magic-radio" type="radio" name="push_state" value="other" id="push_state-0">
+                                        <label for="push_state-0">其他</label>&nbsp;
                                     </div>
+                                </div>-->
+                                用户账号：<input type="text" class="form-control" id="statis_userName"
+                                            placeholder="用户账号: zhangsan" th:value="${userName}">
+                                <!--手机号码：<input type="text" class="form-control" name="mobile" placeholder="手机号码: 8613899998888">-->
+                                <!--短信内容：<input type="text" class="form-control" name="mo_msg" placeholder="短信内容: 你好">-->
+                                <!--<input type="search" placeholder="发送时间：2020-01-01" name="receive_time" data-flag="daterangepicker" class="form-control" style="width:240px;" ignore="ignore" datatype="dr" autocomplete="off">-->
+                                <div class="btn-group">
+                                    <button class="btn btn-info" onclick="statisQuery()"><i class="fa fa-search"></i>查询
+                                    </button>
+                                    <button class="btn btn-default" onclick="statisReset()"><i
+                                            class="fa fa-refresh"></i>重置
+                                    </button>
+                                </div>
                                 <!--</form>-->
                                 <!--<div class="btn-group pull-left">
                                     <a class="btn btn-primary"
@@ -79,25 +83,27 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr class="odd" th:if="${smsSendList!=null && smsSendList.size()>0}"
-                                            th:each="item,index:${smsSendList}">
+                                        <tr class="odd" th:if="${page.records!=null && page.records.size()>0}"
+                                            th:each="item:${page.records}">
                                             <td class="text-center sorting_disabled" rowspan="1" colspan="1"
-                                                style="width: 5%;" th:text="${index.count}">
+                                                style="width: 5%;" th:text="${item.id}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
-                                                style="width: 10%;" th:text="${item.user.name}">
+                                                style="width: 10%;"
+                                                th:text="${item.user != null ? item.user.name : ''}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
-                                                style="width: 5%;" th:text="${item.smsCount}">
+                                                style="width: 5%;" th:text="${item.total}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
                                                 style="width: 10%;" th:text="${item.status}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
-                                                style="width: 20%;" th:text="${item.smsContent}">
+                                                style="width: 20%;" th:text="${item.contents}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
-                                                style="width: 15%;" th:text="${#dates.format(item.createTime,'yyyy-MM-dd HH:mm:ss')}">
+                                                style="width: 15%;"
+                                                th:text="${#dates.format(item.createTime,'yyyy-MM-dd HH:mm:ss')}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
                                                 style="width: 20%;">
@@ -107,18 +113,20 @@
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
                                                 style="width: 15%;">
-                                                <button class="btn btn-primary btn-sm" th:onclick="goDetail([[${item}]])">明细</button>
-<!--                                                <button class="btn btn-danger btn-sm" th:onclick="goDetail([[${item}]])">删除</button>-->
+                                                <button class="btn btn-primary btn-sm"
+                                                        th:onclick="goDetail([[${item}]])">明细
+                                                </button>
+                                                <!--                                                <button class="btn btn-danger btn-sm" th:onclick="goDetail([[${item}]])">删除</button>-->
                                             </td>
                                         </tr>
-                                        <tr class="odd" th:if="${smsSendList==null || smsSendList.size()<1}">
+                                        <tr class="odd" th:if="${page.records==null || page.records.size()<1}">
                                             <td valign="top" colspan="8" class="dataTables_empty">未找到符合条件的数据</td>
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <input type="hidden" th:value="${current}" name="current">
-                                    <input type="hidden" th:value="${pageCount}" name="pageCount">
-                                    <div>共  <span th:text="${count}"></span>  条</div>
+                                    <input type="hidden" th:value="${page.current}" name="current">
+                                    <input type="hidden" th:value="${page.pages}" name="pageCount">
+                                    <div>共 <span th:text="${page.total}"></span> 条</div>
                                     <div class="information_page"></div>
                                 </div>
                             </div>
