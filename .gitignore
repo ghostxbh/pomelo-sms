@@ -5,7 +5,6 @@ target/
 !**/src/test/**
 mobileproject.zip
 logs/
-logback-spring.xml
 ### STS ###
 .apt_generated
 .classpath
