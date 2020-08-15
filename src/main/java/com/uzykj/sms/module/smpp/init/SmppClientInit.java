@@ -32,6 +32,11 @@ public class SmppClientInit {
     @Autowired
     private SmsDetailsMapper smsDetailsMapper;
 
+    public SmppClientInit(SmsAccountMapper smsAccountMapper, SmsDetailsMapper smsDetailsMapper) {
+        this.smsAccountMapper = smsAccountMapper;
+        this.smsDetailsMapper = smsDetailsMapper;
+    }
+
     @PostConstruct
     public void init() throws Exception {
         List<SmsAccount> availableAccounts = smsAccountMapper.selectList(new QueryWrapper<SmsAccount>().eq("enabled", 1));
@@ -66,6 +71,16 @@ public class SmppClientInit {
                 manager.startConnectionCheckTask();
             }
         }
+    }
+
+    /**
+     * 重启smpp
+     *
+     * @throws Exception
+     */
+    public void rebot() throws Exception {
+        this.destroy();
+        this.init();
     }
 
 

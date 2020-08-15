@@ -6,6 +6,8 @@ import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.dto.PageDto;
 import com.uzykj.sms.core.domain.dto.SmsAccountDto;
 import com.uzykj.sms.core.mapper.SmsAccountMapper;
+import com.uzykj.sms.core.mapper.SmsDetailsMapper;
+import com.uzykj.sms.module.smpp.init.SmppClientInit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +18,25 @@ public class SmsAccountService {
 
     @Autowired
     private SmsAccountMapper smsAccountMapper;
+    @Autowired
+    private SmsDetailsMapper smsDetailsMapper;
 
-    public void add(SmsAccount account) {
+    public void add(SmsAccount account) throws Exception {
         smsAccountMapper.insert(account);
+        SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
+        clientInit.rebot();
     }
 
-    public void update(SmsAccount account) {
+    public void update(SmsAccount account) throws Exception {
         smsAccountMapper.updateById(account);
+        SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
+        clientInit.rebot();
     }
 
-    public void del(int id) {
+    public void del(int id) throws Exception {
         smsAccountMapper.deleteById(id);
+        SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
+        clientInit.rebot();
     }
 
     public SmsAccount get(int id) {
