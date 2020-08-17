@@ -90,7 +90,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     updateEntity.setStatus(sendStatus);
                     smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("resp_message_id", id).eq("phone", phone));
 
-                    /*SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
+                    SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
                     SmsCollect collect = Globle.smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
 
                     SmsCollect set = new SmsCollect();
@@ -106,7 +106,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                         set.setFailNum(collect.getFailNum() + 1);
                     }
                     logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
-                    Globle.smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));*/
+                    Globle.smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
                 }
 
                 // 向 SMSC 发送短信已送达响应信息
@@ -125,29 +125,11 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 logger.info("SMSC SubmitSm 消息响应, msisdn: {}, messageId: {}", msisdn, messageId);
                 SmsDetails smsDetails = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("details_id", messageId));
                 if (smsDetails != null) {
-                    int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 10 : -1;
+                    int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 3 : -1;
                     SmsDetails updateEntity = new SmsDetails();
                     updateEntity.setStatus(sendStatus);
                     updateEntity.setRespMessageId(respMessageId);
                     smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("details_id", messageId));
-
-                    SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("details_id", messageId));
-                    SmsCollect collect = Globle.smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
-
-                    SmsCollect set = new SmsCollect();
-                    if (collect.getPendingNum() > 0) {
-                        set.setPendingNum(collect.getPendingNum() - 1);
-                        if (collect.getPendingNum() == 1) {
-                            set.setStatus(SmsEnum.DELIVRD.getStatus());
-                        }
-                    }
-                    if (sendStatus == 10) {
-                        set.setSuccessNum(collect.getSuccessNum() + 1);
-                    } else {
-                        set.setFailNum(collect.getFailNum() + 1);
-                    }
-                    logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
-                    Globle.smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
                 }
             }
         } catch (Exception e) {
