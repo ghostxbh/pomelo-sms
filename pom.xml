@@ -19,9 +19,23 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <maven.version>8</maven.version>
         <sms-core.version>2.1.12.1</sms-core.version>
         <mybatis-plus-starter.version>3.3.1</mybatis-plus-starter.version>
         <netty.version>4.1.45.Final</netty.version>
+        <mybatis.version>2.1.1</mybatis.version>
+        <mybatis-gen.version>1.3.7</mybatis-gen.version>
+        <esay-excel.version>1.1.1</esay-excel.version>
+        <poi.version>3.11</poi.version>
+        <httpclient.version>4.5.3</httpclient.version>
+        <fileupload.version>1.3.3</fileupload.version>
+        <commons-io.version>2.6</commons-io.version>
+        <collections4.version>4.3</collections4.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <okhttp.version>3.10.0</okhttp.version>
+        <fastjson.version>1.2.7</fastjson.version>
+        <jdom.version>1.1</jdom.version>
+        <commons-lang3.version>3.9</commons-lang3.version>
     </properties>
 
     <dependencies>
@@ -49,7 +63,7 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.1</version>
+            <version>${mybatis.version}</version>
         </dependency>
 
         <dependency>
@@ -62,7 +76,7 @@
         <dependency>
             <groupId>org.mybatis.generator</groupId>
             <artifactId>mybatis-generator-core</artifactId>
-            <version>1.3.2</version>
+            <version>${mybatis-gen.version}</version>
         </dependency>
 
         <!-- mybatis-plus-boot-starter -->
@@ -76,45 +90,47 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>1.1.1</version>
+            <version>${esay-excel.version}</version>
         </dependency>
 
         <!-- POI工具包 -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.11</version>
+            <version>${poi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-schemas</artifactId>
-            <version>3.11</version>
+            <version>${poi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.11</version>
+            <version>${poi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
+            <version>${httpclient.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.3.3</version>
+            <version>${fileupload.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <version>${commons-io.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.3</version>
+            <version>${collections4.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -122,30 +138,30 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.10.0</version>
+            <version>${okhttp.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.7</version>
+            <version>${fastjson.version}</version>
         </dependency>
 
         <dependency>
@@ -160,18 +176,12 @@
             </exclusions>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.github.moceanapi/moceanapisdk -->
-        <dependency>
-            <groupId>com.github.moceanapi</groupId>
-            <artifactId>moceanapisdk</artifactId>
-            <version>1.1.0</version>
-        </dependency>
 
         <!--jdom -->
         <dependency>
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
-            <version>1.1</version>
+            <version>${jdom.version}</version>
         </dependency>
 
 
@@ -185,7 +195,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.9</version>
+            <version>${commons-lang3.version}</version>
         </dependency>
 
         <!-- netty -->
@@ -210,7 +220,7 @@
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
-                <version>1.3.7</version>
+                <version>${mybatis-gen.version}</version>
             </plugin>
         </plugins>
         <resources>
