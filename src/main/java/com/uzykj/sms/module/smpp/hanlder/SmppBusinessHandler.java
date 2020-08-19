@@ -123,14 +123,14 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 String msisdn = request.getDestAddress().getAddress();
                 String messageId = (String) request.getReferenceObject();
                 logger.info("SMSC SubmitSm 消息响应, msisdn: {}, messageId: {}", msisdn, messageId);
-                /*SmsDetails smsDetails = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("details_id", messageId));
+                SmsDetails smsDetails = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("details_id", messageId));
                 if (smsDetails != null) {
-                    int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 3 : -1;
+                    int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 10 : -1;
                     SmsDetails updateEntity = new SmsDetails();
                     updateEntity.setStatus(sendStatus);
                     updateEntity.setRespMessageId(respMessageId);
                     smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("details_id", messageId));
-                }*/
+                }
             }
         } catch (Exception e) {
             logger.error("短信业务处理异常, {}", ExceptionUtils.getStackTrace(e));
