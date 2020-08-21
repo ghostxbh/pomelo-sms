@@ -12,6 +12,8 @@ import com.zx.sms.connect.manager.EndpointManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class SmsSendBusiness extends Globle {
         }
     }
 
+    @Async
     public void send(String code, SmsDetails details) throws Exception {
         if (StringUtils.isAnyBlank(details.getContents()) || StringUtils.isAnyBlank(details.getPhone())) {
             throw new RuntimeException("参数有误");

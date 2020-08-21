@@ -25,9 +25,9 @@ public class SmsSendRunner extends Globle {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
     private static final SmsSendBusiness submit = new SmsSendBusiness();
     private volatile static SmsSendRunner instance;
-    private static final int DEFAULT = 500;
+    private static final int DEFAULT = 100;
     // 限制90个
-    private static Semaphore sem = new Semaphore(500);
+    private static Semaphore sem = new Semaphore(90);
 
     public static SmsSendRunner getInstance() {
         if (instance == null) {
@@ -41,20 +41,21 @@ public class SmsSendRunner extends Globle {
     }
 
     public void start() {
-        Thread thread = new Thread("smpp_send_main") {
+        Thread thread = new Thread("smpp_send_main_" + Thread.currentThread().getName()) {
             @Override
             public void run() {
                 while (true) {
                     final List<SmsDetails> sendList = getSendList();
                     if (sendList.size() == 0) {
                         try {
-                            TimeUnit.SECONDS.sleep(5);
+                            TimeUnit.SECONDS.sleep(2);
                         } catch (Exception e) {
                             log.log(Level.WARNING, "thread sleep error {}", e);
                         }
                         continue;
                     }
                     log.info("[send runner] 获取到任务" + sendList.size() + "条");
+                    long currentTimeMillis = System.currentTimeMillis();
                     for (SmsDetails details : sendList) {
                         // change vo status first
                         try {
@@ -64,15 +65,19 @@ public class SmsSendRunner extends Globle {
                             log.log(Level.WARNING, "sem error", e);
                         }
                         SmsSendThreadPool.execute(() -> {
+                            long millis = System.currentTimeMillis();
                             try {
+                                log.info("[task runner] send sms: " + Thread.currentThread().getName());
                                 String code = getCode(details);
                                 submit.send(code, details);
                             } catch (Exception e) {
                                 log.log(Level.WARNING, "fatal process task id: " + details.getId(), e);
                             }
+                            log.info("单条短信消耗时间： " + (System.currentTimeMillis() - millis) + "s");
                             sem.release();
                         });
                     }
+                    log.info("此500短信发送时间： " + (System.currentTimeMillis() - currentTimeMillis) + "s");
                 }
             }
         };
