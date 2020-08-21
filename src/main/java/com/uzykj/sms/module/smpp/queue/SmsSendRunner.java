@@ -27,7 +27,7 @@ public class SmsSendRunner extends Globle {
     private volatile static SmsSendRunner instance;
     private static final int DEFAULT = 500;
     // 限制90个
-    private static Semaphore sem = new Semaphore(400);
+    private static Semaphore sem = new Semaphore(500);
 
     public static SmsSendRunner getInstance() {
         if (instance == null) {
@@ -80,9 +80,8 @@ public class SmsSendRunner extends Globle {
     }
 
     public List<SmsDetails> getSendList() {
-        Page<SmsDetails> page = new Page<SmsDetails>();
-        page.setSize(DEFAULT);
-        Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(page, new QueryWrapper<SmsDetails>().eq("status", 1));
+        Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(new Page<SmsDetails>(0, DEFAULT),
+                new QueryWrapper<SmsDetails>().eq("status", 1));
         return selectPage.getRecords();
     }
 
