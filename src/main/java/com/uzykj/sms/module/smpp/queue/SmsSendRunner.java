@@ -25,9 +25,9 @@ public class SmsSendRunner extends Globle {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
     private static final SmsSendBusiness submit = new SmsSendBusiness();
     private volatile static SmsSendRunner instance;
-    private static final int DEFAULT = 100;
+    private static final int DEFAULT = 500;
     // 限制90个
-    private static Semaphore sem = new Semaphore(90);
+    private static Semaphore sem = new Semaphore(400);
 
     public static SmsSendRunner getInstance() {
         if (instance == null) {
