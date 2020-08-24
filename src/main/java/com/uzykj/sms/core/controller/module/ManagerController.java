@@ -62,7 +62,6 @@ public class ManagerController extends BaseController {
             //分页查询
             Page<SysUser> allUser = userService.getAllUser(pageDto, sysUser);
             List<SysUser> userList = allUser.getRecords();
-            ConcurrentHashMap<Integer, SysUser> userCache = Globle.USER_CACHE;
             List<SysUser> collect = Optional.ofNullable(userList)
                     .orElse(new ArrayList<SysUser>(0))
                     .stream()
