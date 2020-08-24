@@ -20,4 +20,6 @@ public interface SmsDetailsMapper extends BaseMapper<SmsDetails> {
     List<SmsDetails> getList(SmsDetailsDto smsDetailsDto);
 
     int getListCount(SmsDetailsDto smsDetailsDto);
+
+    List<String> getPhoneList(SmsDetailsDto smsDetailsDto);
 }

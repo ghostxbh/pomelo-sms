@@ -15,7 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author elmer.shao
@@ -25,17 +28,13 @@ public class SmsSendBusiness extends Globle {
     private static Logger logger = LoggerFactory.getLogger(SmsSendBusiness.class);
     private final EndpointManager manager = EndpointManager.INS;
 
-    public void batchSend(String code, List<SmsDetails> detailsList) throws Exception {
+    @Async
+    public void batchSend(String code, List<SmsDetails> detailsList) {
         logger.info("短信批量发送， 共 " + detailsList.size() + " 条");
-        String batchNo = DateUtils.getBatchNo();
-        for (SmsDetails details : detailsList) {
-            details.setBatchId(batchNo);
-            send(code, details);
-        }
+        detailsList.forEach(detail -> send(code, detail));
     }
 
-    @Async
-    public void send(String code, SmsDetails details) throws Exception {
+    public void send(String code, SmsDetails details) {
         if (StringUtils.isAnyBlank(details.getContents()) || StringUtils.isAnyBlank(details.getPhone())) {
             throw new RuntimeException("参数有误");
         }
@@ -62,6 +61,18 @@ public class SmsSendBusiness extends Globle {
         // 送达报告
         submitSm.setRegisteredDelivery((byte) 1);
         logger.info("待发送短信 sequenceNo: {}", submitSm.getSequenceNo());
-        ChannelUtil.syncWriteLongMsgToEntity(entity.getId(), submitSm);
+        try {
+            ChannelUtil.syncWriteLongMsgToEntity(entity.getId(), submitSm);
+        } catch (Exception e) {
+            logger.error("发送短信异常", e);
+        }
+    }
+
+    private String parsePhone(List<SmsDetails> detailsList) {
+        return Optional.ofNullable(detailsList)
+                .orElse(new ArrayList<SmsDetails>(0))
+                .stream()
+                .map(SmsDetails::getPhone)
+                .collect(Collectors.joining(","));
     }
 }

@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SmsAccount;
+import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.SysUser;
 import com.uzykj.sms.core.service.SmsDetailsService;
 import com.uzykj.sms.module.smpp.business.SmsSendBusiness;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +28,8 @@ public class SmsSendRunner extends Globle {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
     private static final SmsSendBusiness submit = new SmsSendBusiness();
     private volatile static SmsSendRunner instance;
-    private static final int DEFAULT = 100;
-    // 限制90个
-    private static Semaphore sem = new Semaphore(90);
+    private static final int DEFAULT = 1000;
+    private static Semaphore sem = new Semaphore(10);
 
     public static SmsSendRunner getInstance() {
         if (instance == null) {
@@ -42,7 +43,7 @@ public class SmsSendRunner extends Globle {
     }
 
     public void start() {
-        Thread thread = new Thread("smpp_send_main_" + Thread.currentThread().getName()) {
+        Thread thread = new Thread("smpp_send_" + Thread.currentThread().getName()) {
             @Override
             public void run() {
                 while (true) {
@@ -51,44 +52,53 @@ public class SmsSendRunner extends Globle {
                         try {
                             TimeUnit.SECONDS.sleep(2);
                         } catch (Exception e) {
-                            log.log(Level.WARNING, "thread sleep error {}", e);
+                            log.log(Level.WARNING, "thread sleep error", e);
                         }
                         continue;
                     }
-                    log.info("[send runner] 获取到任务" + sendList.size() + "条");
-                    long currentTimeMillis = System.currentTimeMillis();
-                    for (SmsDetails details : sendList) {
-                        // change vo status first
-                        try {
-                            sem.acquire();
-                            changeStatus(details);
-                        } catch (Exception e) {
-                            log.log(Level.WARNING, "sem error", e);
-                        }
-                        SmsSendThreadPool.execute(() -> {
-                            long millis = System.currentTimeMillis();
-                            try {
-                                log.info("[task runner] send sms: " + Thread.currentThread().getName());
-                                String code = getCode(details);
-                                submit.send(code, details);
-                            } catch (Exception e) {
-                                log.log(Level.WARNING, "fatal process task id: " + details.getId(), e);
-                            }
-                            log.info("单条短信消耗时间： " + (System.currentTimeMillis() - millis) + "s");
-                            sem.release();
-                        });
+
+                    try {
+                        sem.acquire();
+                        changeStatus(sendList);
+                    } catch (InterruptedException e) {
+                        log.log(Level.WARNING, "sem acquire error", e);
                     }
-                    log.info("此500短信发送时间： " + (System.currentTimeMillis() - currentTimeMillis) + "s");
+
+                    long millis = System.currentTimeMillis();
+                    SmsSendThreadPool.execute(() -> {
+                        try {
+                            log.info("[task runner] send sms: " + Thread.currentThread().getName());
+                            String code = getCode(sendList.get(0));
+                            submit.batchSend(code, sendList);
+                        } catch (Exception e) {
+                            log.log(Level.WARNING, "fatal process task ", e);
+                        }
+                        sem.release();
+                    });
+                    log.info("此500短信发送时间： " + (System.currentTimeMillis() - millis) + "s");
                 }
             }
         };
         thread.start();
     }
 
+    public SmsCollect orderCollect() {
+        QueryWrapper<SmsCollect> query = new QueryWrapper<SmsCollect>();
+        query.orderByDesc("create_time");
+        return smsCollectMapper.selectOne(query);
+    }
+
     public List<SmsDetails> getSendList() {
-        Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(new Page<SmsDetails>(0, DEFAULT),
-                new QueryWrapper<SmsDetails>().eq("status", 1));
-        return selectPage.getRecords();
+        SmsCollect collect = orderCollect();
+        Page<SmsDetails> page = new Page<SmsDetails>(0, DEFAULT);
+        QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>()
+                .eq("status", 1)
+                .eq("collect_id", collect.getId());
+
+        Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(page, query);
+        return Optional
+                .ofNullable(selectPage.getRecords())
+                .orElse(new ArrayList<SmsDetails>(0));
     }
 
     public void changeStatus(SmsDetails smsDetails) {
@@ -98,8 +108,18 @@ public class SmsSendRunner extends Globle {
         smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", smsDetails.getDetailsId()));
     }
 
+    public void changeStatus(List<SmsDetails> smsDetails) {
+        smsDetails.forEach(detail -> {
+            SmsDetails set = new SmsDetails();
+            set.setStatus(2);
+            smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", detail.getDetailsId()));
+        });
+    }
+
     public String getCode(SmsDetails smsDetails) {
         SysUser sysUser = Globle.USER_CACHE.get(smsDetails.getUserId());
-        return Optional.ofNullable(sysUser.getAccount().getCode()).orElse(null);
+        return Optional.ofNullable(sysUser.getAccount()
+                .getCode())
+                .orElse(null);
     }
 }
