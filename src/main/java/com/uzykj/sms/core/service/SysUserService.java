@@ -3,8 +3,10 @@ package com.uzykj.sms.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.uzykj.sms.core.common.Globle;
+import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.SysUser;
 import com.uzykj.sms.core.domain.dto.PageDto;
+import com.uzykj.sms.core.mapper.SmsAccountMapper;
 import com.uzykj.sms.core.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ public class SysUserService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private SmsAccountMapper smsAccountMapper;
+
     public SysUser get(Integer id) {
         return sysUserMapper.selectById(id);
     }
@@ -31,12 +36,16 @@ public class SysUserService {
     public void add(SysUser user) {
         sysUserMapper.insert(user);
         SysUser newUser = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("name", user.getName()));
-        Globle.USER_CACHE.putIfAbsent(newUser.getId(), newUser);
+        SmsAccount smsAccount = smsAccountMapper.selectOne(new QueryWrapper<SmsAccount>().eq("id", newUser.getAccountId()));
+        newUser.setAccount(smsAccount);
+        Globle.USER_CACHE.put(newUser.getId(), newUser);
     }
 
     public void update(SysUser user) {
         sysUserMapper.updateById(user);
-        Globle.USER_CACHE.putIfAbsent(user.getId(), user);
+        SmsAccount smsAccount = smsAccountMapper.selectOne(new QueryWrapper<SmsAccount>().eq("id", user.getAccountId()));
+        user.setAccount(smsAccount);
+        Globle.USER_CACHE.put(user.getId(), user);
     }
 
     /**
@@ -65,6 +74,10 @@ public class SysUserService {
         sysUser.setAllowance(allowance);
         sysUser.setAccountId(account);
         sysUserMapper.update(sysUser, new QueryWrapper<SysUser>().eq("id", userId));
+        SysUser user = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("id", userId));
+        SmsAccount smsAccount = smsAccountMapper.selectOne(new QueryWrapper<SmsAccount>().eq("id", user.getAccountId()));
+        user.setAccount(smsAccount);
+        Globle.USER_CACHE.put(user.getId(), user);
     }
 
     /**

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Controller
@@ -61,6 +62,7 @@ public class ManagerController extends BaseController {
             //分页查询
             Page<SysUser> allUser = userService.getAllUser(pageDto, sysUser);
             List<SysUser> userList = allUser.getRecords();
+            ConcurrentHashMap<Integer, SysUser> userCache = Globle.USER_CACHE;
             List<SysUser> collect = Optional.ofNullable(userList)
                     .orElse(new ArrayList<SysUser>(0))
                     .stream()
@@ -86,11 +88,16 @@ public class ManagerController extends BaseController {
 
     @PostMapping("/allowance")
     @ResponseBody
-    public JsonResult modifyAllowance(Integer id, Integer allowance, Integer account) {
+    public JsonResult modifyAllowance(Integer id, Integer allowance,
+                                      Integer add, Integer minus,
+                                      Integer account) {
         if (!OtherUtils.checkParams(id, allowance, account)) {
             return new JsonResult(UserEnum.NOMODIFY.getCode(), UserEnum.NOMODIFY.getMessage());
         }
         try {
+            add = add != null ? add : 0;
+            minus = minus != null ? minus : 0;
+            allowance = allowance + add - minus;
             userService.modifyAllowance(id, allowance, account);
         } catch (Exception e) {
             log.error("user update error", e);

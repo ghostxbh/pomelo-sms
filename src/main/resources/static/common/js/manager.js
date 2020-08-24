@@ -23,7 +23,8 @@ function createUser() {
     var industry = $.trim($("#create_industry").val());//行业
     var address = $.trim($("#create_address").val());//地址
     var remark = $("#create_remark").val();//备注
-    if (!name && !pwd && !pwdToo) {
+    var account = $("#create_account").val();//通道
+    if (!name && !pwd && !pwdToo && !account) {
         modals.error('必填项未输入，带*号为必填项！');
         return;
     }
@@ -45,7 +46,8 @@ function createUser() {
         "mobile": mobile,
         "industry": industry,
         "address": address,
-        "remark": remark
+        "remark": remark,
+        "accountId": account
     };
     postAjax('/user/add', JSON.stringify(user), option);
 }

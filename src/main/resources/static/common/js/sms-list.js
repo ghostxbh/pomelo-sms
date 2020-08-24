@@ -17,8 +17,8 @@ $(function () {
         var endTime = $('#end_time').val();
         var searchName = $('#search_name').val();
         var searchPhone = $('#search_phone').val();
-        var statisId = $('#statisId').val();
-        var url = '/sms/list?startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&statisId=' + statisId;
+        var collectId = $('#collectId').val();
+        var url = '/sms/list?startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&collectId=' + collectId;
         $.get(url, null, function (data) {
             $("#mainDiv").empty();
             $("#mainDiv").append(data);
@@ -37,12 +37,12 @@ $(function () {
         var endTime = $('#end_time').val();
         var searchName = $('#search_name').val();
         var searchPhone = $('#search_phone').val();
-        var statisId = $('#statisId').val();
+        var collectId = $('#collectId').val();
         var url;
         if (confirm('是否导出全部?')) {
-            url = '/sms/export?startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&statisId=' + statisId;
+            url = '/sms/export?startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&collectId=' + collectId;
         } else {
-            url = '/sms/export?page=1&pageSize=20&startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&statisId=' + statisId;
+            url = '/sms/export?page=1&pageSize=20&startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&collectId=' + collectId;
         }
         var tempwindow = window.open('_blank');
         tempwindow.location = url;
@@ -54,8 +54,8 @@ function getPage(pageIndex, totalPage) {
     var endTime = $('#end_time').val();
     var searchName = $('#search_name').val();
     var searchPhone = $('#search_phone').val();
-    var statisId = $('#statisId').val();
-    var url = '/sms/list?&startTime=' + startTime + '&endTime=' + endTime + '&searchPhone=' + searchPhone + '&statisId=' + statisId;
+    var collectId = $('#collectId').val();
+    var url = '/sms/list?&startTime=' + startTime + '&endTime=' + endTime + '&searchPhone=' + searchPhone + '&collectId=' + collectId;
     if (searchName) url += '&searchName=' + searchName;
     url += '&page=';
     $(".information_page").createPage({    //创建分页

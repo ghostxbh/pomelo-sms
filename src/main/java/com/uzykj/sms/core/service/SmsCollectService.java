@@ -31,6 +31,8 @@ public class SmsCollectService {
                 SysUser selectOne = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("name", userName));
                 query.eq("user_id", selectOne.getId());
             }
+        } else {
+            query.eq("user_id", user.getId());
         }
         Page<SmsCollect> page = smsCollectMapper.selectPage(new Page<SmsCollect>(pageDto.getPage(), pageDto.getPageSize()), query);
         List<SmsCollect> collectList = Optional.ofNullable(page.getRecords())

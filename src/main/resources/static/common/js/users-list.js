@@ -67,6 +67,8 @@ function modifyAllowanceModal(user) {
 function modifyAllowance() {
     var id = $('#allowance_id').val();
     var allowance = $('#allowance').val();
+    var add = $('#add_allowance').val();
+    var minus = $('#minus_allowance').val();
     var account = $('#account').val();
     var reg = /^\d+(\.\d+)?$/;
     if (!reg.test(allowance)) {
@@ -78,7 +80,14 @@ function modifyAllowance() {
         modals.error('未选择短信通道');
         return;
     }
-    $.post('/manager/allowance', {"id": id, "allowance": allowance, "account": account}, function (data) {
+    var data = {
+        "id": id,
+        "allowance": allowance,
+        "add": add,
+        "minus": minus,
+        "account": account
+    };
+    $.post('/manager/allowance', data, function (data) {
         if (data.code == 200) {
             modals.info("操作结果 ：" + data.message);
         } else {
