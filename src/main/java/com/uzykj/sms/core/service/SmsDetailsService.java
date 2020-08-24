@@ -1,6 +1,7 @@
 package com.uzykj.sms.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
@@ -69,10 +70,9 @@ public class SmsDetailsService {
         }
 
         try {
-            List<List<String>> partition = ListUtils.partition(phoneList, 1000);
             String batchNo = DateUtils.getBatchNo();
-            for (List<String> childrenList : partition) {
-                insertBatch(childrenList, user, content, collectId, batchNo);
+            for (String children : phoneList) {
+                insert(children, user, content, collectId, batchNo);
             }
             log.info("批量短信使用时间：" + (System.currentTimeMillis() - startTime) + "ms");
         } catch (Exception e) {
@@ -103,6 +103,25 @@ public class SmsDetailsService {
             smsDetailsMapper.insert(d);
         });
         log.info("批量添加短信详情：" + phoneList.size() + "条");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void insert(String phone, SysUser user, String content, String collectId, String batchNo) {
+        SmsDetails d = new SmsDetails();
+        d.setDetailsId(UUID.randomUUID().toString());
+        d.setCollectId(collectId);
+        d.setContents(content);
+        d.setBatchId(batchNo);
+        d.setUserId(user.getId());
+        d.setPhone(phone);
+        d.setStatus(1);
+        // 下行短信
+        d.setDirection(2);
+
+        SysUser sysUser = Globle.USER_CACHE.get(user.getId());
+        d.setAccountCode(sysUser.getAccount().getCode());
+
+        smsDetailsMapper.insert(d);
     }
 
     public int currentCount(int userId) {

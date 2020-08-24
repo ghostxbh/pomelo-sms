@@ -62,7 +62,7 @@ public class SmsSendBusiness extends Globle {
         submitSm.setRegisteredDelivery((byte) 1);
         logger.info("待发送短信 sequenceNo: {}", submitSm.getSequenceNo());
         try {
-            ChannelUtil.syncWriteLongMsgToEntity(entity.getId(), submitSm);
+            ChannelUtil.asyncWriteToEntity(entity.getId(), submitSm);
         } catch (Exception e) {
             logger.error("发送短信异常", e);
         }

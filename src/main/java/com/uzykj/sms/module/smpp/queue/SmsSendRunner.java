@@ -85,7 +85,20 @@ public class SmsSendRunner extends Globle {
     public SmsCollect orderCollect() {
         QueryWrapper<SmsCollect> query = new QueryWrapper<SmsCollect>();
         query.orderByDesc("create_time");
-        return smsCollectMapper.selectOne(query);
+        Page<SmsCollect> page = smsCollectMapper.selectPage(new Page<SmsCollect>(1, 1), query);
+        List<SmsCollect> collects = page.getRecords();
+        int index = 0;
+        List<SmsCollect> collectList = Optional.ofNullable(collects).orElse(new ArrayList<SmsCollect>(0));
+
+        for (int i = 0; i < collectList.size(); i++) {
+            Integer status = smsDetailsMapper.selectCount(new QueryWrapper<SmsDetails>().eq("status", 1));
+            if (status > 0) {
+                index = i;
+                break;
+            }
+        }
+
+        return collects.get(index);
     }
 
     public List<SmsDetails> getSendList() {
