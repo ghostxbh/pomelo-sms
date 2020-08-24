@@ -146,7 +146,7 @@
 <script>
     $(function () {
         var url = 'http://127.0.0.1:9000/link/api';
-        $.getJSON(url, function (res) {
+        $.get(url, function (res) {
             var html = '';
             if (res.code == 200) {
                 var links = res.data;
