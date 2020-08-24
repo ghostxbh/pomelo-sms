@@ -73,10 +73,9 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 // 状态报告
                 else {
                     DeliverSmReceipt deliverSmReceipt = (DeliverSmReceipt) msg;
-                    String address = deliverSmReceipt.getSourceAddress().getAddress();
-                    String phone = address.substring(1);
+                    String address = deliverSmReceipt.getDestAddress().getAddress();
                     String reportStat = deliverSmReceipt.getStat();
-                    logger.info("下行短信状态报告 ===> phone: {}, reportStat: {}", phone, reportStat);
+                    logger.info("下行短信状态报告 ===> phone: {}, reportStat: {}", address, reportStat);
                     String id = deliverSmReceipt.getId();
                     logger.info("状态报告ID: {}", id);
                     int sendStatus = -1;
@@ -88,7 +87,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     SmsDetails updateEntity = new SmsDetails();
                     updateEntity.setReportStat(reportStat);
                     updateEntity.setStatus(sendStatus);
-                    smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("resp_message_id", id).eq("phone", phone));
+                    smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
 
                     SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
                     SmsCollect collect = Globle.smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
@@ -125,7 +124,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 logger.info("SMSC SubmitSm 消息响应, msisdn: {}, messageId: {}", msisdn, messageId);
                 SmsDetails smsDetails = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("details_id", messageId));
                 if (smsDetails != null) {
-                    int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 10 : -1;
+                    int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 3 : -1;
                     SmsDetails updateEntity = new SmsDetails();
                     updateEntity.setStatus(sendStatus);
                     updateEntity.setRespMessageId(respMessageId);

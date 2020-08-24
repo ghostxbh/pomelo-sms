@@ -60,7 +60,7 @@ public class SmsDetails {
      */
     private Date receiveTime;
     /**
-     * 短信发送状态, -1 发送失败 10、发送成功 1、已提交 2、已发送 3、其他
+     * 短信发送状态, -1 发送失败 10、发送成功 1、已提交 2、已发送 3、已请求
      */
     private Integer status;
     /**

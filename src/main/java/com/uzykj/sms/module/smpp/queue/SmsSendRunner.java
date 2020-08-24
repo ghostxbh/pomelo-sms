@@ -29,7 +29,7 @@ public class SmsSendRunner extends Globle {
     private static final SmsSendBusiness submit = new SmsSendBusiness();
     private volatile static SmsSendRunner instance;
     private static final int DEFAULT = 1000;
-    private static Semaphore sem = new Semaphore(10);
+    private static Semaphore sem = new Semaphore(90);
 
     public static SmsSendRunner getInstance() {
         if (instance == null) {
@@ -56,25 +56,26 @@ public class SmsSendRunner extends Globle {
                         }
                         continue;
                     }
-
-                    try {
-                        sem.acquire();
-                        changeStatus(sendList);
-                    } catch (InterruptedException e) {
-                        log.log(Level.WARNING, "sem acquire error", e);
-                    }
-
                     long millis = System.currentTimeMillis();
-                    SmsSendThreadPool.execute(() -> {
+                    for (SmsDetails details : sendList) {
                         try {
-                            log.info("[task runner] send sms: " + Thread.currentThread().getName());
-                            String code = getCode(sendList.get(0));
-                            submit.batchSend(code, sendList);
-                        } catch (Exception e) {
-                            log.log(Level.WARNING, "fatal process task ", e);
+                            sem.acquire();
+                            changeStatus(details);
+                        } catch (InterruptedException e) {
+                            log.log(Level.WARNING, "sem acquire error", e);
                         }
-                        sem.release();
-                    });
+
+                        SmsSendThreadPool.execute(() -> {
+                            try {
+                                log.info("[task runner] send sms: " + Thread.currentThread().getName());
+                                String code = getCode(details);
+                                submit.send(code, details);
+                            } catch (Exception e) {
+                                log.log(Level.WARNING, "fatal process task ", e);
+                            }
+                            sem.release();
+                        });
+                    }
                     log.info("此500短信发送时间： " + (System.currentTimeMillis() - millis) + "s");
                 }
             }
@@ -85,7 +86,7 @@ public class SmsSendRunner extends Globle {
     public SmsCollect orderCollect() {
         QueryWrapper<SmsCollect> query = new QueryWrapper<SmsCollect>();
         query.orderByDesc("create_time");
-        Page<SmsCollect> page = smsCollectMapper.selectPage(new Page<SmsCollect>(1, 1), query);
+        Page<SmsCollect> page = smsCollectMapper.selectPage(new Page<SmsCollect>(1, 10), query);
         List<SmsCollect> collects = page.getRecords();
         int index = 0;
         List<SmsCollect> collectList = Optional.ofNullable(collects).orElse(new ArrayList<SmsCollect>(0));
@@ -103,10 +104,10 @@ public class SmsSendRunner extends Globle {
 
     public List<SmsDetails> getSendList() {
         SmsCollect collect = orderCollect();
-        Page<SmsDetails> page = new Page<SmsDetails>(0, DEFAULT);
+        Page<SmsDetails> page = new Page<SmsDetails>(1, DEFAULT);
         QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>()
                 .eq("status", 1)
-                .eq("collect_id", collect.getId());
+                .eq("collect_id", collect.getCollectId());
 
         Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(page, query);
         return Optional
