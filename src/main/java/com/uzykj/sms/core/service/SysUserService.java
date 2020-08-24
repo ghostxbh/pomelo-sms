@@ -2,9 +2,9 @@ package com.uzykj.sms.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SysUser;
 import com.uzykj.sms.core.domain.dto.PageDto;
-import com.uzykj.sms.core.domain.dto.SysUserDto;
 import com.uzykj.sms.core.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,10 +30,13 @@ public class SysUserService {
      */
     public void add(SysUser user) {
         sysUserMapper.insert(user);
+        SysUser newUser = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("name", user.getName()));
+        Globle.USER_CACHE.putIfAbsent(newUser.getId(), newUser);
     }
 
     public void update(SysUser user) {
         sysUserMapper.updateById(user);
+        Globle.USER_CACHE.putIfAbsent(user.getId(), user);
     }
 
     /**
@@ -41,6 +44,7 @@ public class SysUserService {
      */
     public void del(int id) {
         sysUserMapper.deleteById(id);
+        Globle.USER_CACHE.remove(id);
     }
 
     public SysUser login(String name) {
@@ -66,24 +70,23 @@ public class SysUserService {
     /**
      * 查询所有用户
      */
-    public Page<SysUser> getAllUser(PageDto pageDto, SysUserDto sysUserDto) {
-        int skip = (pageDto.getPage() - 1) * pageDto.getPageSize();
-        Page<SysUser> page = new Page<SysUser>(skip, pageDto.getPageSize());
+    public Page<SysUser> getAllUser(PageDto pageDto, SysUser sysUser) {
+        Page<SysUser> page = new Page<SysUser>(pageDto.getPage(), pageDto.getPageSize());
         QueryWrapper<SysUser> query = new QueryWrapper<SysUser>();
-        if (sysUserDto.getName() != null) query.eq("name", sysUserDto.getName());
-        if (sysUserDto.getMobile() != null) query.eq("mobile", sysUserDto.getMobile());
+        if (sysUser.getName() != null) query.eq("name", sysUser.getName());
+        if (sysUser.getMobile() != null) query.eq("mobile", sysUser.getMobile());
         page = sysUserMapper.selectPage(page, query);
         return page;
     }
 
-    public int userAllCount(SysUserDto sysUserDto) {
+    public int userAllCount(SysUser sysUser) {
         QueryWrapper<SysUser> query = new QueryWrapper<SysUser>();
-        if (sysUserDto.getName() != null) query.eq("name", sysUserDto.getName());
-        if (sysUserDto.getMobile() != null) query.eq("mobile", sysUserDto.getMobile());
+        if (sysUser.getName() != null) query.eq("name", sysUser.getName());
+        if (sysUser.getMobile() != null) query.eq("mobile", sysUser.getMobile());
         return sysUserMapper.selectCount(query);
     }
 
     public List<SysUser> allUser() {
-        return sysUserMapper.selectList(new QueryWrapper<SysUser>());
+        return sysUserMapper.getAll();
     }
 }

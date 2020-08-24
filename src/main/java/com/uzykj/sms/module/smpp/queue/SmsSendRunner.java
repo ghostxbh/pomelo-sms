@@ -11,6 +11,7 @@ import com.uzykj.sms.module.smpp.business.SmsSendBusiness;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -98,8 +99,7 @@ public class SmsSendRunner extends Globle {
     }
 
     public String getCode(SmsDetails smsDetails) {
-        SysUser sysUser = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("id", smsDetails.getUserId()));
-        SmsAccount smsAccount = smsAccountMapper.selectOne(new QueryWrapper<SmsAccount>().eq("id", sysUser.getAccountId()));
-        return smsAccount.getCode();
+        SysUser sysUser = Globle.USER_CACHE.get(smsDetails.getUserId());
+        return Optional.ofNullable(sysUser.getAccount().getCode()).orElse(null);
     }
 }

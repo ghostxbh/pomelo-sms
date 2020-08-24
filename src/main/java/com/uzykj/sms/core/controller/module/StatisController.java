@@ -2,9 +2,9 @@ package com.uzykj.sms.core.controller.module;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.uzykj.sms.core.controller.BaseController;
+import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SysUser;
 import com.uzykj.sms.core.domain.dto.PageDto;
-import com.uzykj.sms.core.domain.dto.SmsCollectDto;
 import com.uzykj.sms.core.service.SmsCollectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,8 +30,8 @@ public class StatisController extends BaseController {
         SysUser user = checkUser(session);
         try {
             //根据用户id查询总条数
-            PageDto dto = new PageDto((page - 1) * pageSize, pageSize);
-            Page<SmsCollectDto> all = smsCollectService.getAll(user, dto, userName);
+            PageDto dto = new PageDto(page, pageSize);
+            Page<SmsCollect> all = smsCollectService.getAll(user, dto, userName);
 
             model.addAttribute("page", all);
             model.addAttribute("userName", userName);

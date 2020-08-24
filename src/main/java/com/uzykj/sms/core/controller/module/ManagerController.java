@@ -1,11 +1,11 @@
 package com.uzykj.sms.core.controller.module;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.controller.BaseController;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.SysUser;
 import com.uzykj.sms.core.domain.dto.PageDto;
-import com.uzykj.sms.core.domain.dto.SysUserDto;
 import com.uzykj.sms.core.enums.CommenEnum;
 import com.uzykj.sms.core.enums.UserEnum;
 import com.uzykj.sms.core.service.SmsAccountService;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/manager")
@@ -49,48 +51,33 @@ public class ManagerController extends BaseController {
                        Model model, HttpSession session) {
         try {
             PageDto pageDto = new PageDto();
-            //查询所有条数
-            int count = 0;
-            SysUserDto userDto = new SysUserDto();
-            if ((searchName != null && !"".equals(searchName)) && (searchPhone != null && !"".equals(searchPhone))) {
-                userDto.setName(searchName);
-                userDto.setMobile(searchPhone);
-                count = userService.userAllCount(userDto);
-            } else {
-                count = userService.userAllCount(userDto);
-            }
-            //总共多少页
-            int total = (count % pageSize > 0) ? (count / pageSize + 1) : count / pageSize;
-            //起始索引
-            pageDto.setOffset((page - 1) * pageSize);
-            pageDto.setCount(count);
-            pageDto.setTotal(total);
             pageDto.setPage(page);
             pageDto.setPageSize(pageSize);
 
+            SysUser sysUser = new SysUser();
+            sysUser.setName(!("".equals(searchName)) ? searchName : null);
+            sysUser.setMobile(!("".equals(searchPhone)) ? searchPhone : null);
+
             //分页查询
-            Page<SysUser> allUser = userService.getAllUser(pageDto, userDto);
+            Page<SysUser> allUser = userService.getAllUser(pageDto, sysUser);
             List<SysUser> userList = allUser.getRecords();
-            SysUser user = (SysUser) session.getAttribute("user");
+            List<SysUser> collect = Optional.ofNullable(userList)
+                    .orElse(new ArrayList<SysUser>(0))
+                    .stream()
+                    .map(user -> Globle.USER_CACHE.get(user.getId()))
+                    .collect(Collectors.toList());
+            allUser.setRecords(collect);
 
             Page<SmsAccount> all = smsAccountService.getAll(null, null);
-            List<SmsAccount> smsAccountList = all.getRecords();
+            List<SmsAccount> smsAccountList = Optional.ofNullable(all.getRecords()).orElse(new ArrayList<SmsAccount>(0));
 
-            List<SysUserDto> userDtoList = new ArrayList<SysUserDto>(userList.size());
-            userList.forEach(item -> {
-                SmsAccount smsAccount = smsAccountService.get(item.getAccountId());
-                SysUserDto sysUserDto = new SysUserDto(item, smsAccount);
-                userDtoList.add(sysUserDto);
-            });
+            SysUser user = (SysUser) session.getAttribute("user");
 
-            model.addAttribute("accountList", smsAccountList);
             model.addAttribute("searchName", searchName != null ? searchName : "");
             model.addAttribute("searchPhone", searchPhone != null ? searchPhone : "");
-            model.addAttribute("userList", userDtoList);
             model.addAttribute("currentId", user.getId());
-            model.addAttribute("current", page);
-            model.addAttribute("pageCount", total);
-            model.addAttribute("count", count);
+            model.addAttribute("accountList", smsAccountList);
+            model.addAttribute("page", allUser);
         } catch (Exception e) {
             log.error("用户列表展示", e);
         }

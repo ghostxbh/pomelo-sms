@@ -78,8 +78,8 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr class="odd" th:if="${userList != null && userList.size()>0}"
-                                            th:each="user:${userList}">
+                                        <tr class="odd" th:if="${page.records != null && page.records.size()>0}"
+                                            th:each="user:${page.records}">
                                             <td class="text-center sorting_disabled" rowspan="1" colspan="1"
                                                 style="width: 5%;" th:text="${user.id}">
                                             </td>
@@ -107,14 +107,14 @@
                                                 <button class="btn btn-link" th:onclick="delUser([[${user}]])"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
                                             </td>
                                         </tr>
-                                        <tr th:if="${userList == null || userList.size() < 1}">
+                                        <tr th:if="${page.records == null || page.records.size() < 1}">
                                             <td valign="top" colspan="9" class="dataTables_empty">未找到符合条件的数据</td>
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <input type="hidden" th:value="${current}" name="current">
-                                    <input type="hidden" th:value="${pageCount}" name="pageCount">
-                                    <div>共  <span th:text="${count}"></span>  条</div>
+                                    <input type="hidden" th:value="${page.current}" name="current">
+                                    <input type="hidden" th:value="${page.pages}" name="pageCount">
+                                    <div>共  <span th:text="${page.total}"></span>  条</div>
                                     <div class="information_page"></div>
                                 </div>
                             </div>

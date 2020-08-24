@@ -1,6 +1,7 @@
 package com.uzykj.sms.core.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -31,18 +32,6 @@ public class SmsCollect {
     private Date updateTime;
     private Date completeTime;
 
-    public SmsCollect(SmsCollect collect) {
-        this.id = collect.getId();
-        this.collectId = collect.getCollectId();
-        this.userId = collect.getUserId();
-        this.contents = collect.getContents();
-        this.status = collect.getStatus();
-        this.total = collect.getTotal();
-        this.pendingNum = collect.getPendingNum();
-        this.successNum = collect.getSuccessNum();
-        this.failNum = collect.getFailNum();
-        this.createTime = collect.getCreateTime();
-        this.updateTime = collect.getUpdateTime();
-        this.completeTime = collect.getCompleteTime();
-    }
+    @TableField(exist = false)
+    private SysUser user;
 }
