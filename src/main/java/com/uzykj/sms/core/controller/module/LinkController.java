@@ -12,7 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author ghostxbh
@@ -91,5 +93,18 @@ public class LinkController extends BaseController {
             log.error("查询短息服务链接失败", e);
         }
         return "link/list";
+    }
+
+    @GetMapping("/api")
+    @ResponseBody
+    public JsonResult<List<SysLink>> apiList(HttpServletResponse response) {
+        try {
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            List<SysLink> allLink = sysLinkService.getAllLink();
+            return new JsonResult<List<SysLink>>(allLink);
+        } catch (Exception e) {
+            log.error("查询短息服务链接失败", e);
+            return new JsonResult<List<SysLink>>(e);
+        }
     }
 }

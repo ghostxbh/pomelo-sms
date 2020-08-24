@@ -8,6 +8,8 @@ import com.uzykj.sms.core.mapper.SysLinkMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author ghostxbh
  * @date 2020/8/14
@@ -48,6 +50,10 @@ public class SysLinkService {
         Page<SysLink> page = new Page<SysLink>(skip, pageDto.getPageSize());
         page = sysLinkMapper.selectPage(page, new QueryWrapper<SysLink>().eq("enable", 1));
         return page;
+    }
+
+    public List<SysLink> getAllLink() {
+        return sysLinkMapper.selectList(new QueryWrapper<SysLink>().eq("enable", 1));
     }
 
     public int getAllCount() {
