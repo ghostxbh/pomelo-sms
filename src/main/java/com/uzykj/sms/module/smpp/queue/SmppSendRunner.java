@@ -26,7 +26,7 @@ public class SmppSendRunner {
 
     private static final int DEFAULT = 2000;
 
-    private static final int LIMIT = 30;
+    private static final int LIMIT = 10;
 
     private ExecutorService exec = Executors.newFixedThreadPool(10);
 
@@ -132,6 +132,7 @@ public class SmppSendRunner {
                         String code = getCode(details);
                         submit.send(code, details);
                     });
+            TimeUnit.SECONDS.sleep(1);
             return detailsList;
         }
 
