@@ -123,14 +123,12 @@ public class SmppSendRunner {
 
         @Override
         public List<SmsDetails> call() throws Exception {
-            System.out.println("task线程：" + Thread.currentThread().getName() + "任务完成！" + new Date());
-            Optional.ofNullable(detailsList)
-                    .orElse(new ArrayList<SmsDetails>(0))
-                    .stream()
-                    .peek(details -> {
-                        String code = getCode(details);
-                        submit.send(code, details);
-                    });
+            log.info("task线程：" + Thread.currentThread().getName() + "任务完成！" + new Date());
+            for (SmsDetails details : detailsList) {
+                String code = getCode(details);
+                submit.send(code, details);
+                log.info("短信" + details + "已发送！");
+            }
             TimeUnit.SECONDS.sleep(1);
             return detailsList;
         }
