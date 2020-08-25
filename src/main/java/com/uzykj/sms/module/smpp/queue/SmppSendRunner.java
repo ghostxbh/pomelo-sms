@@ -67,13 +67,12 @@ public class SmppSendRunner {
                         for (int i = 0; i <= sendList.size() / LIMIT; i++) {
                             List<SmsDetails> smsDetails = sendList.stream().skip(i * LIMIT).limit(LIMIT).collect(Collectors.toList());
                             changeStatus(smsDetails);
-                            Future<List<SmsDetails>> result = exec.submit(new CallableTask(smsDetails));
                             futures.add(completionService.submit(new CallableTask(smsDetails)));
                         }
 
                         for (int i = 0; i < sendList.size() / LIMIT; i++) {
                             List<SmsDetails> smsDetails = completionService.take().get();//采用completionService.take()，内部维护阻塞队列，任务先完成的先获取到
-                            log.info("任务i" + i + "完成!" + new Date());
+                            log.info("任务" + i + "完成!" + new Date());
                             list.add(smsDetails);
                         }
                     } catch (Exception e) {
