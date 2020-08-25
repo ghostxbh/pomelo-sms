@@ -12,6 +12,7 @@ import com.zx.sms.connect.manager.EndpointManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  * @since 2020-08-08
  */
 @Component
+@Order(99)
 public class SmsSendBusiness extends Globle {
     private static Logger logger = LoggerFactory.getLogger(SmsSendBusiness.class);
     private final EndpointManager manager = EndpointManager.INS;

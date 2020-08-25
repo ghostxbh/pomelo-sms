@@ -8,6 +8,7 @@ import com.uzykj.sms.core.mapper.SysUserMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description
  */
 @Component
+@Order(1)
 public class Globle {
     private static Logger log = LogManager.getLogger(Globle.class);
     public static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
