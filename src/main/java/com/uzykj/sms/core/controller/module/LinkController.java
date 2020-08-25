@@ -99,7 +99,7 @@ public class LinkController extends BaseController {
     @ResponseBody
     public JsonResult<List<SysLink>> apiList(HttpServletResponse response) {
         try {
-            response.setHeader("Access-Control-Allow-Origin", "*");
+//            response.setHeader("Access-Control-Allow-Origin", "*");
             List<SysLink> allLink = sysLinkService.getAllLink();
             return new JsonResult<List<SysLink>>(allLink);
         } catch (Exception e) {
