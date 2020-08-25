@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  * @author elmer.shao
  * @since 2020-08-08
  */
+@Component
 public class SmsSendBusiness extends Globle {
     private static Logger logger = LoggerFactory.getLogger(SmsSendBusiness.class);
     private final EndpointManager manager = EndpointManager.INS;
@@ -34,6 +36,7 @@ public class SmsSendBusiness extends Globle {
         detailsList.forEach(detail -> send(code, detail));
     }
 
+    @Async
     public void send(String code, SmsDetails details) {
         if (StringUtils.isAnyBlank(details.getContents()) || StringUtils.isAnyBlank(details.getPhone())) {
             throw new RuntimeException("参数有误");
