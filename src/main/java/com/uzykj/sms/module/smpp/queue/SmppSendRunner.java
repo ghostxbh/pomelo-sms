@@ -26,7 +26,7 @@ public class SmppSendRunner {
 
     private static final int DEFAULT = 2000;
 
-    private static final int LIMIT = 10;
+    private static final int LIMIT = 30;
 
     private ExecutorService exec = Executors.newFixedThreadPool(10);
 
