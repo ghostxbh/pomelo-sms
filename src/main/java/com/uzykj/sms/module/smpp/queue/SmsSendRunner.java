@@ -9,6 +9,9 @@ import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.SysUser;
 import com.uzykj.sms.core.service.SmsDetailsService;
 import com.uzykj.sms.module.smpp.business.SmsSendBusiness;
+import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,22 +61,20 @@ public class SmsSendRunner extends Globle {
                     }
                     long millis = System.currentTimeMillis();
                     for (SmsDetails details : sendList) {
-                        try {
-                            sem.acquire();
-                            changeStatus(details);
-                        } catch (InterruptedException e) {
-                            log.log(Level.WARNING, "sem acquire error", e);
-                        }
+                        long smillis = System.currentTimeMillis();
+//                            changeStatus(details);
+                            log.info("====== 修改状态 ========:" + (System.currentTimeMillis() - smillis) + "ms");
+
 
                         SmsSendThreadPool.execute(() -> {
                             try {
                                 log.info("[task runner] send sms: " + Thread.currentThread().getName());
-                                String code = getCode(details);
-                                submit.send(code, details);
+//                                String code = getCode(details);
+//                                submit.send(code, details);
+                                log.info("====== 发送业务 ========:" + (System.currentTimeMillis() - smillis) + "ms");
                             } catch (Exception e) {
                                 log.log(Level.WARNING, "fatal process task ", e);
                             }
-                            sem.release();
                         });
                     }
                     log.info("此500短信发送时间： " + (System.currentTimeMillis() - millis) + "s");

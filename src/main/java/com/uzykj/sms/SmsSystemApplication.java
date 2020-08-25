@@ -1,5 +1,6 @@
 package com.uzykj.sms;
 
+import com.uzykj.sms.module.smpp.queue.SmppSendRunner;
 import com.uzykj.sms.module.smpp.queue.SmsSendRunner;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
@@ -18,6 +19,7 @@ public class SmsSystemApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        SmsSendRunner.getInstance().start();
+//        SmsSendRunner.getInstance().start();
+        SmppSendRunner.getInstance().start();
     }
 }

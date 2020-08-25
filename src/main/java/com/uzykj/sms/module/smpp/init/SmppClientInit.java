@@ -11,6 +11,7 @@ import com.zx.sms.connect.manager.smpp.SMPPClientEndpointEntity;
 import com.zx.sms.handler.api.BusinessHandlerInterface;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +24,7 @@ import java.util.List;
  * @since 2020-08-08
  */
 @Component
+@Order(2)
 public class SmppClientInit {
 
     private final EndpointManager manager = EndpointManager.INS;

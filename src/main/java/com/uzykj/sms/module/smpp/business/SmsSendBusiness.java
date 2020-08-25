@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
  * @author elmer.shao
  * @since 2020-08-08
  */
-@Component
-@Order(99)
 public class SmsSendBusiness extends Globle {
     private static Logger logger = LoggerFactory.getLogger(SmsSendBusiness.class);
     private final EndpointManager manager = EndpointManager.INS;
@@ -38,8 +36,8 @@ public class SmsSendBusiness extends Globle {
         detailsList.forEach(detail -> send(code, detail));
     }
 
-    @Async
     public void send(String code, SmsDetails details) {
+        long millis = System.currentTimeMillis();
         if (StringUtils.isAnyBlank(details.getContents()) || StringUtils.isAnyBlank(details.getPhone())) {
             throw new RuntimeException("参数有误");
         }
@@ -71,6 +69,7 @@ public class SmsSendBusiness extends Globle {
         } catch (Exception e) {
             logger.error("发送短信异常", e);
         }
+        logger.info("单条短信耗时：{}ms", (System.currentTimeMillis() - millis));
     }
 
     private String parsePhone(List<SmsDetails> detailsList) {
