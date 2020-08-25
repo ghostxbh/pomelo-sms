@@ -14,14 +14,14 @@ import java.util.logging.Logger;
  */
 public class SmsSendThreadPool {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
-    private static final int DEFAULT_MAX_CONCURRENT = 100;
+    private static final int DEFAULT_MAX_CONCURRENT = 15;
 
     private static final String THREAD_POOL_NAME = "XmlSendThreadPool-%d";
 
     private static final ThreadFactory FACTORY = new BasicThreadFactory.Builder().namingPattern(THREAD_POOL_NAME)
             .daemon(true).build();
 
-    private static final int DEFAULT_SIZE = 500;
+    private static final int DEFAULT_SIZE = 1000;
 
     private static final long DEFAULT_KEEP_ALIVE = 60L;
 

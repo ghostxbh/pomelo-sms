@@ -28,7 +28,7 @@ public class SmsSendRunner extends Globle {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
     private static final SmsSendBusiness submit = new SmsSendBusiness();
     private volatile static SmsSendRunner instance;
-    private static final int DEFAULT = 1000;
+    private static final int DEFAULT = 100;
     private static Semaphore sem = new Semaphore(90);
 
     public static SmsSendRunner getInstance() {
@@ -103,15 +103,10 @@ public class SmsSendRunner extends Globle {
     }
 
     public List<SmsDetails> getSendList() {
-        SmsCollect collect = orderCollect();
-        Page<SmsDetails> page = new Page<SmsDetails>(1, DEFAULT);
-        QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>()
-                .eq("status", 1)
-                .eq("collect_id", collect.getCollectId());
-
-        Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(page, query);
+        List<SmsDetails> smsDetailsList = smsDetailsMapper.selectList(new QueryWrapper<SmsDetails>()
+                .eq("status", 1));
         return Optional
-                .ofNullable(selectPage.getRecords())
+                .ofNullable(smsDetailsList)
                 .orElse(new ArrayList<SmsDetails>(0));
     }
 
