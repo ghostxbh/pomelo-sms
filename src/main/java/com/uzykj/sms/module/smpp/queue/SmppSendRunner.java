@@ -28,7 +28,7 @@ public class SmppSendRunner {
 
     private static final int LIMIT = 30;
 
-    private ExecutorService exec = Executors.newFixedThreadPool(10);
+    private ExecutorService exec;
 
     public static SmppSendRunner getInstance() {
         if (instance == null) {
@@ -56,9 +56,9 @@ public class SmppSendRunner {
                         }
                         continue;
                     }
+                    exec = Executors.newFixedThreadPool(10);
                     try {
-                        //结果集
-                        List<List<SmsDetails>> list = new ArrayList<List<SmsDetails>>();
+                        List<List<SmsDetails>> list = new ArrayList<>();
                         //1.定义CompletionService
                         CompletionService<List<SmsDetails>> completionService = new ExecutorCompletionService<>(exec);
                         List<Future<List<SmsDetails>>> futures = new ArrayList<Future<List<SmsDetails>>>();
@@ -72,7 +72,7 @@ public class SmppSendRunner {
 
                         for (int i = 0; i < sendList.size() / LIMIT; i++) {
                             List<SmsDetails> smsDetails = completionService.take().get();//采用completionService.take()，内部维护阻塞队列，任务先完成的先获取到
-                            log.info("单列任务，序号：" + i + " 完成! 时间：" + new Date());
+                            log.info("单列任务，序号：" + i + " 完成! 共发送： " + smsDetails.size() + " 条，时间：" + new Date());
                             list.add(smsDetails);
                         }
                         log.info("发送任务已完成，共 " + sendList.size() + " 条");
@@ -106,13 +106,6 @@ public class SmppSendRunner {
             set.setStatus(2);
             Globle.smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", detail.getDetailsId()));
         });
-    }
-
-    public String getCode(SmsDetails smsDetails) {
-        SysUser sysUser = Globle.USER_CACHE.get(smsDetails.getUserId());
-        return Optional.ofNullable(sysUser.getAccount()
-                .getCode())
-                .orElse(null);
     }
 
     static class CallableTask implements Callable<List<SmsDetails>> {
