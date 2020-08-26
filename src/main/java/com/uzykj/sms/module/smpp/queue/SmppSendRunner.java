@@ -72,9 +72,11 @@ public class SmppSendRunner {
 
                         for (int i = 0; i < sendList.size() / LIMIT; i++) {
                             List<SmsDetails> smsDetails = completionService.take().get();//采用completionService.take()，内部维护阻塞队列，任务先完成的先获取到
-                            log.info("任务" + i + "完成!" + new Date());
+                            log.info("单列任务，序号：" + i + " 完成! 时间：" + new Date());
                             list.add(smsDetails);
                         }
+                        log.info("发送任务已完成，共 " + sendList.size() + " 条");
+                        TimeUnit.SECONDS.sleep(2);
                     } catch (Exception e) {
                         log.log(Level.WARNING, "send sms error", e);
                     } finally {
@@ -123,13 +125,10 @@ public class SmppSendRunner {
 
         @Override
         public List<SmsDetails> call() throws Exception {
-            log.info("task线程：" + Thread.currentThread().getName() + "任务完成！" + new Date());
             for (SmsDetails details : detailsList) {
                 String code = getCode(details);
                 submit.send(code, details);
-                log.info("短信" + details + "已发送！");
             }
-            TimeUnit.SECONDS.sleep(1);
             return detailsList;
         }
 
