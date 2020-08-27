@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description
  */
 @Component
-@Order(1)
+@Order(2)
 public class Globle {
     private static Logger log = LogManager.getLogger(Globle.class);
     public static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);

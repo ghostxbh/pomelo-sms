@@ -3,6 +3,7 @@ package com.uzykj.sms.core.common;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  * @description 配置类，解决定时任务无法注入的问题
  */
 @Component
+@Order(1)
 public class ApplicationContextUtil implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
