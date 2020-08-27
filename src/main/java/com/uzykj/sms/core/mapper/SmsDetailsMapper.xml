@@ -37,7 +37,7 @@
             </if>
         </where>
         order by sms_details.create_time desc
-        <if test="pageDto != null">
+        <if test="pageDto != null and pageDto.page != null and pageDto.pageSize != null">
             limit #{pageDto.page},#{pageDto.pageSize}
         </if>
     </select>

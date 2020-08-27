@@ -192,6 +192,7 @@ public class SmsController extends BaseController {
         startTime = OtherUtils.checkNull(startTime);
         endTime = OtherUtils.checkNull(endTime);
         searchName = OtherUtils.checkNull(searchName);
+        searchName = ("undefined").equals(searchName) ? null : searchName;
         searchPhone = OtherUtils.checkNull(searchPhone);
         collectId = OtherUtils.checkNull(collectId);
         int userId = searchName != null ? null : user.getId();
@@ -199,8 +200,10 @@ public class SmsController extends BaseController {
             String sheetName = UUID.randomUUID().toString();
             //起始索引
             PageDto pageDto = new PageDto();
-            pageDto.setPage((page - 1) * pageSize);
-            pageDto.setPageSize(pageSize);
+            if (page != null && pageSize != null) {
+                pageDto.setPage((page - 1) * pageSize);
+                pageDto.setPageSize(pageSize);
+            }
 
             SmsDetailsDto dto = new SmsDetailsDto(userId, collectId, searchName, searchPhone, startTime, endTime, pageDto);
             List<SmsDetails> SmsDetailsList = smsDetailsService.getList(dto);
