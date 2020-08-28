@@ -1,11 +1,14 @@
 package com.uzykj.sms.core.domain.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
  * @author elmer.shao
  * @since 2020-08-08
  */
+@Data
 public class SmsSendDTO {
     /**
      * 运营商分配的短号
@@ -20,27 +23,5 @@ public class SmsSendDTO {
      */
     private String content;
 
-    public String getShortCode() {
-        return shortCode;
-    }
-
-    public void setShortCode(String shortCode) {
-        this.shortCode = shortCode;
-    }
-
-    public List<String> getMobiles() {
-        return mobiles;
-    }
-
-    public void setMobiles(List<String> mobiles) {
-        this.mobiles = mobiles;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
+    private Integer userId;
 }

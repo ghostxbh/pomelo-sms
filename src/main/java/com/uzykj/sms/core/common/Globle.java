@@ -12,7 +12,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,9 +32,9 @@ public class Globle {
 
     @Bean
     public void initCache() {
-        List<SysUser> userList = Optional.ofNullable(sysUserMapper.getAll())
-                .orElse(new ArrayList<SysUser>(0));
-        userList.forEach(user -> USER_CACHE.put(user.getId(), user));
-        log.info("初始化用户列表缓存, 共计缓存: {} 条", userList.size());
+        log.info("初始化用户列表缓存");
+        Optional.ofNullable(sysUserMapper.getAll())
+                .orElse(new ArrayList<SysUser>(0))
+                .forEach(user -> USER_CACHE.put(user.getId(), user));
     }
 }

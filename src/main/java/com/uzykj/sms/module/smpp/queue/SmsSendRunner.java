@@ -46,7 +46,7 @@ public class SmsSendRunner extends Globle {
     }
 
     public void start() {
-        Thread thread = new Thread("smpp_send_" + Thread.currentThread().getName()) {
+        Thread thread = new Thread("smpp_send_main") {
             @Override
             public void run() {
                 while (true) {
@@ -55,59 +55,39 @@ public class SmsSendRunner extends Globle {
                         try {
                             TimeUnit.SECONDS.sleep(2);
                         } catch (Exception e) {
-                            log.log(Level.WARNING, "thread sleep error", e);
+                            log.log(Level.WARNING, "thread sleep error {}", e);
                         }
                         continue;
                     }
-                    long millis = System.currentTimeMillis();
+                    log.info("[send runner] 获取到任务" + sendList.size() + "条");
                     for (SmsDetails details : sendList) {
-                        long smillis = System.currentTimeMillis();
-//                            changeStatus(details);
-                            log.info("====== 修改状态 ========:" + (System.currentTimeMillis() - smillis) + "ms");
-
-
+                        // change vo status first
+                        try {
+                            sem.acquire();
+                            changeStatus(details);
+                        } catch (Exception e) {
+                            log.log(Level.WARNING, "sem error", e);
+                        }
                         SmsSendThreadPool.execute(() -> {
                             try {
-                                log.info("[task runner] send sms: " + Thread.currentThread().getName());
-//                                String code = getCode(details);
-//                                submit.send(code, details);
-                                log.info("====== 发送业务 ========:" + (System.currentTimeMillis() - smillis) + "ms");
+                                String code = getCode(details);
+                                submit.send(code, details);
                             } catch (Exception e) {
-                                log.log(Level.WARNING, "fatal process task ", e);
+                                log.log(Level.WARNING, "fatal process task id: " + details.getId(), e);
                             }
+                            sem.release();
                         });
                     }
-                    log.info("此500短信发送时间： " + (System.currentTimeMillis() - millis) + "s");
                 }
             }
         };
         thread.start();
     }
 
-    public SmsCollect orderCollect() {
-        QueryWrapper<SmsCollect> query = new QueryWrapper<SmsCollect>();
-        query.orderByDesc("create_time");
-        Page<SmsCollect> page = smsCollectMapper.selectPage(new Page<SmsCollect>(1, 10), query);
-        List<SmsCollect> collects = page.getRecords();
-        int index = 0;
-        List<SmsCollect> collectList = Optional.ofNullable(collects).orElse(new ArrayList<SmsCollect>(0));
-
-        for (int i = 0; i < collectList.size(); i++) {
-            Integer status = smsDetailsMapper.selectCount(new QueryWrapper<SmsDetails>().eq("status", 1));
-            if (status > 0) {
-                index = i;
-                break;
-            }
-        }
-
-        return collects.get(index);
-    }
-
     public List<SmsDetails> getSendList() {
-        List<SmsDetails> smsDetailsList = smsDetailsMapper.selectList(new QueryWrapper<SmsDetails>()
-                .eq("status", 1));
         return Optional
-                .ofNullable(smsDetailsList)
+                .ofNullable(smsDetailsMapper.selectList(new QueryWrapper<SmsDetails>()
+                        .eq("status", 1)))
                 .orElse(new ArrayList<SmsDetails>(0));
     }
 
@@ -118,17 +98,8 @@ public class SmsSendRunner extends Globle {
         smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", smsDetails.getDetailsId()));
     }
 
-    public void changeStatus(List<SmsDetails> smsDetails) {
-        smsDetails.forEach(detail -> {
-            SmsDetails set = new SmsDetails();
-            set.setStatus(2);
-            smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", detail.getDetailsId()));
-        });
-    }
-
     public String getCode(SmsDetails smsDetails) {
-        SysUser sysUser = Globle.USER_CACHE.get(smsDetails.getUserId());
-        return Optional.ofNullable(sysUser.getAccount()
+        return Optional.ofNullable(Globle.USER_CACHE.get(smsDetails.getUserId()).getAccount()
                 .getCode())
                 .orElse(null);
     }

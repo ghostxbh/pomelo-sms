@@ -75,11 +75,6 @@ public class SmppClientInit {
         }
     }
 
-    /**
-     * 重启smpp
-     *
-     * @throws Exception
-     */
     public void rebot() throws Exception {
         this.destroy();
         this.init();

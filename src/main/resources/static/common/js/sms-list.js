@@ -42,7 +42,7 @@ $(function () {
         if (confirm('是否导出全部?')) {
             url = '/sms/export?startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&collectId=' + collectId;
         } else {
-            url = '/sms/export?page=1&pageSize=20&startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&collectId=' + collectId;
+            url = '/sms/export?page=' + current + '&pageSize=20&startTime=' + startTime + '&endTime=' + endTime + '&searchName=' + searchName + '&searchPhone=' + searchPhone + '&collectId=' + collectId;
         }
         var tempwindow = window.open('_blank');
         tempwindow.location = url;

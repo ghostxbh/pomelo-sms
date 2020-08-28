@@ -1,9 +1,13 @@
 package com.uzykj.sms.core.enums;
 
+import lombok.Data;
+import lombok.Getter;
+
 /**
  * @author elmer.shao
  * @since 2020-08-08
  */
+@Getter
 public enum ResponseCode {
 
     /**
@@ -32,17 +36,5 @@ public enum ResponseCode {
         this.code = code;
         this.msg = msg;
         this.tip = tip;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public String getTip() {
-        return tip;
     }
 }

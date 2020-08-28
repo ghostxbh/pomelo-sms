@@ -15,15 +15,11 @@ public class PermissionService {
     private static final String SMS_LIST_URL = "/sms/list";
     private static final String SMS_ADD = "短信发送";
     private static final String SMS_ADD_URL = "/sms/add";
-    private static final String SMS_LOG = "短信日志";
-    private static final String SMS_LOG_URL = "/sms/log";
 
     private static final String USER = "用户";
     private static final String USER_ICO = "fa fa-users";
     private static final String USER_INFO = "用户资料";
     private static final String USER_INFO_URL = "/user/info";
-    private static final String USER_LIST = "用户列表";
-    private static final String USER_LIST_URL = "/user/list";
     private static final String USER_PWD = "重置密码";
     private static final String USER_PWD_URL = "/user/pwd";
 
