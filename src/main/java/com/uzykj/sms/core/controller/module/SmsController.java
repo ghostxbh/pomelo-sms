@@ -1,5 +1,6 @@
 package com.uzykj.sms.core.controller.module;
 
+import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.controller.BaseController;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.SysUser;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -195,7 +197,14 @@ public class SmsController extends BaseController {
         searchName = ("undefined").equals(searchName) ? null : searchName;
         searchPhone = OtherUtils.checkNull(searchPhone);
         collectId = OtherUtils.checkNull(collectId);
-        int userId = searchName != null ? null : user.getId();
+        Integer userId;
+        if (searchName != null) {
+            userId = Optional.ofNullable(sysUserService.login(searchName))
+                    .orElse(new SysUser())
+                    .getId();
+        } else {
+            userId = user.getId();
+        }
         try {
             String sheetName = UUID.randomUUID().toString();
             //起始索引
