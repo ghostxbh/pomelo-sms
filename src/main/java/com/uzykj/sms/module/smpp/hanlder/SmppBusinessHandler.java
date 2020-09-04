@@ -5,6 +5,7 @@ import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.enums.SmsEnum;
+import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.zx.sms.codec.smpp.Address;
 import com.zx.sms.codec.smpp.msg.*;
@@ -27,9 +28,11 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
     private static Logger logger = LoggerFactory.getLogger(SmppBusinessHandler.class);
 
     private SmsDetailsMapper smsDetailsMapper;
+    private SmsCollectMapper smsCollectMapper;
 
-    public SmppBusinessHandler(SmsDetailsMapper smsDetailsMapper) {
+    public SmppBusinessHandler(SmsDetailsMapper smsDetailsMapper, SmsCollectMapper smsCollectMapper) {
         this.smsDetailsMapper = smsDetailsMapper;
+        this.smsCollectMapper = smsCollectMapper;
     }
 
     @Override
@@ -90,7 +93,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
 
                     SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
-                    SmsCollect collect = Globle.smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
+                    SmsCollect collect = smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
 
                     SmsCollect set = new SmsCollect();
                     if (collect.getPendingNum() > 0) {
@@ -105,7 +108,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                         set.setFailNum(collect.getFailNum() + 1);
                     }
                     logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
-                    Globle.smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
+                    smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
                 }
 
                 // 向 SMSC 发送短信已送达响应信息

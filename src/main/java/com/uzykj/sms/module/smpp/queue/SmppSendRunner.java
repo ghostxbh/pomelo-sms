@@ -1,9 +1,11 @@
 package com.uzykj.sms.module.smpp.queue;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.uzykj.sms.core.common.ApplicationContextUtil;
 import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.SysUser;
+import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.service.SmsDetailsService;
 import com.uzykj.sms.module.smpp.business.SmsSendBusiness;
 
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class SmppSendRunner {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
-
+    private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private static final SmsSendBusiness submit = new SmsSendBusiness();
     private volatile static SmppSendRunner instance;
 
@@ -88,7 +90,7 @@ public class SmppSendRunner {
     }
 
     public List<SmsDetails> getSendList() {
-        List<SmsDetails> detailsList = Globle.smsDetailsMapper.selectList(new QueryWrapper<SmsDetails>().eq("status", 1));
+        List<SmsDetails> detailsList = smsDetailsMapper.selectList(new QueryWrapper<SmsDetails>().eq("status", 1));
         return Optional.ofNullable(detailsList)
                 .orElse(new ArrayList<SmsDetails>(0));
     }
@@ -97,14 +99,14 @@ public class SmppSendRunner {
         SmsDetails set = new SmsDetails();
         set.setStatus(2);
         set.setSendTime(new Date());
-        Globle.smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", smsDetails.getDetailsId()));
+        smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", smsDetails.getDetailsId()));
     }
 
     public void changeStatus(List<SmsDetails> smsDetails) {
         smsDetails.forEach(detail -> {
             SmsDetails set = new SmsDetails();
             set.setStatus(2);
-            Globle.smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", detail.getDetailsId()));
+            smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", detail.getDetailsId()));
         });
     }
 

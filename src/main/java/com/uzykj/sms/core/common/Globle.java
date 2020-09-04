@@ -7,9 +7,8 @@ import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.mapper.SysUserMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,11 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Globle {
     private static Logger log = LogManager.getLogger(Globle.class);
-    public static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
-    public static SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
-    public static SmsCollectMapper smsCollectMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsCollectMapper.class);
-    public static SysUserMapper sysUserMapper = ApplicationContextUtil.getApplicationContext().getBean(SysUserMapper.class);
     public static final ConcurrentHashMap<Integer, SysUser> USER_CACHE = new ConcurrentHashMap<Integer, SysUser>();
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     @Bean
     public void initCache() {

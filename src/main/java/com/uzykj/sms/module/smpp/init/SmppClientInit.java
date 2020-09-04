@@ -3,6 +3,7 @@ package com.uzykj.sms.module.smpp.init;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.mapper.SmsAccountMapper;
+import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.module.smpp.hanlder.SmppBusinessHandler;
 import com.zx.sms.connect.manager.EndpointEntity;
@@ -24,7 +25,6 @@ import java.util.List;
  * @since 2020-08-08
  */
 @Component
-@Order(2)
 public class SmppClientInit {
 
     private final EndpointManager manager = EndpointManager.INS;
@@ -33,6 +33,8 @@ public class SmppClientInit {
     private SmsAccountMapper smsAccountMapper;
     @Autowired
     private SmsDetailsMapper smsDetailsMapper;
+    @Autowired
+    private SmsCollectMapper smsCollectMapper;
 
     public SmppClientInit(SmsAccountMapper smsAccountMapper, SmsDetailsMapper smsDetailsMapper) {
         this.smsAccountMapper = smsAccountMapper;
@@ -64,7 +66,7 @@ public class SmppClientInit {
                 entity.setReSendFailMsg(false);
 
                 List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
-                businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper));
+                businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
 
                 entity.setBusinessHandlerSet(businessHandlers);
 

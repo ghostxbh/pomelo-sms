@@ -1,17 +1,12 @@
 package com.uzykj.sms.module.smpp.queue;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.uzykj.sms.core.common.ApplicationContextUtil;
 import com.uzykj.sms.core.common.Globle;
-import com.uzykj.sms.core.domain.SmsAccount;
-import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
-import com.uzykj.sms.core.domain.SysUser;
+import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.service.SmsDetailsService;
 import com.uzykj.sms.module.smpp.business.SmsSendBusiness;
-import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +24,7 @@ import java.util.logging.Logger;
  */
 public class SmsSendRunner extends Globle {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
+    private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private static final SmsSendBusiness submit = new SmsSendBusiness();
     private volatile static SmsSendRunner instance;
     private static final int DEFAULT = 100;
