@@ -46,34 +46,10 @@ public class SmppClientInit {
         List<SmsAccount> availableAccounts = smsAccountMapper.selectList(new QueryWrapper<SmsAccount>().eq("enabled", 1));
         if (CollectionUtils.isNotEmpty(availableAccounts)) {
             for (SmsAccount account : availableAccounts) {
-                SMPPClientEndpointEntity entity = new SMPPClientEndpointEntity();
-
-                String code = account.getCode();
-                String systemId = account.getSystemId();
-                String password = account.getPassword();
-                String url = account.getUrl();
-                int port = account.getPort();
-
-                entity.setId(code);
-                entity.setHost(url);
-                entity.setPort(port);
-                entity.setSystemId(systemId);
-                entity.setPassword(password);
-                entity.setChannelType(EndpointEntity.ChannelType.DUPLEX);
-                entity.setMaxChannels((short) 3);
-                entity.setRetryWaitTimeSec((short) 100);
-                entity.setUseSSL(false);
-                entity.setReSendFailMsg(false);
-
-                List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
-                businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
-
-                entity.setBusinessHandlerSet(businessHandlers);
-
-                manager.addEndpointEntity(entity);
-                manager.openAll();
-                manager.startConnectionCheckTask();
+                this.connectByAccount(account);
             }
+            manager.openAll();
+            manager.startConnectionCheckTask();
         }
     }
 
@@ -86,5 +62,40 @@ public class SmppClientInit {
     @PreDestroy
     public void destroy() {
         manager.close();
+    }
+
+    private void connectByAccount(SmsAccount account) {
+        for (int i = 0; i < 6; i++) {
+            SMPPClientEndpointEntity entity = new SMPPClientEndpointEntity();
+
+            String code = account.getCode();
+            String systemId = account.getSystemId();
+            String password = account.getPassword();
+            String url = account.getUrl();
+            int port = account.getPort();
+
+            if (i == 0) {
+                entity.setMaxChannels((short) 3);
+                entity.setId(code);
+                entity.setChannelType(EndpointEntity.ChannelType.UP);
+            } else {
+                entity.setChannelType(EndpointEntity.ChannelType.DOWN);
+                entity.setId(code + "_tx_" + i);
+                List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
+                businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
+                entity.setBusinessHandlerSet(businessHandlers);
+            }
+            entity.setHost(url);
+            entity.setPort(port);
+            entity.setSystemId(systemId);
+            entity.setPassword(password);
+
+
+            entity.setRetryWaitTimeSec((short) 100);
+            entity.setUseSSL(false);
+            entity.setReSendFailMsg(false);
+
+            manager.addEndpointEntity(entity);
+        }
     }
 }

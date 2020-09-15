@@ -19,7 +19,7 @@ public class SmsSystemApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        SmsSendRunner.getInstance().start();
-        SmppSendRunner.getInstance().start();
+        SmsSendRunner.getInstance().start();
+//        SmppSendRunner.getInstance().start();
     }
 }
