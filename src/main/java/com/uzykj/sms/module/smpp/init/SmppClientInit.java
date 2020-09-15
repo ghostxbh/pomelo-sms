@@ -74,23 +74,18 @@ public class SmppClientInit {
             String url = account.getUrl();
             int port = account.getPort();
 
-            if (i == 0) {
-                entity.setMaxChannels((short) 3);
-                entity.setId(code);
-                entity.setChannelType(EndpointEntity.ChannelType.UP);
-            } else {
-                entity.setChannelType(EndpointEntity.ChannelType.DOWN);
-                entity.setId(code + "_tx_" + i);
-                List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
-                businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
-                entity.setBusinessHandlerSet(businessHandlers);
-            }
+            entity.setId(code);
             entity.setHost(url);
             entity.setPort(port);
             entity.setSystemId(systemId);
             entity.setPassword(password);
+            entity.setChannelType(EndpointEntity.ChannelType.DUPLEX);
 
+            List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
+            businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
+            entity.setBusinessHandlerSet(businessHandlers);
 
+            entity.setMaxChannels((short) 3);
             entity.setRetryWaitTimeSec((short) 100);
             entity.setUseSSL(false);
             entity.setReSendFailMsg(false);
