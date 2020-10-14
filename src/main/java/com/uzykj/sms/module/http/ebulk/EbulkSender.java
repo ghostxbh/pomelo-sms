@@ -3,7 +3,6 @@ package com.uzykj.sms.module.http.ebulk;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
 import com.uzykj.sms.core.common.http.HttpClient4;
-import com.uzykj.sms.core.common.http.HttpsUtil;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
@@ -11,10 +10,7 @@ import com.uzykj.sms.core.enums.SmsEnum;
 import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.module.http.HttpSender;
-import io.netty.handler.codec.http.HttpUtil;
 import org.apache.commons.collections4.ListUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.logging.Level;

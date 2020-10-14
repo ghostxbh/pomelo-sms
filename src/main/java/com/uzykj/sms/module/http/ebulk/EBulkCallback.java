@@ -40,7 +40,10 @@ public class EBulkCallback {
         log.info("回调成功，msgId: " + details.getRespMessageId() + " , status: " + status);
 
         SmsDetails set = new SmsDetails();
-        if ("DELIVRD".equalsIgnoreCase(status)) {
+        if ("SUBMITTED".equalsIgnoreCase(status)) {
+            log.info("回调等待中，msgId: " + details.getRespMessageId());
+            return;
+        } else if ("DELIVRD".equalsIgnoreCase(status)) {
             set.setStatus(10);
         } else {
             set.setStatus(-1);
