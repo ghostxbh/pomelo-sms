@@ -29,7 +29,7 @@ public class EbulkSender implements HttpSender {
 
     @Override
     public void submitMessage(List<String> phones, Map<String, SmsDetails> detilsMap, String message, SmsAccount account) {
-        Map<String, String> paramMap = new HashMap<String, String>(6);
+        Map<String, Object> paramMap = new HashMap<String, Object>(6);
         paramMap.put("username", account.getSystemId());
         paramMap.put("password", account.getPassword());
         paramMap.put("type", "2");
@@ -46,7 +46,7 @@ public class EbulkSender implements HttpSender {
 
                     try {
                         log.info("回调请求数据 url: " + account.getUrl() + ", 参数：" + paramMap);
-                        String res = HttpsUtil.post(account.getUrl(), paramMap, null);
+                        String res = HttpClient4.doPost(account.getUrl(), paramMap);
                         log.info("回调数据打印：" + res);
                         boolean isSendSuccess = true;
                         if (res.contains("Message")) {
