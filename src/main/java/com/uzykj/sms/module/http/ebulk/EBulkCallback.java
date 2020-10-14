@@ -41,8 +41,7 @@ public class EBulkCallback {
 
         SmsDetails set = new SmsDetails();
         if ("SUBMITTED".equalsIgnoreCase(status)) {
-            log.info("回调等待中，msgId: " + details.getRespMessageId());
-            return;
+            set.setStatus(3);
         } else if ("DELIVRD".equalsIgnoreCase(status)) {
             set.setStatus(10);
         } else {

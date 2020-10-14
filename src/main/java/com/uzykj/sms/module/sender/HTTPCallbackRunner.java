@@ -3,7 +3,9 @@ package com.uzykj.sms.module.sender;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
+import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
+import com.uzykj.sms.core.enums.SmsEnum;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.service.SmsDetailsService;
 import com.uzykj.sms.module.http.ebulk.EBulkCallback;
@@ -55,6 +57,13 @@ public class HTTPCallbackRunner {
                     }
                     log.info("[send runner] 获取到任务" + callbackList.size() + "条");
                     for (SmsDetails details : callbackList) {
+                        try {
+                            sem.acquire();
+                            changeStatus(details);
+                        } catch (Exception e) {
+                            log.log(Level.WARNING, "sem error", e);
+                        }
+
                         SmsSendThreadPool.execute(() -> {
                             try {
                                 callback.reqMsgId(details);
@@ -76,5 +85,11 @@ public class HTTPCallbackRunner {
         Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(page, query);
         return Optional.ofNullable(selectPage.getRecords())
                 .orElse(new ArrayList<SmsDetails>(0));
+    }
+
+    public void changeStatus(SmsDetails smsDetails) {
+        SmsDetails set = new SmsDetails();
+        set.setStatus(4);
+        smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", smsDetails.getDetailsId()));
     }
 }
