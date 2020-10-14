@@ -12,6 +12,7 @@ public class SmsStatus {
         String result = "";
         if (!StringUtils.isEmpty(status)) {
             switch (status) {
+                case "success":
                 case "delivrd":
                     result = "发送成功";
                     break;

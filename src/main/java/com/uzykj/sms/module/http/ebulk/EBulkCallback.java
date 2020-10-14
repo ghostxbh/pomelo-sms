@@ -59,12 +59,13 @@ public class EBulkCallback {
             if (collect.getPendingNum() == 1) {
                 collectSet.setStatus(SmsEnum.SUCCESS.getStatus());
             }
+            if (status.equalsIgnoreCase(SmsEnum.DELIVRD.getStatus())) {
+                collectSet.setSuccessNum(collect.getSuccessNum() + 1);
+            } else {
+                collectSet.setFailNum(collect.getFailNum() + 1);
+            }
         }
-        if (status.equalsIgnoreCase(SmsEnum.DELIVRD.getStatus())) {
-            collectSet.setSuccessNum(collect.getSuccessNum() + 1);
-        } else {
-            collectSet.setFailNum(collect.getFailNum() + 1);
-        }
+
         smsCollectMapper.update(collectSet, new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
     }
 }
