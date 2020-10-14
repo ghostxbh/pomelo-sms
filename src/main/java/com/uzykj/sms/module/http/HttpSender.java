@@ -1,6 +1,10 @@
 package com.uzykj.sms.module.http;
 
-import com.uzykj.sms.module.http.domian.HttpSendDTO;
+import com.uzykj.sms.core.domain.SmsAccount;
+import com.uzykj.sms.core.domain.SmsDetails;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author ghostxbh
@@ -11,8 +15,9 @@ public interface HttpSender {
     /**
      * 短信发送
      *
-     * @param sender
-     * @return
+     * @param phones
+     * @param message
+     * @param account
      */
-    void submitMessage(HttpSendDTO sender);
+    void submitMessage(List<String> phones, Map<String, SmsDetails> detilsMap, String message, SmsAccount account);
 }

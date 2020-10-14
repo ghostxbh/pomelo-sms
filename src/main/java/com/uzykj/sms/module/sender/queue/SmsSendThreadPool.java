@@ -1,4 +1,4 @@
-package com.uzykj.sms.module.smpp.queue;
+package com.uzykj.sms.module.sender.queue;
 
 import com.uzykj.sms.core.service.SmsDetailsService;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;

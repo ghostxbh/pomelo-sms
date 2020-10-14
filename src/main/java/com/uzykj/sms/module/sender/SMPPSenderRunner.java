@@ -1,4 +1,4 @@
-package com.uzykj.sms.module.smpp.queue;
+package com.uzykj.sms.module.sender;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
@@ -6,6 +6,7 @@ import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.service.SmsDetailsService;
+import com.uzykj.sms.module.sender.queue.SmsSendThreadPool;
 import com.uzykj.sms.module.smpp.business.SmsSendBusiness;
 
 import java.util.ArrayList;
@@ -22,19 +23,19 @@ import java.util.logging.Logger;
  * @date 2020/7/3
  * @description
  */
-public class SmsSendRunner extends Globle {
+public class SMPPSenderRunner {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private static final SmsSendBusiness submit = new SmsSendBusiness();
-    private volatile static SmsSendRunner instance;
+    private volatile static SMPPSenderRunner instance;
     private static final int DEFAULT = 100;
     private static Semaphore sem = new Semaphore(90);
 
-    public static SmsSendRunner getInstance() {
+    public static SMPPSenderRunner getInstance() {
         if (instance == null) {
-            synchronized (SmsSendRunner.class) {
+            synchronized (SMPPSenderRunner.class) {
                 if (instance == null) {
-                    instance = new SmsSendRunner();
+                    instance = new SMPPSenderRunner();
                 }
             }
         }
@@ -81,9 +82,11 @@ public class SmsSendRunner extends Globle {
     }
 
     public List<SmsDetails> getSendList() {
+        QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>()
+                .eq("status", 1)
+                .like("account_code", "S");
         return Optional
-                .ofNullable(smsDetailsMapper.selectList(new QueryWrapper<SmsDetails>()
-                        .eq("status", 1)))
+                .ofNullable(smsDetailsMapper.selectList(query))
                 .orElse(new ArrayList<SmsDetails>(0));
     }
 

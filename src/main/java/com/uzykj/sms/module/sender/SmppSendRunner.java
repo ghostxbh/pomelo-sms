@@ -1,4 +1,4 @@
-package com.uzykj.sms.module.smpp.queue;
+package com.uzykj.sms.module.sender;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
