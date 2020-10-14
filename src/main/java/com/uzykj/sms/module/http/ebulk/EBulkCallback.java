@@ -8,8 +8,6 @@ import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.enums.SmsEnum;
 import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.logging.Logger;
@@ -19,7 +17,6 @@ import java.util.logging.Logger;
  * @date 2020/10/13
  * @description
  */
-@Service
 public class EBulkCallback {
     private static Logger log = Logger.getLogger(EBulkCallback.class.getName());
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
