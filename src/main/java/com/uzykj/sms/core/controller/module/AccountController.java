@@ -5,6 +5,7 @@ import com.uzykj.sms.core.controller.BaseController;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.dto.PageDto;
 import com.uzykj.sms.core.domain.dto.SmsAccountDto;
+import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import com.uzykj.sms.core.enums.CommenEnum;
 import com.uzykj.sms.core.enums.UserEnum;
 import com.uzykj.sms.core.service.SmsAccountService;
@@ -60,7 +61,7 @@ public class AccountController extends BaseController {
     @PostMapping("/add")
     @ResponseBody
     public JsonResult add(@RequestBody SmsAccount a) {
-        boolean check = OtherUtils.checkParams(a.getCode(), a.getSystemId(), a.getPassword(), a.getPort(), a.getUrl());
+        boolean check = OtherUtils.checkParams(a.getCode(), a.getSystemId(), a.getPassword(), a.getPort(), a.getUrl(), a.getChannelType());
         if (!check) {
             return new JsonResult(UserEnum.NOMUST.getCode(), UserEnum.NOMUST.getMessage());
         }
@@ -69,6 +70,8 @@ public class AccountController extends BaseController {
             if (byCode != null) {
                 return new JsonResult(UserEnum.EXIST.getCode(), UserEnum.EXIST.getMessage());
             }
+            String code = a.getChannelType().equals(ChannelTypeEnum.HTTP) ? "H" + a.getCode() : "S" + a.getCode();
+            a.setCode(code);
             smsAccountService.add(a);
         } catch (Exception e) {
             log.error("add account error", e);

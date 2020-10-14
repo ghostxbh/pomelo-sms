@@ -2,9 +2,11 @@ package com.uzykj.sms.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.dto.PageDto;
 import com.uzykj.sms.core.domain.dto.SmsAccountDto;
+import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import com.uzykj.sms.core.mapper.SmsAccountMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.module.smpp.init.SmppClientInit;
@@ -21,22 +23,29 @@ public class SmsAccountService {
     @Autowired
     private SmsDetailsMapper smsDetailsMapper;
 
-    public void add(SmsAccount account) throws Exception {
+    public void add(SmsAccount account) {
         smsAccountMapper.insert(account);
-        SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
-        clientInit.rebot();
+        if (account.getChannelType().equals(ChannelTypeEnum.SMPP)) {
+            SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
+            clientInit.rebot();
+        }
+        Globle.updateCache();
     }
 
-    public void update(SmsAccount account) throws Exception {
+    public void update(SmsAccount account) {
         smsAccountMapper.updateById(account);
-        SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
-        clientInit.rebot();
+        if (account.getChannelType().equals(ChannelTypeEnum.SMPP)) {
+            SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
+            clientInit.rebot();
+        }
+        Globle.updateCache();
     }
 
-    public void del(int id) throws Exception {
+    public void del(int id) {
         smsAccountMapper.deleteById(id);
         SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
         clientInit.rebot();
+        Globle.updateCache();
     }
 
     public SmsAccount get(int id) {

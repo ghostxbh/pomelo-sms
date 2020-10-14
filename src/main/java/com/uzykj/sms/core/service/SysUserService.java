@@ -35,17 +35,12 @@ public class SysUserService {
      */
     public void add(SysUser user) {
         sysUserMapper.insert(user);
-        SysUser newUser = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("name", user.getName()));
-        SmsAccount smsAccount = smsAccountMapper.selectOne(new QueryWrapper<SmsAccount>().eq("id", newUser.getAccountId()));
-        newUser.setAccount(smsAccount);
-        Globle.USER_CACHE.put(newUser.getId(), newUser);
+        Globle.updateCache();
     }
 
     public void update(SysUser user) {
         sysUserMapper.updateById(user);
-        SmsAccount smsAccount = smsAccountMapper.selectOne(new QueryWrapper<SmsAccount>().eq("id", user.getAccountId()));
-        user.setAccount(smsAccount);
-        Globle.USER_CACHE.put(user.getId(), user);
+        Globle.updateCache();
     }
 
     /**
@@ -53,7 +48,7 @@ public class SysUserService {
      */
     public void del(int id) {
         sysUserMapper.deleteById(id);
-        Globle.USER_CACHE.remove(id);
+        Globle.updateCache();
     }
 
     public SysUser login(String name) {

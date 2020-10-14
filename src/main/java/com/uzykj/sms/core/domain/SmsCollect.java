@@ -19,6 +19,7 @@ public class SmsCollect {
     private Long id;
     private String collectId;
     private Integer userId;
+    private String accountCode;
 
     private String contents;
     private String status;

@@ -40,13 +40,15 @@ public class SmsDetailsService {
         long startTime = System.currentTimeMillis();
         String collectId = UUID.randomUUID().toString();
         try {
+            SysUser sysUser = Globle.USER_CACHE.get(user.getId());
             SmsCollect collect = new SmsCollect();
             collect.setCollectId(collectId);
             collect.setUserId(user.getId());
+            collect.setAccountCode(sysUser.getAccount().getCode());
             collect.setContents(content);
             collect.setTotal(phoneList.size());
             collect.setPendingNum(phoneList.size());
-            collect.setStatus(SmsEnum.PENDING.getStatus());
+            collect.setStatus(SmsEnum.SUBMITED.getStatus());
 
             log.info("添加汇总记录：" + collect.toString());
             smsCollectMapper.insert(collect);

@@ -3,6 +3,7 @@ package com.uzykj.sms.core.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ public class SmsAccount {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String code;
+    private ChannelTypeEnum channelType;
     private String systemId;
     private String password;
     private String url;
