@@ -63,12 +63,12 @@ public class EbulkSender implements HttpSender {
                                 SmsCollect collectSet = new SmsCollect();
                                 SmsCollect collect = smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
                                 if (collect.getPendingNum() > 0) {
-                                    collectSet.setPendingNum(collect.getPendingNum() - size);
+                                    collectSet.setPendingNum(collect.getPendingNum() - 1);
                                     if (collect.getPendingNum() == 1) {
                                         collectSet.setStatus(SmsEnum.SUCCESS.getStatus());
                                     }
+                                    collectSet.setFailNum(collect.getFailNum() + 1);
                                 }
-                                collectSet.setFailNum(collect.getFailNum() + size);
                                 smsCollectMapper.update(collectSet, new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
                             }
                             smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", details.getDetailsId()));
