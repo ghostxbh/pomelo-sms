@@ -1,6 +1,7 @@
 package com.uzykj.sms.module.sender;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
 import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SmsAccount;
@@ -61,6 +62,15 @@ public class HTTPSenderRunner {
                     final SmsAccount smsAccount = Globle.ACCOUNT_CACHE.get(collect.getAccountCode());
                     final Map<String, SmsDetails> detilsMap = getDetilsMap(collect.getCollectId());
                     final List<String> sendList = getSendList(collect.getCollectId());
+                    if ((sendList == null || sendList.size() == 0) && collect != null) {
+                        try {
+                            changeCollect(collect);
+                            TimeUnit.SECONDS.sleep(2);
+                        } catch (Exception e) {
+                            log.log(Level.WARNING, "thread sleep error {}", e);
+                        }
+                        continue;
+                    }
                     if (sendList.size() == 0) {
                         try {
                             TimeUnit.SECONDS.sleep(2);
@@ -93,12 +103,14 @@ public class HTTPSenderRunner {
     }
 
     public SmsCollect getCollect() {
+        Page<SmsCollect> page = new Page<SmsCollect>(0, 1);
         QueryWrapper<SmsCollect> query = new QueryWrapper<SmsCollect>()
                 .eq("status", SmsEnum.SUBMITED.getStatus())
                 .like("account_code", "H")
                 .orderByAsc("create_time");
+        Page<SmsCollect> collectPage = smsCollectMapper.selectPage(page, query);
         return Optional
-                .ofNullable(smsCollectMapper.selectOne(query))
+                .ofNullable(collectPage.getRecords().get(0))
                 .orElse(null);
     }
 
@@ -131,5 +143,12 @@ public class HTTPSenderRunner {
                     set.setSendTime(new Date());
                     smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", detailsHashMap.get(phone).getDetailsId()));
                 });
+    }
+
+    public void changeCollect(SmsCollect collect) {
+        SmsCollect setCollect = new SmsCollect();
+        setCollect.setStatus(SmsEnum.SUCCESS.getStatus());
+        setCollect.setUpdateTime(new Date());
+        smsCollectMapper.update(setCollect, new QueryWrapper<SmsCollect>().eq("collect_id", collect.getCollectId()));
     }
 }
