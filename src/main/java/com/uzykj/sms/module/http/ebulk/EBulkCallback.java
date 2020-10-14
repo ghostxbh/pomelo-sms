@@ -42,11 +42,15 @@ public class EBulkCallback {
         SmsDetails set = new SmsDetails();
         if ("SUBMITTED".equalsIgnoreCase(status)) {
             set.setStatus(3);
+            set.setReportStat(status);
+            smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", details.getDetailsId()));
+            return;
         } else if ("DELIVRD".equalsIgnoreCase(status)) {
             set.setStatus(10);
         } else {
             set.setStatus(-1);
         }
+
         set.setReceiveTime(new Date());
         set.setReportStat(status);
         smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", details.getDetailsId()));

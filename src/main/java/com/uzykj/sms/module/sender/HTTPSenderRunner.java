@@ -109,8 +109,9 @@ public class HTTPSenderRunner {
                 .like("account_code", "H")
                 .orderByAsc("create_time");
         Page<SmsCollect> collectPage = smsCollectMapper.selectPage(page, query);
+        List<SmsCollect> records = collectPage.getRecords();
         return Optional
-                .ofNullable(collectPage.getRecords().get(0))
+                .ofNullable(records != null && records.size() > 0 ? records.get(0) : null)
                 .orElse(null);
     }
 
