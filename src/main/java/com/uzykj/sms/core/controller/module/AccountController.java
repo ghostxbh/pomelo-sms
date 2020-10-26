@@ -89,6 +89,8 @@ public class AccountController extends BaseController {
             return new JsonResult(UserEnum.NOMUST.getCode(), UserEnum.NOMUST.getMessage());
         }
         try {
+            String code = a.getChannelType().equals(ChannelTypeEnum.HTTP) ? "H" + a.getCode() : "S" + a.getCode();
+            a.setCode(code);
             smsAccountService.update(a);
         } catch (Exception e) {
             log.error("account update error", e);
