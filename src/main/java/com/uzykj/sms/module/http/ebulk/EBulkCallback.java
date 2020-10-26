@@ -40,7 +40,7 @@ public class EBulkCallback {
         log.info("回调成功，msgId: " + details.getRespMessageId() + " , status: " + status);
 
         SmsDetails set = new SmsDetails();
-        if ("SUBMITTED".equalsIgnoreCase(status)) {
+        if ("SUBMITTED".equalsIgnoreCase(status) || "An error has occurred".contains(status)) {
             set.setStatus(3);
             set.setReportStat(status);
             smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", details.getDetailsId()));

@@ -14,7 +14,7 @@ public class SmsStatus {
             switch (status) {
                 case "success":
                 case "delivrd":
-                    result = "发送成功";
+                    result = "发送完成";
                     break;
                 case "expired":
                     result = "响应超时";

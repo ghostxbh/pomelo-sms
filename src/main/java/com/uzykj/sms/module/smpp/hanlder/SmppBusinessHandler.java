@@ -76,7 +76,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 // 状态报告
                 else {
                     DeliverSmReceipt deliverSmReceipt = (DeliverSmReceipt) msg;
-                    String address = deliverSmReceipt.getDestAddress().getAddress();
+                    String address = deliverSmReceipt.getSourceAddress().getAddress();
                     String reportStat = deliverSmReceipt.getStat();
                     logger.info("下行短信状态报告 ===> phone: {}, reportStat: {}", address, reportStat);
                     String id = deliverSmReceipt.getId();
