@@ -8,11 +8,18 @@ import com.uzykj.sms.core.domain.dto.PageDto;
 import com.uzykj.sms.core.domain.dto.SmsAccountDto;
 import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import com.uzykj.sms.core.mapper.SmsAccountMapper;
+import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
+import com.uzykj.sms.module.smpp.hanlder.SmppBusinessHandler;
 import com.uzykj.sms.module.smpp.init.SmppClientInit;
+import com.zx.sms.connect.manager.EndpointEntity;
+import com.zx.sms.connect.manager.EndpointManager;
+import com.zx.sms.connect.manager.smpp.SMPPClientEndpointEntity;
+import com.zx.sms.handler.api.BusinessHandlerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +29,8 @@ public class SmsAccountService {
     private SmsAccountMapper smsAccountMapper;
     @Autowired
     private SmsDetailsMapper smsDetailsMapper;
+    @Autowired
+    private SmsCollectMapper smsCollectMapper;
 
     public void add(SmsAccount account) {
         smsAccountMapper.insert(account);
@@ -91,5 +100,46 @@ public class SmsAccountService {
             query.eq("is_invalid", accountDto.getIsInvalid());
         }
         return query;
+    }
+
+    public boolean check(String code) {
+        EndpointEntity entity = SmppClientInit.manager.getEndpointEntity(code);
+        return entity != null && entity.getId() != null;
+    }
+
+    public void refrensh(String code) {
+        EndpointManager manager = SmppClientInit.manager;
+        SMPPClientEndpointEntity entity = new SMPPClientEndpointEntity();
+
+        SmsAccount account = Globle.ACCOUNT_CACHE.get(code);
+
+        String systemId = account.getSystemId();
+        String password = account.getPassword();
+        String url = account.getUrl();
+        int port = account.getPort();
+
+        entity.setId(code);
+        entity.setHost(url);
+        entity.setPort(port);
+        entity.setSystemId(systemId);
+        entity.setPassword(password);
+        entity.setChannelType(EndpointEntity.ChannelType.DUPLEX);
+        entity.setMaxChannels((short) 3);
+        entity.setRetryWaitTimeSec((short) 100);
+        entity.setUseSSL(false);
+        entity.setReSendFailMsg(false);
+
+        List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
+        businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
+
+        entity.setBusinessHandlerSet(businessHandlers);
+
+        manager.addEndpointEntity(entity);
+        try {
+            manager.openEndpoint(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        manager.startConnectionCheckTask();
     }
 }

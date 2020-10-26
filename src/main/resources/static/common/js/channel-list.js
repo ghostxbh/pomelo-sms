@@ -55,6 +55,56 @@ function delAccount(account) {
     }
 }
 
+function checkAccount(account) {
+    if (account.code.substring(0, 1) === 'H') {
+        modals.info('HTTP线路通道正常');
+        return;
+    }
+    //点击确定后操作
+    $.ajax({
+        url: '/channel/check/' + account.code,
+        type: "GET",
+        data: {},
+        success: function (data) {
+            if (data.code == 200) {
+                modals.info(data.message);
+            } else {
+                modals.error(data.message);
+            }
+            callback();
+        },
+        beforeSend: function () {
+        },
+        error: function (data) {
+        }
+    });
+}
+
+function refrenshAccount(account) {
+    if (account.code.substring(0, 1) === 'H') {
+        modals.info('重启HTTP线路通道成功');
+        return;
+    }
+    //点击确定后操作
+    $.ajax({
+        url: '/channel/refrensh/' + account.code,
+        type: "GET",
+        data: {},
+        success: function (data) {
+            if (data.code == 200) {
+                modals.info(data.message);
+            } else {
+                modals.error(data.message);
+            }
+            callback();
+        },
+        beforeSend: function () {
+        },
+        error: function (data) {
+        }
+    });
+}
+
 function callback() {
     var current = $("input[name='current']").val();
     $.get('/channel/list?page=' + current, function (data) {

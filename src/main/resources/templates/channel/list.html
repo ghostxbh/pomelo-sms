@@ -70,13 +70,13 @@
                                                 style="width: 15%;" aria-label="通道密码">通道密码
                                             </th>
                                             <th class="sorting_disabled text-center" rowspan="1" colspan="1"
-                                                style="width: 20%;" aria-label="启用">启用
+                                                style="width: 10%;" aria-label="启用">启用
                                             </th>
                                             <th class="sorting_disabled text-center" rowspan="1" colspan="1"
                                                 style="width: 15%;" aria-label="创建时间">创建时间
                                             </th>
                                             <th class="sorting_disabled text-center" rowspan="1" colspan="1"
-                                                style="width: 15%;" aria-label="操作">操作
+                                                style="width: 25%;" aria-label="操作">操作
                                             </th>
                                         </tr>
                                         </thead>
@@ -105,7 +105,7 @@
                                                 style="width: 20%;" th:text="${channel.channelPwd}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
-                                                style="width: 20%;"
+                                                style="width: 10%;"
                                                 th:text="${channel.enabled == 1 ? '是' : '否'}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
@@ -113,11 +113,15 @@
                                                 th:text="${#dates.format(channel.createTime,'yyyy-MM-dd HH:mm:ss')}">
                                             </td>
                                             <td class="sorting_disabled text-center" rowspan="1" colspan="1"
-                                                style="width: 15%;">
-                                                <button class="btn btn-link" th:onclick="goInfo([[${channel.id}]])"><i
+                                                style="width: 25%;">
+                                                <button title="编辑" class="btn btn-link" th:onclick="goInfo([[${channel.id}]])"><i
                                                         class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                                                <button class="btn btn-link" th:onclick="delAccount([[${channel}]])"><i
+                                                <button title="删除" class="btn btn-link" th:onclick="delAccount([[${channel}]])"><i
                                                         class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                                <button title="测试" class="btn btn-link" th:onclick="checkAccount([[${channel}]])"><i
+                                                        class="fa fa-hand-o-up" aria-hidden="true"></i></button>
+                                                <button title="重启" class="btn btn-link" th:onclick="refrenshAccount([[${channel}]])"><i
+                                                        class="fa fa-refresh" aria-hidden="true"></i></button>
                                             </td>
                                         </tr>
                                         <tr th:if="${page.records == null || page.records.size() < 1}">

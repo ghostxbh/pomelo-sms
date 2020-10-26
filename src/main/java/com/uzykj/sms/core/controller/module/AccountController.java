@@ -5,6 +5,7 @@ import com.uzykj.sms.core.controller.BaseController;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.dto.PageDto;
 import com.uzykj.sms.core.domain.dto.SmsAccountDto;
+import com.uzykj.sms.core.enums.ChannelEnum;
 import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import com.uzykj.sms.core.enums.CommenEnum;
 import com.uzykj.sms.core.enums.UserEnum;
@@ -105,6 +106,41 @@ public class AccountController extends BaseController {
         }
         try {
             smsAccountService.del(id);
+        } catch (Exception e) {
+            log.error("account del error", e);
+            return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());
+        }
+        return new JsonResult(CommenEnum.SUCCESS.getCode(), CommenEnum.SUCCESS.getMessage());
+    }
+
+    @GetMapping("/check/{code}")
+    @ResponseBody
+    public JsonResult check(@PathVariable String code) {
+        boolean check = OtherUtils.checkParams(code);
+        if (!check) {
+            return new JsonResult(UserEnum.NOMUST.getCode(), UserEnum.NOMUST.getMessage());
+        }
+        try {
+            boolean checked = smsAccountService.check(code);
+            if (checked) {
+                return new JsonResult(ChannelEnum.SUCCESS.getCode(), ChannelEnum.SUCCESS.getMessage());
+            }
+            return new JsonResult(ChannelEnum.FAIL.getCode(), ChannelEnum.FAIL.getMessage());
+        } catch (Exception e) {
+            log.error("account del error", e);
+            return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());
+        }
+    }
+
+    @GetMapping("/refrensh/{code}")
+    @ResponseBody
+    public JsonResult refrensh(@PathVariable String code) {
+        boolean check = OtherUtils.checkParams(code);
+        if (!check) {
+            return new JsonResult(UserEnum.NOMUST.getCode(), UserEnum.NOMUST.getMessage());
+        }
+        try {
+            smsAccountService.refrensh(code);
         } catch (Exception e) {
             log.error("account del error", e);
             return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());

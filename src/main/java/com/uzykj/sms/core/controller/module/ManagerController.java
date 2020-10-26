@@ -65,7 +65,10 @@ public class ManagerController extends BaseController {
             List<SysUser> collect = Optional.ofNullable(userList)
                     .orElse(new ArrayList<SysUser>(0))
                     .stream()
-                    .map(user -> Globle.USER_CACHE.get(user.getId()))
+                    .peek(user -> {
+                        SysUser cacheUser = Globle.USER_CACHE.get(user.getId());
+                        user.setAccount(cacheUser.getAccount());
+                    })
                     .collect(Collectors.toList());
             allUser.setRecords(collect);
 
