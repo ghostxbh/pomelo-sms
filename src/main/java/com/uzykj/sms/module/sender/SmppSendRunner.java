@@ -25,7 +25,10 @@ public class SmppSendRunner {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private volatile static SmppSendRunner instance;
-    ThreadPoolExecutor executor = new ThreadPoolExecutor(16, 16, 60, TimeUnit.SECONDS,
+    private Thread processor;
+    private static int CORE = 16;
+    private static int MAX = 16;
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(CORE, MAX, 60, TimeUnit.SECONDS,
             new ArrayBlockingQueue<Runnable>(20000));
 
     public static SmppSendRunner getInstance() {
@@ -40,7 +43,7 @@ public class SmppSendRunner {
     }
 
     public void start() {
-        Thread thread = new Thread("smpp_send_main") {
+        processor = new Thread("smpp_send_main") {
             @Override
             public void run() {
                 while (true) {
@@ -67,11 +70,12 @@ public class SmppSendRunner {
                         executor.execute(business);
                         log.info("线程池中线程数目：" + executor.getPoolSize() + "，队列中等待执行的任务数目：" +
                                 executor.getQueue().size() + "，已执行玩别的任务数目：" + executor.getCompletedTaskCount());
+
                     }
                 }
             }
         };
-        thread.start();
+        processor.start();
     }
 
     public List<SmsDetails> getSendList() {
@@ -96,7 +100,7 @@ public class SmppSendRunner {
                 .orElse(null);
     }
 
-    public void shutdown(){
+    public void shutdown() {
         try {
             executor.shutdown();
             TimeUnit.SECONDS.sleep(2);
