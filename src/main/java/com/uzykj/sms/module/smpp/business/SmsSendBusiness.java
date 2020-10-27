@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,21 @@ public class SmsSendBusiness implements Runnable {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
             logger.error("发送短信异常", e);
+        }
+    }
+
+    public static void main(String[] args) {
+        for (int i = 1; i <= 9999 ; i++) {
+            String phone = "1371010";
+            StringBuilder value = new StringBuilder(String.valueOf(i));
+            int length = 4 - value.length();
+            if (length == 1)
+                value.insert(0, "0");
+            else if (length == 2)
+                value.insert(0, "00");
+            else if (length == 3)
+                value.insert(0, "000");
+            System.out.println(phone + new String(value));
         }
     }
 }

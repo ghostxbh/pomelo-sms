@@ -26,7 +26,7 @@ public class SmppSendRunner {
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private volatile static SmppSendRunner instance;
     ThreadPoolExecutor executor = new ThreadPoolExecutor(16, 16, 60, TimeUnit.SECONDS,
-            new ArrayBlockingQueue<Runnable>(100));
+            new ArrayBlockingQueue<Runnable>(20000));
 
     public static SmppSendRunner getInstance() {
         if (instance == null) {
@@ -68,8 +68,6 @@ public class SmppSendRunner {
                         log.info("线程池中线程数目：" + executor.getPoolSize() + "，队列中等待执行的任务数目：" +
                                 executor.getQueue().size() + "，已执行玩别的任务数目：" + executor.getCompletedTaskCount());
                     }
-
-                    executor.shutdown();
                 }
             }
         };
@@ -98,4 +96,12 @@ public class SmppSendRunner {
                 .orElse(null);
     }
 
+    public void shutdown(){
+        try {
+            executor.shutdown();
+            TimeUnit.SECONDS.sleep(2);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "shutdown error", e);
+        }
+    }
 }
