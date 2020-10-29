@@ -42,50 +42,30 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
-        EndpointEntity entity = getEndpointEntity();
-
-        logger.info("收到SMSC请求, 交由业务处理 ===> entityId: {}, 信息类型: {}, 信息详情: {}",
-                entity.getId(), msg.getClass(), msg);
+//        EndpointEntity entity = getEndpointEntity();
+//        logger.info("收到SMSC请求, 交由业务处理 ===> entityId: {}, 信息类型: {}, 信息详情: {}",
+//                entity.getId(), msg.getClass(), msg);
         // DeliverSm: SMSC -> ESME, 对平台而言即上行短信
         try {
             if (msg instanceof DeliverSm) {
                 DeliverSm deliverSm = (DeliverSm) msg;
-
                 // 不是状态报告, 也即上行短信
                 if (!deliverSm.isReport()) {
-                    String msgContent = deliverSm.getMsgContent();
-                    Address sourceAddress = deliverSm.getSourceAddress();
-
-                    String sourceAddressVal = sourceAddress.getAddress();
-                    String msisdn = sourceAddressVal.substring(1);
-
-                    logger.info("上行短信内容: {}, 源地址: {npi: {}, ton: {}, address: {}}",
-                            msgContent, sourceAddress.getNpi(), sourceAddress.getTon(), msisdn);
-
-                    SmsDetails smsRecord = new SmsDetails();
-                    String detailsId = UUID.randomUUID().toString();
-                    smsRecord.setDetailsId(detailsId);
-                    smsRecord.setContents(msgContent);
-                    smsRecord.setDirection(1);
-                    smsRecord.setAccountCode(entity.getId());
-                    smsRecord.setReceiveTime(new Date());
-                    smsRecord.setStatus(10);
-                    smsDetailsMapper.insert(smsRecord);
+                    // TODO 上行短信 不做逻辑处理
                 }
                 // 状态报告
                 else {
                     DeliverSmReceipt deliverSmReceipt = (DeliverSmReceipt) msg;
                     String address = deliverSmReceipt.getSourceAddress().getAddress();
                     String reportStat = deliverSmReceipt.getStat();
-                    logger.info("下行短信状态报告 ===> phone: {}, reportStat: {}", address, reportStat);
                     String id = deliverSmReceipt.getId();
-                    logger.info("状态报告ID: {}", id);
+                    logger.info("下行短信状态报告 ===> 状态报告ID: {}, phone: {}, reportStat: {}", id, address, reportStat);
                     int sendStatus = -1;
-                    // 送达
                     // 送达报告状态非 DELIVRD 一律认定为发送失败
-                    if ("DELIVRD".equals(reportStat)) {
+                    if ("DELIVRD".equalsIgnoreCase(reportStat)) {
                         sendStatus = 10;
+                    } else if ("SUBMITTED".equalsIgnoreCase(reportStat)) {
+                        sendStatus = 2;
                     }
                     SmsDetails updateEntity = new SmsDetails();
                     updateEntity.setReportStat(reportStat);
@@ -102,7 +82,9 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                             set.setStatus(SmsEnum.SUCCESS.getStatus());
                         }
                     }
-                    if (sendStatus == 10) {
+                    if (sendStatus == 2) {
+                        logger.info("回调更新, id: {} 发送中", collect.getId());
+                    } else if (sendStatus == 10) {
                         set.setSuccessNum(collect.getSuccessNum() + 1);
                     } else {
                         set.setFailNum(collect.getFailNum() + 1);
@@ -121,10 +103,9 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 SubmitSmResp submitSmResp = (SubmitSmResp) msg;
                 SubmitSm request = (SubmitSm) submitSmResp.getRequest();
                 String respMessageId = submitSmResp.getMessageId();
-                logger.info("SubmitSmResp messageId: {}", respMessageId);
                 String msisdn = request.getDestAddress().getAddress();
                 String messageId = (String) request.getReferenceObject();
-                logger.info("SMSC SubmitSm 消息响应, msisdn: {}, messageId: {}", msisdn, messageId);
+                logger.info("SMSC SubmitSm 消息响应, 目的地号码: {}, 短信ID: {}", msisdn, messageId);
                 SmsDetails smsDetails = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("details_id", messageId));
                 if (smsDetails != null) {
                     int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 3 : -1;
