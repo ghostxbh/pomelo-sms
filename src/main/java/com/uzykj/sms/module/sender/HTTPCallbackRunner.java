@@ -81,7 +81,11 @@ public class HTTPCallbackRunner {
 
     public List<SmsDetails> getCallbackList() {
         Page<SmsDetails> page = new Page<SmsDetails>(0, 1000);
-        QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>().eq("status", 3).isNotNull(true, "resp_message_id").orderByAsc("create_time");
+        QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>()
+                .like("account_code", "H")
+                .eq("status", 3)
+                .isNotNull(true, "resp_message_id")
+                .orderByAsc("create_time");
         Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(page, query);
         return Optional.ofNullable(selectPage.getRecords())
                 .orElse(new ArrayList<SmsDetails>(0));
