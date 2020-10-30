@@ -25,7 +25,7 @@ public class ExcelUtils {
 
     private final static String excel2003l = ".xls";
     private final static String excel2007l = ".xlsx";
-    private static String[] HEADS = {"短信编号", "短信号码", "短信内容", "状态", "发送时间", "送达时间"};
+    private static String[] HEADS = {"短信编号", "短信号码", "短信内容", "状态(1、未发送 2、已发送 3、运营商发送 10、发送成功 -1、发送失败)", "发送时间", "送达时间"};
 
     public static List<String> fileImport(InputStream ins, String fileName) throws Exception {
         List<String> phoneList = new ArrayList<String>();
@@ -200,7 +200,7 @@ public class ExcelUtils {
                             cell.setCellValue(mobileinfo.getContents());
                             break;
                         case 3:
-                            cell.setCellValue(mobileinfo.getStatus());
+                            cell.setCellValue(getStatus(mobileinfo.getStatus()));
                             break;
                         case 4:
                             Date createTime = mobileinfo.getCreateTime();
@@ -228,6 +228,23 @@ public class ExcelUtils {
         for (int i = 0; i < HEADS.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(HEADS[i]);
+        }
+    }
+
+    private static String getStatus(int status){
+        switch (status) {
+            case 1:
+                return "未发送";
+            case 2:
+                return "已发送";
+            case 3:
+                return "运营商发送中";
+            case 10:
+                return "发送成功";
+            case -1:
+                return "发送失败";
+            default:
+                return "未知";
         }
     }
 
