@@ -25,7 +25,7 @@ public class ExcelUtils {
 
     private final static String excel2003l = ".xls";
     private final static String excel2007l = ".xlsx";
-    private static String[] HEADS = {"短信编号", "短信号码", "短信内容", "状态(1、未发送 2、已发送 3、运营商发送 10、发送成功 -1、发送失败)", "发送时间", "送达时间"};
+    private static String[] HEADS = {"短信编号", "短信号码", "短信内容", "状态", "发送时间", "送达时间"};
 
     public static List<String> fileImport(InputStream ins, String fileName) throws Exception {
         List<String> phoneList = new ArrayList<String>();

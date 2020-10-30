@@ -34,6 +34,10 @@ public class SysUserService {
      * 添加用户信息
      */
     public void add(SysUser user) {
+        // 默认86
+        if (user.getPhonePrefix() == null || "".equals(user.getPhonePrefix())) {
+            user.setPhonePrefix("86");
+        }
         sysUserMapper.insert(user);
         Globle.updateCache();
     }
@@ -64,10 +68,15 @@ public class SysUserService {
         sysUserMapper.update(sysUser, new QueryWrapper<SysUser>().eq("id", user.getId()));
     }
 
-    public void modifyAllowance(int userId, Integer allowance, Integer account) {
+    public void modifyAllowance(Integer userId, Integer allowance, Integer account,
+                                String phonePrefix, Integer textSuffix) {
         SysUser sysUser = new SysUser();
         sysUser.setAllowance(allowance);
         sysUser.setAccountId(account);
+        sysUser.setTextSuffix(textSuffix);
+        if (phonePrefix != null) {
+            sysUser.setPhonePrefix(phonePrefix);
+        }
         sysUserMapper.update(sysUser, new QueryWrapper<SysUser>().eq("id", userId));
         SysUser user = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("id", userId));
         SmsAccount smsAccount = smsAccountMapper.selectOne(new QueryWrapper<SmsAccount>().eq("id", user.getAccountId()));

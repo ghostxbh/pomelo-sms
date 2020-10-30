@@ -12,7 +12,7 @@ public class OtherUtils {
     private static final String REGEX_MOBILE = "^((1[3-9][0-9]))\\d{8}$";
 
     public static String getVercode(int size) {
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
+        String chars = "abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
         String vercode = "";
         Random r = new Random();
         for (int i = 0; i < size; ++i) {

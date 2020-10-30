@@ -92,15 +92,16 @@ public class ManagerController extends BaseController {
     @ResponseBody
     public JsonResult modifyAllowance(Integer id, Integer allowance,
                                       Integer add, Integer minus,
-                                      Integer account) {
-        if (!OtherUtils.checkParams(id, allowance, account)) {
+                                      Integer account, String phonePrefix,
+                                      Integer textSuffix) {
+        if (!OtherUtils.checkParams(id, allowance, account, textSuffix)) {
             return new JsonResult(UserEnum.NOMODIFY.getCode(), UserEnum.NOMODIFY.getMessage());
         }
         try {
             add = add != null ? add : 0;
             minus = minus != null ? minus : 0;
             allowance = allowance + add - minus;
-            userService.modifyAllowance(id, allowance, account);
+            userService.modifyAllowance(id, allowance, account, phonePrefix, textSuffix);
         } catch (Exception e) {
             log.error("user update error", e);
             return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());

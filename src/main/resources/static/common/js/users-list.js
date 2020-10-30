@@ -70,6 +70,8 @@ function modifyAllowance() {
     var add = $('#add_allowance').val();
     var minus = $('#minus_allowance').val();
     var account = $('#account').val();
+    var phonePrefix = $("#prefix").val();//号码
+    var textSuffix = $("#suffix").val();//通道
     var reg = /^\d+(\.\d+)?$/;
     if (!reg.test(allowance)) {
         $('#manager_users_modal_close').click();
@@ -85,7 +87,9 @@ function modifyAllowance() {
         "allowance": allowance,
         "add": add,
         "minus": minus,
-        "account": account
+        "account": account,
+        "phonePrefix": phonePrefix,
+        "textSuffix": textSuffix,
     };
     $.post('/manager/allowance', data, function (data) {
         if (data.code == 200) {

@@ -101,13 +101,11 @@ public class SmsController extends BaseController {
 
     @PostMapping("/batchAdd")
     @ResponseBody
-    public JsonResult batchAdd(@RequestParam("phoneList[]") List<String> phoneList, String content, HttpSession session) {
-        String resultCount = "";
+    public JsonResult<?> batchAdd(@RequestParam("phoneList[]") List<String> phoneList, String content, HttpSession session) {
         long startTime = System.currentTimeMillis();
         try {
             SysUser user = checkUser(session);
             SysUser smsUser = sysUserService.get(user.getId());
-
             if (phoneList.size() < 1 || phoneList == null || content == null || content.isEmpty()) {
                 log.warn("参数异常");
                 return new JsonResult(SmsEnum.NOMUST.getCode(), SmsEnum.NOMUST.getMessage());
@@ -116,36 +114,25 @@ public class SmsController extends BaseController {
                 log.warn("超出发送上限");
                 return new JsonResult(SmsEnum.MAXOUT.getCode(), SmsEnum.MAXOUT.getMessage());
             }
-            /*if (smsUser.getAllowance() <= 0) {
-                log.warn("余额条数为0");
-                return new JsonResult(CommenEnum.FAIL.getCode(), "你当前的余额条数为0");
-            }
-            if (phoneList.size() > smsUser.getAllowance()) {
-                log.warn("余额不足");
-                return new JsonResult(SmsEnum.ALLOWANCE.getCode(), SmsEnum.ALLOWANCE.getMessage());
-            }*/
-            List<String> filterNumber = OtherUtils.filterNumber(phoneList);
-            JsonResult<String> result = smsDetailsService.processSmsList(filterNumber, content, smsUser);
+
+            JsonResult<?> result = smsDetailsService.processSmsList(phoneList, content, smsUser);
             if (result.getCode() != 200) {
                 return result;
             }
-            resultCount = "已发送 " + filterNumber.size() + " 条短信";
-            if (phoneList.size() != filterNumber.size()) {
-                resultCount += ", 重复号码/非法字符 " + (phoneList.size() - filterNumber.size()) + " 条";
-            }
+
+            String resultCount = "已发送 " + phoneList.size() + " 条短信";
+            log.info("数据异步API耗费时间: " + (System.currentTimeMillis() - startTime) + " ms");
+            return new JsonResult(CommenEnum.SUCCESS.getCode(), resultCount);
         } catch (Exception e) {
-            log.error("群发短信error: ", e.getMessage());
+            log.error("群发短信error: ", e);
             return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());
         }
-        log.info("数据异步API耗费时间: " + (System.currentTimeMillis() - startTime) + " ms");
-        return new JsonResult(CommenEnum.SUCCESS.getCode(), resultCount);
     }
 
     @PostMapping("/fileAdd")
     @ResponseBody
-    public JsonResult fileAdd(@RequestParam("dataFile") MultipartFile multipartFile,
-                              @RequestParam("content") String content, HttpSession session) {
-        String resultCount = "";
+    public JsonResult<?> fileAdd(@RequestParam("dataFile") MultipartFile multipartFile,
+                                 @RequestParam("content") String content, HttpSession session) {
         long startTime = System.currentTimeMillis();
         try {
             SysUser user = checkUser(session);
@@ -153,8 +140,10 @@ public class SmsController extends BaseController {
 
             String originalFilename = multipartFile.getOriginalFilename();
             InputStream ins = multipartFile.getInputStream();
+            assert originalFilename != null;
             List<String> phoneList = ExcelUtils.fileImport(ins, originalFilename);
-            if (phoneList.size() < 1 || phoneList == null || content == null || content.isEmpty()) {
+
+            if (phoneList.size() < 1 || content == null || content.isEmpty()) {
                 log.warn("参数异常");
                 return new JsonResult(SmsEnum.NOMUST.getCode(), SmsEnum.NOMUST.getMessage());
             }
@@ -163,22 +152,18 @@ public class SmsController extends BaseController {
                 return new JsonResult(SmsEnum.MAXOUT.getCode(), SmsEnum.MAXOUT.getMessage());
             }
 
-            List<String> filterNumber = OtherUtils.filterNumber(phoneList);
-            JsonResult<String> result = smsDetailsService.processSmsList(filterNumber, content, smsUser);
+            JsonResult<?> result = smsDetailsService.processSmsList(phoneList, content, smsUser);
             if (result.getCode() != 200) {
                 return result;
             }
 
-            resultCount = "已发送 " + filterNumber.size() + " 条短信";
-            if (phoneList.size() != filterNumber.size()) {
-                resultCount += ", 重复号码/非法字符 " + (phoneList.size() - filterNumber.size()) + " 条";
-            }
+            log.info("文件异步API耗费时间: " + (System.currentTimeMillis() - startTime) + " ms");
+            String resultCount = "已发送 " + phoneList.size() + " 条短信";
+            return new JsonResult(CommenEnum.SUCCESS.getCode(), resultCount);
         } catch (Exception e) {
             log.error("fileAdd error: ", e);
             return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());
         }
-        log.info("文件异步API耗费时间: " + (System.currentTimeMillis() - startTime) + " ms");
-        return new JsonResult(CommenEnum.SUCCESS.getCode(), resultCount);
     }
 
     @GetMapping("/export")

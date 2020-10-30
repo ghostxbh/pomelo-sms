@@ -13,8 +13,4 @@ public class DateUtils {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         return format.format(new Date());
     }
-
-    public static void main(String[] args) {
-        System.out.println(getBatchNo());
-    }
 }

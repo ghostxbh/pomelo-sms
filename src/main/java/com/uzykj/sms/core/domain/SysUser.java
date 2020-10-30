@@ -40,6 +40,15 @@ public class SysUser implements Serializable {
     private String remark;
     private Date createTime;
 
+    /**
+     * 号码前缀
+     */
+    private String phonePrefix;
+    /**
+     * 内容后缀
+     */
+    private Integer textSuffix;
+
     @TableField(exist = false)
     private SmsAccount account;
 }

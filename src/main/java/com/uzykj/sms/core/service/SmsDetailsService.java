@@ -13,6 +13,7 @@ import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.mapper.SysUserMapper;
 import com.uzykj.sms.core.common.json.JsonResult;
 import com.uzykj.sms.core.util.DateUtils;
+import com.uzykj.sms.core.util.StringUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class SmsDetailsService {
     private SysUserMapper sysUserMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public JsonResult processSmsList(List<String> phoneList, String content, SysUser user) {
+    public JsonResult<?> processSmsList(List<String> phoneList, String content, SysUser user) {
         long startTime = System.currentTimeMillis();
         String collectId = UUID.randomUUID().toString();
         try {
@@ -74,6 +75,10 @@ public class SmsDetailsService {
         try {
             String batchNo = DateUtils.getBatchNo();
             for (String children : phoneList) {
+                children = user.getPhonePrefix() + children;
+                if (user.getTextSuffix() > 0) {
+                    content = content + "。" + StringUtils.getVercode("ULN", 3);
+                }
                 insert(children, user, content, collectId, batchNo);
             }
             log.info("批量短信使用时间：" + (System.currentTimeMillis() - startTime) + "ms");
