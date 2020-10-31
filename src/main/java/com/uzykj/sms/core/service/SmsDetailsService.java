@@ -74,11 +74,11 @@ public class SmsDetailsService {
 
         try {
             String batchNo = DateUtils.getBatchNo();
+            if (user.getTextSuffix() > 0) {
+                content = content + "。" + StringUtils.getVercode("ULN", 3);
+            }
             for (String children : phoneList) {
                 children = user.getPhonePrefix() + children;
-                if (user.getTextSuffix() > 0) {
-                    content = content + "。" + StringUtils.getVercode("ULN", 3);
-                }
                 insert(children, user, content, collectId, batchNo);
             }
             log.info("批量短信使用时间：" + (System.currentTimeMillis() - startTime) + "ms");
