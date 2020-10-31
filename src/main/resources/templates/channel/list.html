@@ -122,6 +122,8 @@
                                                         class="fa fa-hand-o-up" aria-hidden="true"></i></button>
                                                 <button title="重启" class="btn btn-link" th:onclick="refrenshAccount([[${channel}]])"><i
                                                         class="fa fa-refresh" aria-hidden="true"></i></button>
+                                                <button title="停止" class="btn btn-link" th:onclick="stopAccount([[${channel}]])"><i
+                                                        class="fa fa-power-off" aria-hidden="true"></i></button>
                                             </td>
                                         </tr>
                                         <tr th:if="${page.records == null || page.records.size() < 1}">

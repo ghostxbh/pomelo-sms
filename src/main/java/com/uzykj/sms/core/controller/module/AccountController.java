@@ -129,7 +129,7 @@ public class AccountController extends BaseController {
             }
             return new JsonResult(ChannelEnum.FAIL.getCode(), ChannelEnum.FAIL.getMessage());
         } catch (Exception e) {
-            log.error("account del error", e);
+            log.error("account check error", e);
             return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());
         }
     }
@@ -144,7 +144,23 @@ public class AccountController extends BaseController {
         try {
             smsAccountService.refrensh(code);
         } catch (Exception e) {
-            log.error("account del error", e);
+            log.error("account refrensh error", e);
+            return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());
+        }
+        return new JsonResult(CommenEnum.SUCCESS.getCode(), CommenEnum.SUCCESS.getMessage());
+    }
+
+    @GetMapping("/stop/{code}")
+    @ResponseBody
+    public JsonResult stop(@PathVariable String code) {
+        boolean check = OtherUtils.checkParams(code);
+        if (!check) {
+            return new JsonResult(UserEnum.NOMUST.getCode(), UserEnum.NOMUST.getMessage());
+        }
+        try {
+            smsAccountService.stopEndpoint(code);
+        } catch (Exception e) {
+            log.error("account stop error", e);
             return new JsonResult(CommenEnum.FAIL.getCode(), CommenEnum.FAIL.getMessage());
         }
         return new JsonResult(CommenEnum.SUCCESS.getCode(), CommenEnum.SUCCESS.getMessage());

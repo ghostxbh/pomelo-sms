@@ -16,6 +16,8 @@ import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.connect.manager.EndpointManager;
 import com.zx.sms.connect.manager.smpp.SMPPClientEndpointEntity;
 import com.zx.sms.handler.api.BusinessHandlerInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ import java.util.List;
 
 @Service
 public class SmsAccountService {
-
+    private static Logger logger = LoggerFactory.getLogger(SmsAccountService.class);
     @Autowired
     private SmsAccountMapper smsAccountMapper;
     @Autowired
@@ -103,11 +105,17 @@ public class SmsAccountService {
     }
 
     public boolean check(String code) {
-        EndpointEntity entity = SmppClientInit.manager.getEndpointEntity(code);
-        return entity != null && entity.getId() != null;
+        EndpointManager manager = SmppClientInit.manager;
+        EndpointEntity endpointEntity = manager.getEndpointEntity(code);
+        logger.info("SMPP is running, {}", endpointEntity);
+        return endpointEntity != null && endpointEntity.getId() != null;
     }
 
     public void refrensh(String code) {
+        SmsAccount set = new SmsAccount();
+        set.setEnabled(1);
+        smsAccountMapper.update(set, new QueryWrapper<SmsAccount>().eq("code", code));
+
         EndpointManager manager = SmppClientInit.manager;
         SMPPClientEndpointEntity entity = new SMPPClientEndpointEntity();
 
@@ -136,10 +144,29 @@ public class SmsAccountService {
 
         manager.addEndpointEntity(entity);
         try {
-            manager.openEndpoint(entity);
+            manager.close();
+            manager.openAll();
+            manager.startConnectionCheckTask();
+            logger.info("SMPP code: {} is started", code);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        manager.startConnectionCheckTask();
+    }
+
+    public void stopEndpoint(String code) throws Exception {
+        SmsAccount set = new SmsAccount();
+        set.setEnabled(0);
+        smsAccountMapper.update(set, new QueryWrapper<SmsAccount>().eq("code", code));
+
+        EndpointManager manager = SmppClientInit.manager;
+        EndpointEntity endpointEntity = manager.getEndpointEntity(code);
+        if (endpointEntity != null) {
+            manager.remove(code);
+            logger.info("SMPP code: {} is closed", code);
+            manager.close();
+            manager.openAll();
+            manager.startConnectionCheckTask();
+        }
+        logger.warn("SMPP code: {} not connection", code);
     }
 }

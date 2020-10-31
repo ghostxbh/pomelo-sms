@@ -105,6 +105,27 @@ function refrenshAccount(account) {
     });
 }
 
+function stopAccount(account) {
+    //点击确定后操作
+    $.ajax({
+        url: '/channel/stop/' + account.code,
+        type: "GET",
+        data: {},
+        success: function (data) {
+            if (data.code == 200) {
+                modals.info(data.message);
+            } else {
+                modals.error(data.message);
+            }
+            callback();
+        },
+        beforeSend: function () {
+        },
+        error: function (data) {
+        }
+    });
+}
+
 function callback() {
     var current = $("input[name='current']").val();
     $.get('/channel/list?page=' + current, function (data) {
