@@ -74,7 +74,7 @@ public class SmsSendBusiness implements Runnable {
         logger.info("正在发送短信，号码 {}", details.getPhone());
         try {
             this.send(code, details);
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
             logger.error("发送短信异常", e);
         }
