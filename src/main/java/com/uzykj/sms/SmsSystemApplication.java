@@ -2,8 +2,7 @@ package com.uzykj.sms;
 
 import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.module.sender.HTTPCallbackRunner;
-import com.uzykj.sms.module.sender.HTTPSenderRunner;
-import com.uzykj.sms.module.sender.SMPPSenderRunner;
+import com.uzykj.sms.module.sender.HttpSendRunner;
 import com.uzykj.sms.module.sender.SmppSendRunner;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +25,7 @@ public class SmsSystemApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         Globle.initCache();
-        HTTPSenderRunner.getInstance().start();
+        HttpSendRunner.getInstance().start();
         SmppSendRunner.getInstance().start();
 
         HTTPCallbackRunner.getInstance().start();

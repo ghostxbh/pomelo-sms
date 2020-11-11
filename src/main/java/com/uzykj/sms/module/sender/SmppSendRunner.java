@@ -26,7 +26,7 @@ public class SmppSendRunner {
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private volatile static SmppSendRunner instance;
     private Thread processor;
-    private static int CORE = 1;
+    private static int CORE = 10;
     private static int MAX = 10;
     ThreadPoolExecutor executor = new ThreadPoolExecutor(CORE, MAX, 60, TimeUnit.SECONDS,
             new ArrayBlockingQueue<Runnable>(20000));

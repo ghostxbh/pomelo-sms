@@ -20,7 +20,7 @@ public class EbulkSender implements HttpSender {
     private static Logger log = Logger.getLogger(EbulkSender.class.getName());
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private static SmsCollectMapper smsCollectMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsCollectMapper.class);
-    private static final int DEFAULT = 16;
+    private static final int DEFAULT = 14;
 
 
     @Override
@@ -53,11 +53,11 @@ public class EbulkSender implements HttpSender {
                             SmsDetails details = detilsMap.get(phone);
                             SmsDetails set = new SmsDetails();
                             if (isSendSuccess) {
-                                String[] responseID = getResponseID(res);
+                                String[] responseID = getResponseId(res);
                                 String resId = responseID[i];
                                 set.setStatus(3);
                                 set.setRespMessageId(resId.trim());
-                            }else {
+                            } else {
                                 set.setStatus(-1);
 
                                 SmsCollect collectSet = new SmsCollect();
@@ -79,7 +79,7 @@ public class EbulkSender implements HttpSender {
                 });
     }
 
-    private String[] getResponseID(String res) {
+    private String[] getResponseId(String res) {
         if (res.contains(":")) {
             return res.split(":")[1].split(",");
         } else if (res.contains("-")) {

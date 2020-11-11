@@ -1,6 +1,7 @@
 package com.uzykj.sms.core.controller.module;
 
-import com.uzykj.sms.core.common.Globle;
+import com.uzykj.sms.core.common.excel.ExcelUtils;
+import com.uzykj.sms.core.common.json.JsonResult;
 import com.uzykj.sms.core.controller.BaseController;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.SysUser;
@@ -10,8 +11,6 @@ import com.uzykj.sms.core.enums.CommenEnum;
 import com.uzykj.sms.core.enums.SmsEnum;
 import com.uzykj.sms.core.service.SmsDetailsService;
 import com.uzykj.sms.core.service.SysUserService;
-import com.uzykj.sms.core.common.excel.ExcelUtils;
-import com.uzykj.sms.core.common.json.JsonResult;
 import com.uzykj.sms.core.util.OtherUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/sms")
@@ -115,12 +112,15 @@ public class SmsController extends BaseController {
                 return new JsonResult(SmsEnum.MAXOUT.getCode(), SmsEnum.MAXOUT.getMessage());
             }
 
-            JsonResult<?> result = smsDetailsService.processSmsList(phoneList, content, smsUser);
+            List<String> filterList = new ArrayList<>(new HashSet<>(phoneList));
+            int filterNum = phoneList.size() - filterList.size();
+            JsonResult<?> result = smsDetailsService.processSmsList(filterList, content, smsUser);
             if (result.getCode() != 200) {
                 return result;
             }
 
-            String resultCount = "已发送 " + phoneList.size() + " 条短信";
+            String resultCount = "已发送 " + filterList.size() + " 条短信";
+            resultCount = filterNum > 0 ? resultCount + ", 重复 " + filterNum + "个号码" : resultCount;
             log.info("数据异步API耗费时间: " + (System.currentTimeMillis() - startTime) + " ms");
             return new JsonResult(CommenEnum.SUCCESS.getCode(), resultCount);
         } catch (Exception e) {
@@ -152,13 +152,16 @@ public class SmsController extends BaseController {
                 return new JsonResult(SmsEnum.MAXOUT.getCode(), SmsEnum.MAXOUT.getMessage());
             }
 
-            JsonResult<?> result = smsDetailsService.processSmsList(phoneList, content, smsUser);
+            List<String> filterList = new ArrayList<>(new HashSet<>(phoneList));
+            int filterNum = phoneList.size() - filterList.size();
+            JsonResult<?> result = smsDetailsService.processSmsList(filterList, content, smsUser);
             if (result.getCode() != 200) {
                 return result;
             }
 
             log.info("文件异步API耗费时间: " + (System.currentTimeMillis() - startTime) + " ms");
-            String resultCount = "已发送 " + phoneList.size() + " 条短信";
+            String resultCount = "已发送 " + filterList.size() + " 条短信";
+            resultCount = filterNum > 0 ? resultCount + ", 重复 " + filterNum + "个号码" : resultCount;
             return new JsonResult(CommenEnum.SUCCESS.getCode(), resultCount);
         } catch (Exception e) {
             log.error("fileAdd error: ", e);

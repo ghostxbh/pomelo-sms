@@ -78,6 +78,8 @@ public class SmsDetailsService {
                 String setContent = "";
                 if (user.getTextSuffix() > 0) {
                     setContent = content + "。" + StringUtils.getVercode("ULN", 3);
+                } else {
+                    setContent = content;
                 }
                 children = user.getPhonePrefix() + children;
                 insert(children, user, setContent, collectId, batchNo);
