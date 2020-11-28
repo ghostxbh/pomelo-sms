@@ -1,6 +1,8 @@
 package com.uzykj.sms.core.util;
 
 import java.util.Random;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * @author ghostxbh
@@ -37,8 +39,23 @@ public class StringUtils {
         return new String(vercode);
     }
 
+    public static boolean isUUID(String str){
+        try {
+            UUID.fromString(str).toString();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        return pattern.matcher(str).matches();
+    }
+
     public static void main(String[] args) {
-        String nl = getVercode("ULN", 32);
-        System.out.println(nl);
+//        String nl = getVercode("ULN", 32);
+//        System.out.println(nl);
+        System.out.println(isUUID("21dba-51bb-8b79-e5d97d2f1e52"));
     }
 }
