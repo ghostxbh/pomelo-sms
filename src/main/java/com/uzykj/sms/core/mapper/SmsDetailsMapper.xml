@@ -82,4 +82,10 @@
             </if>
         </where>
     </select>
+
+    <update id="setFailList" parameterType="java.util.ArrayList">
+        update sms_details
+        set `status`=-1
+        where id IN #{ids}
+    </update>
 </mapper>

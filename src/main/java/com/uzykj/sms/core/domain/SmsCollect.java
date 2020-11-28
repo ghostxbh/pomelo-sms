@@ -5,15 +5,17 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
-@TableName("sms_collect")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@TableName("sms_collect")
 public class SmsCollect {
     @TableId(type = IdType.AUTO)
     private Long id;

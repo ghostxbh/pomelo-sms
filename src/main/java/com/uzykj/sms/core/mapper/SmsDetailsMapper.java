@@ -23,6 +23,8 @@ public interface SmsDetailsMapper extends BaseMapper<SmsDetails> {
 
     List<String> getPhoneList(SmsDetailsDto smsDetailsDto);
 
+    int setFailList(@Param("ids") List<Long> ids);
+
     @Select("select phone from sms_details where collect_id=#{collectId}")
     List<String> sendPhoneList(@Param("collectId")String collectId);
 }

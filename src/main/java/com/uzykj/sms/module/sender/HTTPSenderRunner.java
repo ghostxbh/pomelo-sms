@@ -12,6 +12,7 @@ import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.service.SmsDetailsService;
 import com.uzykj.sms.module.http.ebulk.EbulkSender;
+import com.uzykj.sms.module.http.masterks.MasterksSender;
 import com.uzykj.sms.module.sender.queue.SmsSendThreadPool;
 
 import java.util.*;
@@ -29,7 +30,7 @@ public class HTTPSenderRunner {
     private static Logger log = Logger.getLogger(SmsDetailsService.class.getName());
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private static SmsCollectMapper smsCollectMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsCollectMapper.class);
-    private static final EbulkSender sender = new EbulkSender();
+    private static final MasterksSender sender = new MasterksSender();
     private volatile static HTTPSenderRunner instance;
     private static final int DEFAULT = 100;
     private static Semaphore sem = new Semaphore(90);

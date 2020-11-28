@@ -36,6 +36,7 @@
         <fastjson.version>1.2.7</fastjson.version>
         <jdom.version>1.1</jdom.version>
         <commons-lang3.version>3.9</commons-lang3.version>
+        <hutool.version>5.3.10</hutool.version>
     </properties>
 
     <dependencies>
@@ -208,6 +209,11 @@
             <version>${netty.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

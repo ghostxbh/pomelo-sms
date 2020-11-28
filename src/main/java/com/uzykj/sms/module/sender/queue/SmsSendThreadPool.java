@@ -21,7 +21,7 @@ public class SmsSendThreadPool {
     private static final ThreadFactory FACTORY = new BasicThreadFactory.Builder().namingPattern(THREAD_POOL_NAME)
             .daemon(true).build();
 
-    private static final int DEFAULT_SIZE = 1000;
+    private static final int DEFAULT_SIZE = 20000;
 
     private static final long DEFAULT_KEEP_ALIVE = 60L;
 

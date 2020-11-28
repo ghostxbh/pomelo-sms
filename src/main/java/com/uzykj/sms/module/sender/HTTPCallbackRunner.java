@@ -9,6 +9,7 @@ import com.uzykj.sms.core.enums.SmsEnum;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.service.SmsDetailsService;
 import com.uzykj.sms.module.http.ebulk.EBulkCallback;
+import com.uzykj.sms.module.http.masterks.MasterksCallback;
 import com.uzykj.sms.module.sender.queue.SmsSendThreadPool;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +27,7 @@ import java.util.logging.Logger;
 public class HTTPCallbackRunner {
     private static Logger log = Logger.getLogger(HTTPCallbackRunner.class.getName());
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
-    private static final EBulkCallback callback = new EBulkCallback();
+    private static final MasterksCallback callback = new MasterksCallback();
     private volatile static HTTPCallbackRunner instance;
     private static Semaphore sem = new Semaphore(90);
 
