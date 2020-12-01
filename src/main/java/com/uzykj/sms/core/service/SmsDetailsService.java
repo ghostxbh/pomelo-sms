@@ -12,7 +12,8 @@ import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.mapper.SysUserMapper;
 import com.uzykj.sms.core.util.DateUtils;
-import com.uzykj.sms.core.util.StringUtils;
+import com.uzykj.sms.core.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,27 +73,29 @@ public class SmsDetailsService {
         try {
             String batchNo = DateUtils.getBatchNo();
             for (String children : phoneList) {
-                String setContent = "";
-                if (user.getTextSuffix() > 0) {
-                    setContent = content + "。" + StringUtils.getVercode("ULN", 3);
-                } else {
-                    setContent = content;
+                if (!StringUtils.isEmpty(children)) {
+                    String setContent;
+                    if (user.getTextSuffix() > 0) {
+                        setContent = content + "。" + StringUtil.getVercode("ULN", 3);
+                    } else {
+                        setContent = content;
+                    }
+                    children = !StringUtils.isEmpty(user.getPhonePrefix()) ? user.getPhonePrefix() : "86" + children;
+                    SysUser sysUser = Globle.USER_CACHE.get(user.getId());
+                    SmsDetails details = SmsDetails.builder()
+                            .detailsId(UUID.randomUUID().toString())
+                            .collectId(collectId)
+                            .contents(setContent)
+                            .batchId(batchNo)
+                            .userId(user.getId())
+                            .phone(children)
+                            // 下行短信
+                            .status(1)
+                            .direction(2)
+                            .accountCode(sysUser.getAccount().getCode())
+                            .build();
+                    smsDetailsMapper.insert(details);
                 }
-                children = user.getPhonePrefix() + children;
-                SysUser sysUser = Globle.USER_CACHE.get(user.getId());
-                SmsDetails details = SmsDetails.builder()
-                        .detailsId(UUID.randomUUID().toString())
-                        .collectId(collectId)
-                        .contents(setContent)
-                        .batchId(batchNo)
-                        .userId(user.getId())
-                        .phone(children)
-                        // 下行短信
-                        .status(1)
-                        .direction(2)
-                        .accountCode(sysUser.getAccount().getCode())
-                        .build();
-                smsDetailsMapper.insert(details);
             }
             log.info("批量短信使用时间：" + (System.currentTimeMillis() - startTime) + "ms");
         } catch (Exception e) {

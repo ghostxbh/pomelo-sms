@@ -11,7 +11,7 @@ import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.enums.SmsEnum;
 import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
-import com.uzykj.sms.core.util.StringUtils;
+import com.uzykj.sms.core.util.StringUtil;
 import com.uzykj.sms.module.http.HttpSender;
 import com.uzykj.sms.module.http.ebulk.EbulkSend;
 import org.apache.commons.collections4.ListUtils;
@@ -80,8 +80,8 @@ public class MasterksSender implements HttpSender {
             Arrays.asList(split)
                     .forEach(elment -> {
                         String trim = elment.trim();
-                        if (StringUtils.isUUID(trim)) msgIdList.add(trim);
-                        if (StringUtils.isInteger(trim)) phoneList.add(trim);
+                        if (StringUtil.isUUID(trim)) msgIdList.add(trim);
+                        if (StringUtil.isInteger(trim)) phoneList.add(trim);
                     });
             for (int i = 0; i < phoneList.size(); i++) {
                 phoneMap.put(phoneList.get(i), msgIdList.get(i));

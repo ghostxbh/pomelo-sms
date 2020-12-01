@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @date 2020/10/30
  * @description
  */
-public class StringUtils {
+public class StringUtil {
     private static final String UPPERCHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ";
     private static final String LOWERCHARS = "abcdefghjklmnpqrstuvwxyz";
     private static final String NUMBERS = "0123456789";
