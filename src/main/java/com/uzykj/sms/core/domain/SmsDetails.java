@@ -22,7 +22,7 @@ import java.util.Date;
 public class SmsDetails {
 
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
     /**
      * 短信唯一标识
      */
@@ -79,4 +79,12 @@ public class SmsDetails {
     private String remark;
     private Date createTime;
     private Date updateTime;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

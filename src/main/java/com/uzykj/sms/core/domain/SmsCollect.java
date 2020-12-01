@@ -18,7 +18,7 @@ import java.util.Date;
 @TableName("sms_collect")
 public class SmsCollect {
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
     private String collectId;
     private Integer userId;
     private String accountCode;
@@ -37,4 +37,12 @@ public class SmsCollect {
 
     @TableField(exist = false)
     private SysUser user;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

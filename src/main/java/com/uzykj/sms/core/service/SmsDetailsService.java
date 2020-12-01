@@ -32,8 +32,6 @@ public class SmsDetailsService {
     @Autowired
     private SmsCollectMapper smsCollectMapper;
     @Autowired
-    private SmsAccountService smsAccountService;
-    @Autowired
     private SysUserMapper sysUserMapper;
 
     @Transactional(rollbackFor = Exception.class)
@@ -49,7 +47,7 @@ public class SmsDetailsService {
             collect.setContents(content);
             collect.setTotal(phoneList.size());
             collect.setPendingNum(phoneList.size());
-            collect.setStatus(SmsEnum.SUBMITED.getStatus());
+            collect.setStatus(SmsEnum.PENDING.getStatus());
 
             log.info("添加汇总记录：" + collect.toString());
             smsCollectMapper.insert(collect);
@@ -82,7 +80,19 @@ public class SmsDetailsService {
                     setContent = content;
                 }
                 children = user.getPhonePrefix() + children;
-                insert(children, user, setContent, collectId, batchNo);
+                SysUser sysUser = Globle.USER_CACHE.get(user.getId());
+                SmsDetails details = SmsDetails.builder()
+                        .detailsId(UUID.randomUUID().toString())
+                        .contents(setContent)
+                        .batchId(batchNo)
+                        .userId(user.getId())
+                        .phone(children)
+                        // 下行短信
+                        .status(1)
+                        .direction(2)
+                        .accountCode(sysUser.getAccount().getCode())
+                        .build();
+                smsDetailsMapper.insert(details);
             }
             log.info("批量短信使用时间：" + (System.currentTimeMillis() - startTime) + "ms");
         } catch (Exception e) {
@@ -90,48 +100,6 @@ public class SmsDetailsService {
             return JsonResult.toError("批量添加短信详情错误");
         }
         return new JsonResult<>();
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void insertBatch(List<String> phoneList, SysUser user, String content, String collectId, String batchNo) {
-        //批量添加
-        phoneList.forEach(phone -> {
-            SmsDetails d = new SmsDetails();
-            d.setDetailsId(UUID.randomUUID().toString());
-            d.setCollectId(collectId);
-            d.setContents(content);
-            d.setBatchId(batchNo);
-            d.setUserId(user.getId());
-            d.setPhone(phone);
-            d.setStatus(1);
-            // 下行短信
-            d.setDirection(2);
-
-            SmsAccount smsAccount = smsAccountService.get(user.getAccountId());
-            d.setAccountCode(smsAccount.getCode());
-
-            smsDetailsMapper.insert(d);
-        });
-        log.info("批量添加短信详情：" + phoneList.size() + "条");
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void insert(String phone, SysUser user, String content, String collectId, String batchNo) {
-        SmsDetails d = new SmsDetails();
-        d.setDetailsId(UUID.randomUUID().toString());
-        d.setCollectId(collectId);
-        d.setContents(content);
-        d.setBatchId(batchNo);
-        d.setUserId(user.getId());
-        d.setPhone(phone);
-        d.setStatus(1);
-        // 下行短信
-        d.setDirection(2);
-
-        SysUser sysUser = Globle.USER_CACHE.get(user.getId());
-        d.setAccountCode(sysUser.getAccount().getCode());
-
-        smsDetailsMapper.insert(d);
     }
 
     public int currentCount(int userId) {

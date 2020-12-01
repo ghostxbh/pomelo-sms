@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class SmsRecord {
 
-    private Long id;
+    private Integer id;
     /**
      * 短信唯一标识
      */

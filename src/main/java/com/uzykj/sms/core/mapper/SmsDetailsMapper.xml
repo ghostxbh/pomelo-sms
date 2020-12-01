@@ -70,22 +70,33 @@
         </where>
     </select>
 
-    <select id="getPhoneList" resultType="java.util.ArrayList"
-            parameterType="com.uzykj.sms.core.domain.dto.SmsDetailsDto">
+    <select id="getPhoneList" >
         select
             phone
         from sms_details
         <where>
             1=1
             <if test="status != null">
-                and status=#{status}
+                and `status`=#{status}
             </if>
         </where>
     </select>
 
-    <update id="setFailList" parameterType="java.util.ArrayList">
+    <update id="setFailList" parameterType="java.util.List">
         update sms_details
         set `status`=-1
-        where id IN #{ids}
+        where id IN
+        <foreach collection="ids" index="index" item="item" separator="," open="(" close=")">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <update id="batchSendStatus" parameterType="java.util.List">
+        update sms_details
+        set `status`=2,`send_time`=NOW()
+        where id IN
+        <foreach collection="ids" index="index" item="item" separator="," open="(" close=")">
+            #{item,jdbcType=BIGINT}
+        </foreach>
     </update>
 </mapper>

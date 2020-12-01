@@ -26,7 +26,6 @@ public class SmsSystemApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         Globle.initCache();
-        HTTPSenderRunner.getInstance().start();
-        HTTPCallbackRunner.getInstance().start();
+        SmppSendRunner.getInstance().start();
     }
 }

@@ -37,7 +37,7 @@ public class SmsSmppController {
             return JsonResult.error(ResponseCode.PARAM_EMPTY);
         }
         try {
-            SmsSendBusiness business = new SmsSendBusiness();
+
             String batchNo = DateUtils.getBatchNo();
             String code = smsSendDTO.getShortCode();
             Optional.ofNullable(smsSendDTO.getMobiles())
@@ -53,7 +53,8 @@ public class SmsSmppController {
                         d.setStatus(1);
                         d.setAccountCode(code);
                         d.setUserId(smsSendDTO.getUserId());
-                        business.send(code, d);
+                        SmsSendBusiness business = new SmsSendBusiness(code, d);
+                        business.send();
                     });
             return new JsonResult();
         } catch (Exception e) {

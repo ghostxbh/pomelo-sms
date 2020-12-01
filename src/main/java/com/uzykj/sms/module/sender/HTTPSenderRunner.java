@@ -2,6 +2,7 @@ package com.uzykj.sms.module.sender;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Maps;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
 import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.domain.SmsAccount;
@@ -20,6 +21,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * @author ghostxbh
@@ -60,18 +63,13 @@ public class HTTPSenderRunner {
                         }
                         continue;
                     }
-                    final SmsAccount smsAccount = Globle.ACCOUNT_CACHE.get(collect.getAccountCode());
-                    final Map<String, SmsDetails> detilsMap = getDetilsMap(collect.getCollectId());
-                    final List<String> sendList = getSendList(collect.getCollectId());
-                    if ((sendList == null || sendList.size() == 0) && collect != null) {
-                        try {
-                            changeCollect(collect);
-                            TimeUnit.SECONDS.sleep(2);
-                        } catch (Exception e) {
-                            log.log(Level.WARNING, "thread sleep error {}", e);
-                        }
-                        continue;
-                    }
+
+                    SmsAccount smsAccount = Globle.ACCOUNT_CACHE.get(collect.getAccountCode());
+                    List<SmsDetails> detailsList = getDetailsList(collect.getCollectId());
+                    Map<String, SmsDetails> detilsMap = getDetilsMap(detailsList);
+                    List<String> sendList = getSendList(detailsList);
+
+                    changeCollect(collect);
                     if (sendList.size() == 0) {
                         try {
                             TimeUnit.SECONDS.sleep(2);
@@ -85,10 +83,11 @@ public class HTTPSenderRunner {
                     // change vo status first
                     try {
                         sem.acquire();
-                        changeStatus(sendList, detilsMap, collect);
+                        changeStatus(detailsList);
                     } catch (Exception e) {
                         log.log(Level.WARNING, "sem error", e);
                     }
+
                     SmsSendThreadPool.execute(() -> {
                         try {
                             sender.submitMessage(sendList, detilsMap, collect.getContents(), smsAccount);
@@ -104,50 +103,60 @@ public class HTTPSenderRunner {
     }
 
     public SmsCollect getCollect() {
-        Page<SmsCollect> page = new Page<SmsCollect>(0, 1);
-        QueryWrapper<SmsCollect> query = new QueryWrapper<SmsCollect>()
-                .eq("status", SmsEnum.SUBMITED.getStatus())
-                .like("account_code", "H")
-                .orderByAsc("create_time");
-        Page<SmsCollect> collectPage = smsCollectMapper.selectPage(page, query);
-        List<SmsCollect> records = collectPage.getRecords();
         return Optional
-                .ofNullable(records != null && records.size() > 0 ? records.get(0) : null)
+                .ofNullable(smsCollectMapper.getSendCollect())
                 .orElse(null);
     }
 
-    public List<String> getSendList(String collectId) {
-        return Optional
-                .ofNullable(smsDetailsMapper.sendPhoneList(collectId))
-                .orElse(new ArrayList<String>(0));
+    public List<SmsDetails> getDetailsList(String collectId) {
+        QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>()
+                .eq("collect_id", collectId)
+                .eq("status", 1);
+        Page<SmsDetails> page = new Page<>(1, 200);
+        Page<SmsDetails> selectPage = smsDetailsMapper.selectPage(page, query);
+        List<SmsDetails> detailsList = selectPage.getRecords();
+
+        return Optional.ofNullable(detailsList)
+                .orElse(new ArrayList<SmsDetails>(0));
     }
 
-    public Map<String, SmsDetails> getDetilsMap(String collectId) {
-        HashMap<String, SmsDetails> detailsHashMap = new HashMap<String, SmsDetails>();
-        QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>().eq("collect_id", collectId).eq("status", 1);
-        Optional.ofNullable(smsDetailsMapper.selectList(query))
-                .orElse(new ArrayList<SmsDetails>(0))
-                .forEach(smsDetails -> detailsHashMap.put(smsDetails.getPhone(), smsDetails));
+    public List<String> getSendList(List<SmsDetails> detailsList) {
+        return detailsList
+                .stream()
+                .map(SmsDetails::getPhone)
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, SmsDetails> getDetilsMap(List<SmsDetails> detailsList) {
+        HashMap<String, SmsDetails> detailsHashMap = Maps.newHashMap();
+        detailsList.forEach(smsDetails -> detailsHashMap.put(smsDetails.getPhone(), smsDetails));
         return detailsHashMap;
     }
 
-    public void changeStatus(List<String> phones, Map<String, SmsDetails> detailsHashMap, SmsCollect collect) {
-        SmsCollect setCollect = new SmsCollect();
-        setCollect.setStatus(SmsEnum.PENDING.getStatus());
-        setCollect.setUpdateTime(new Date());
-        smsCollectMapper.update(setCollect, new QueryWrapper<SmsCollect>().eq("collect_id", collect.getCollectId()));
-
-        Optional.ofNullable(phones)
-                .orElse(new ArrayList<String>(0))
-                .forEach(phone -> {
-                    SmsDetails set = new SmsDetails();
-                    set.setStatus(2);
-                    set.setSendTime(new Date());
-                    smsDetailsMapper.update(set, new QueryWrapper<SmsDetails>().eq("details_id", detailsHashMap.get(phone).getDetailsId()));
-                });
+    public void changeStatus(List<SmsDetails> detailsList) {
+        List<Integer> ids = detailsList.stream()
+                .map(SmsDetails::getId)
+                .collect(Collectors.toList());
+        smsDetailsMapper.batchSendStatus(ids);
     }
 
     public void changeCollect(SmsCollect collect) {
+        if (collect.getStatus().equals(SmsEnum.SUBMITED.getStatus())) {
+            SmsCollect setCollect = new SmsCollect();
+            setCollect.setStatus(SmsEnum.PENDING.getStatus());
+            setCollect.setUpdateTime(new Date());
+            smsCollectMapper.update(setCollect, new QueryWrapper<SmsCollect>().eq("collect_id", collect.getCollectId()));
+            return;
+        }
+
+        QueryWrapper<SmsDetails> query = new QueryWrapper<SmsDetails>()
+                .eq("collect_id", collect.getCollectId())
+                .eq("status", 1);
+        Integer count = smsDetailsMapper.selectCount(query);
+        if (count > 0) {
+            return;
+        }
+
         SmsCollect setCollect = new SmsCollect();
         setCollect.setStatus(SmsEnum.SUCCESS.getStatus());
         setCollect.setUpdateTime(new Date());

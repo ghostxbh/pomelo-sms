@@ -3,8 +3,8 @@ package com.uzykj.sms.module.http.masterks;
 import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
+import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
@@ -16,11 +16,8 @@ import com.uzykj.sms.module.http.HttpSender;
 import com.uzykj.sms.module.http.ebulk.EbulkSend;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.compress.utils.Lists;
+
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -34,7 +31,7 @@ public class MasterksSender implements HttpSender {
     private static Logger log = Logger.getLogger(EbulkSend.class.getName());
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private static SmsCollectMapper smsCollectMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsCollectMapper.class);
-    private static final ExecutorService EXECUTOR_SERVICE = new ThreadPoolExecutor(16, 16, 60, TimeUnit.SECONDS, Queues.newLinkedBlockingQueue(1000));
+    private static RedisService redisService = ApplicationContextUtil.getApplicationContext().getBean(RedisService.class);
 
     @Override
     public void submitMessage(List<String> phones, Map<String, SmsDetails> detilsMap, String message, SmsAccount account) {
@@ -45,26 +42,30 @@ public class MasterksSender implements HttpSender {
         paramMap.put("sender", account.getCode());
         paramMap.put("message", message);
 
-        List<List<String>> partition = ListUtils.partition(phones, 15);
+        List<List<String>> partition = ListUtils.partition(phones, 50);
         partition.forEach(phoneList -> {
-            CompletableFuture.supplyAsync(() -> {
-                paramMap.put("mobile", String.join(",", phoneList));
-                try {
-                    String post = HttpUtil.post(account.getUrl(), paramMap);
-                    Map<String, String> response = getResponseId(post);
-                    String collectId = detilsMap.get(phones.get(0)).getCollectId();
+            String phoneStr = String.join(",", phoneList);
+            paramMap.put("mobile", phoneStr);
+            try {
+                log.info("send sms list: " + phoneStr);
+                String uuid = UUID.randomUUID().toString();
+                redisService.setCacheList(uuid, phoneList);
 
-                    setFailList(phones, detilsMap, response);
-                    setSuccessList(detilsMap, response);
-                    updateCollect(phones, response, collectId);
-                    log.info("batch send success, total: " + phoneList.size());
-                } catch (Exception e) {
-                    log.log(Level.WARNING, "post message error / response id get error", e);
-                }
-                return 1;
-            }, EXECUTOR_SERVICE);
+                String post = HttpUtil.post(account.getUrl(), paramMap);
+                log.info("send sms list result: " + post);
+                Map<String, String> response = getResponseId(post);
+
+
+                setFailList(phones, detilsMap, response);
+                setSuccessList(detilsMap, response);
+
+                String collectId = detilsMap.get(phoneList.get(0)).getCollectId();
+                updateCollect(phones, response, collectId);
+                log.info("batch send success, total: " + phoneList.size());
+            } catch (Exception e) {
+                log.log(Level.WARNING, "post message error / response id get error", e);
+            }
         });
-
         log.info("submitMessage success, total: " + phones.size());
     }
 
@@ -89,11 +90,11 @@ public class MasterksSender implements HttpSender {
         return phoneMap;
     }
 
-    private void setSuccessList(Map<String, SmsDetails> detilsMap, Map<String, String> response){
+    private void setSuccessList(Map<String, SmsDetails> detilsMap, Map<String, String> response) {
         Set<String> keySet = response.keySet();
         keySet.forEach(key -> {
             String msgId = response.get(key);
-            Long id = detilsMap.get(key).getId();
+            Integer id = detilsMap.get(key).getId();
             SmsDetails smsDetails = SmsDetails.builder()
                     .status(3)
                     .respMessageId(msgId)
@@ -103,8 +104,8 @@ public class MasterksSender implements HttpSender {
         });
     }
 
-    private void setFailList(List<String> phones, Map<String, SmsDetails> detilsMap, Map<String, String> response){
-        List<Long> ids = phones.stream()
+    private void setFailList(List<String> phones, Map<String, SmsDetails> detilsMap, Map<String, String> response) {
+        List<Integer> ids = phones.stream()
                 .filter(phone -> response.get(phone) == null)
                 .map(phone -> detilsMap.get(phone).getId())
                 .collect(Collectors.toList());
@@ -115,7 +116,7 @@ public class MasterksSender implements HttpSender {
         }
     }
 
-    private void updateCollect(List<String> phones, Map<String, String> response, String collectId){
+    private void updateCollect(List<String> phones, Map<String, String> response, String collectId) {
         int successNum = response.size();
         int totalNum = phones.size();
         int failNum = totalNum - successNum;

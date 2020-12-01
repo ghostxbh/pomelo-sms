@@ -2,6 +2,10 @@ package com.uzykj.sms.core.common;
 
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 /**
  * @author ghostxbh
  * @date 2020/8/15
@@ -40,5 +44,14 @@ public class SmsStatus {
             }
         }
         return result;
+    }
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        String s = "https://e-bulksms.com/sendsms/sendsms?username=qq1562580&password=qq1314520&type=2&sid=855&message=你在干嘛呢？如果无聊~可以来这里噢！ https://is.gd/qZxy1Z 通知码&dcs=0&mno=8613752086588";
+        String encode = URLEncoder.encode(s, "UTF-8");
+        System.out.println(encode);
+        String replaceAll = encode.replaceAll("\\+", "");
+        System.out.println(replaceAll);
+        String decode = URLDecoder.decode(replaceAll, "UTF-8");
+        System.out.println(decode);
     }
 }

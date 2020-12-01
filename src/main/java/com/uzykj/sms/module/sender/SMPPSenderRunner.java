@@ -68,7 +68,7 @@ public class SMPPSenderRunner {
                         SmsSendThreadPool.execute(() -> {
                             try {
                                 String code = getCode(details);
-                                submit.send(code, details);
+                                submit.send();
                             } catch (Exception e) {
                                 log.log(Level.WARNING, "fatal process task id: " + details.getId(), e);
                             }
