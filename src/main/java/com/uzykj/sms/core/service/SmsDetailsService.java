@@ -83,6 +83,7 @@ public class SmsDetailsService {
                 SysUser sysUser = Globle.USER_CACHE.get(user.getId());
                 SmsDetails details = SmsDetails.builder()
                         .detailsId(UUID.randomUUID().toString())
+                        .collectId(collectId)
                         .contents(setContent)
                         .batchId(batchNo)
                         .userId(user.getId())
