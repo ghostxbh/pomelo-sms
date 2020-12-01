@@ -80,7 +80,7 @@ public class SmsSendBusiness {
             log.info("send sms obj: {}} ", submitSm);
             Object obj = redisService.getCacheObject(batchId);
             if (obj != null)
-                redisService.setCacheObject(batchId, Integer.parseInt(obj.toString()) + 1);
+                redisService.setCacheObject(batchId, Integer.parseInt(obj.toString()) + 1, 4, TimeUnit.HOURS);
             else
                 redisService.setCacheObject(batchId, 1, 4, TimeUnit.HOURS);
             ChannelUtil.asyncWriteToEntity(entity.getId(), submitSm);

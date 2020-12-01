@@ -2,7 +2,7 @@ package com.uzykj.sms.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.common.Globle;
-import com.uzykj.sms.core.domain.SmsAccount;
+import com.uzykj.sms.core.common.json.JsonResult;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.SysUser;
@@ -11,10 +11,8 @@ import com.uzykj.sms.core.enums.SmsEnum;
 import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.core.mapper.SysUserMapper;
-import com.uzykj.sms.core.common.json.JsonResult;
 import com.uzykj.sms.core.util.DateUtils;
 import com.uzykj.sms.core.util.StringUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +31,7 @@ public class SmsDetailsService {
     private SmsCollectMapper smsCollectMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
+
 
     @Transactional(rollbackFor = Exception.class)
     public JsonResult<?> processSmsList(List<String> phoneList, String content, SysUser user) {

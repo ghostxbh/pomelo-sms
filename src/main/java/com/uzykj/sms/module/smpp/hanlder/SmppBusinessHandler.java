@@ -75,6 +75,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
                     SmsCollect collect = smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
 
+                    logger.info("handler details: " + details.toString() + " , collect: " + collect.toString());
                     SmsCollect set = new SmsCollect();
                     if (collect.getPendingNum() > 0) {
                         set.setPendingNum(collect.getPendingNum() - 1);
