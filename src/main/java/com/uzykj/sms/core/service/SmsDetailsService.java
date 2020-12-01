@@ -73,14 +73,16 @@ public class SmsDetailsService {
         try {
             String batchNo = DateUtils.getBatchNo();
             for (String children : phoneList) {
-                if (!StringUtils.isEmpty(children)) {
+                if (!StringUtils.isEmpty(children.trim())) {
                     String setContent;
                     if (user.getTextSuffix() > 0) {
                         setContent = content + "。" + StringUtil.getVercode("ULN", 3);
                     } else {
                         setContent = content;
                     }
-                    children = !StringUtils.isEmpty(user.getPhonePrefix()) ? user.getPhonePrefix() : "86" + children;
+                    String phonePrefix = !StringUtils.isEmpty(user.getPhonePrefix().trim()) ? user.getPhonePrefix().trim() : "86";
+                    children = phonePrefix + children;
+
                     SysUser sysUser = Globle.USER_CACHE.get(user.getId());
                     SmsDetails details = SmsDetails.builder()
                             .detailsId(UUID.randomUUID().toString())
