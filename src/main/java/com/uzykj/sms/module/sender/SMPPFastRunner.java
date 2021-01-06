@@ -28,9 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SMPPFastRunner {
     private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private volatile static SMPPFastRunner instance;
-    private static int CORE = 16;
-    private static int MAX = 16;
-    private static int QUEUE = 5000;
+    private static final int CORE = 8;
+    private static final int MAX = 8;
+    private static final int QUEUE = 5000;
     private final Thread mainThread;
     private final ThreadPoolExecutor executor;
 
@@ -51,7 +51,7 @@ public class SMPPFastRunner {
                         try {
                             TimeUnit.SECONDS.sleep(2);
                         } catch (Exception e) {
-                            log.error("thread sleep error {}", e);
+                            log.error("thread sleep error", e);
                         }
                         continue;
                     }

@@ -66,6 +66,7 @@ public class SmppClientInit {
                     entity.setRetryWaitTimeSec((short) 100);
                     entity.setUseSSL(false);
                     entity.setReSendFailMsg(false);
+//                    entity.setInterfaceVersion((byte) 32);
 
                     List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
                     businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
