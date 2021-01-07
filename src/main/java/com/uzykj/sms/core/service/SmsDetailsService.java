@@ -3,6 +3,7 @@ package com.uzykj.sms.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.common.json.JsonResult;
+import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.SysUser;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +34,8 @@ public class SmsDetailsService {
     private SmsCollectMapper smsCollectMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
-
+    @Autowired
+    private RedisService redisService;
 
     @Transactional(rollbackFor = Exception.class)
     public JsonResult<?> processSmsList(List<String> phoneList, String content, SysUser user) {
@@ -51,6 +54,8 @@ public class SmsDetailsService {
 
             log.info("添加汇总记录：" + collect.toString());
             smsCollectMapper.insert(collect);
+
+            redisService.setCacheObject(1, collect.getCollectId(), collect, 1, TimeUnit.DAYS);
         } catch (Exception e) {
             log.log(Level.WARNING, "添加汇总记录错误", e);
             return JsonResult.toError("添加汇总记录错误");
@@ -97,6 +102,8 @@ public class SmsDetailsService {
                             .accountCode(sysUser.getAccount().getCode())
                             .build();
                     smsDetailsMapper.insert(details);
+
+                    redisService.setCacheObject(2, details.getDetailsId(), details, 1, TimeUnit.DAYS);
                 }
             }
             log.info("批量短信使用时间：" + (System.currentTimeMillis() - startTime) + "ms");
