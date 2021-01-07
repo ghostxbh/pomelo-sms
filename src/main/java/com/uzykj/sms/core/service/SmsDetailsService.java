@@ -16,6 +16,7 @@ import com.uzykj.sms.core.util.DateUtils;
 import com.uzykj.sms.core.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class SmsDetailsService {
     @Autowired
     private RedisService redisService;
 
+    @Async
     @Transactional(rollbackFor = Exception.class)
     public JsonResult<?> processSmsList(List<String> phoneList, String content, SysUser user) {
         long startTime = System.currentTimeMillis();

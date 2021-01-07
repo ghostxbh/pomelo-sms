@@ -112,12 +112,17 @@ public class SmsController extends BaseController {
                 return new JsonResult(SmsEnum.MAXOUT.getCode(), SmsEnum.MAXOUT.getMessage());
             }
 
+
+
             List<String> filterList = new ArrayList<>(new HashSet<>(phoneList));
-            int filterNum = phoneList.size() - filterList.size();
-            JsonResult<?> result = smsDetailsService.processSmsList(filterList, content, smsUser);
-            if (result.getCode() != 200) {
-                return result;
+
+            if (filterList.size() > user.getAllowance()) {
+                return JsonResult.toError("余额不足");
             }
+
+            int filterNum = phoneList.size() - filterList.size();
+
+            smsDetailsService.processSmsList(filterList, content, smsUser);
 
             String resultCount = "已发送 " + filterList.size() + " 条短信";
             resultCount = filterNum > 0 ? resultCount + ", 重复 " + filterNum + "个号码" : resultCount;
@@ -153,11 +158,14 @@ public class SmsController extends BaseController {
             }
 
             List<String> filterList = new ArrayList<>(new HashSet<>(phoneList));
-            int filterNum = phoneList.size() - filterList.size();
-            JsonResult<?> result = smsDetailsService.processSmsList(filterList, content, smsUser);
-            if (result.getCode() != 200) {
-                return result;
+
+            if (filterList.size() > user.getAllowance()) {
+                return JsonResult.toError("余额不足");
             }
+
+            int filterNum = phoneList.size() - filterList.size();
+
+            smsDetailsService.processSmsList(filterList, content, smsUser);
 
             log.info("文件异步API耗费时间: " + (System.currentTimeMillis() - startTime) + " ms");
             String resultCount = "已发送 " + filterList.size() + " 条短信";

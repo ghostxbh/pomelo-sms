@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,16 +29,13 @@ import java.util.Optional;
  * @author ghostxbh
  * @since 2020-08-08
  */
-@Component
-@Order(99)
 public class SmppClientInit {
-    private static SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
-    private static SmsCollectMapper smsCollectMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsCollectMapper.class);
-    private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
+    private SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
 
     public static EndpointManager manager = EndpointManager.INS;
 
     private volatile static SmppClientInit instance;
+
     @PostConstruct
     public void init() {
         QueryWrapper<SmsAccount> queryWrapper = new QueryWrapper<SmsAccount>().eq("enabled", 1).eq("channel_type", ChannelTypeEnum.SMPP);
@@ -66,7 +64,7 @@ public class SmppClientInit {
 //                    entity.setInterfaceVersion((byte) 34);
 
                     List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
-                    businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
+                    businessHandlers.add(new SmppBusinessHandler());
 
                     entity.setBusinessHandlerSet(businessHandlers);
 

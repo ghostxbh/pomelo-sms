@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public class SMPPFastRunner {
-    private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
+    private SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
     private volatile static SMPPFastRunner instance;
     private static final int CORE = 8;
     private static final int MAX = 8;

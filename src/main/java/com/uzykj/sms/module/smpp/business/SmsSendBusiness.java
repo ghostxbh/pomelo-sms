@@ -4,7 +4,7 @@ package com.uzykj.sms.module.smpp.business;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
 import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsDetails;
-import com.uzykj.sms.core.mapper.SmsDetailsMapper;
+import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.zx.sms.codec.smpp.Address;
 import com.zx.sms.codec.smpp.msg.SubmitSm;
 import com.zx.sms.common.util.ChannelUtil;
@@ -12,15 +12,14 @@ import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.connect.manager.EndpointManager;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author ghostxbh
@@ -30,8 +29,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class SmsSendBusiness {
     private static Logger logger = LoggerFactory.getLogger(SmsSendBusiness.class);
-    private static RedisService redisService = ApplicationContextUtil.getApplicationContext().getBean(RedisService.class);
+    private RedisService redisService = ApplicationContextUtil.getApplicationContext().getBean(RedisService.class);
+
     private final EndpointManager manager = EndpointManager.INS;
+
     private String code;
     private SmsDetails details;
 

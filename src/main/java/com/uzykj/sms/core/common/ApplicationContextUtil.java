@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
  * @description 配置类，解决定时任务无法注入的问题
  */
 @Component
-@Order(5)
 public class ApplicationContextUtil implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;

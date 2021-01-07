@@ -2,25 +2,20 @@ package com.uzykj.sms.module.smpp.hanlder;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
-import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.enums.SmsEnum;
 import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
-import com.zx.sms.codec.smpp.Address;
 import com.zx.sms.codec.smpp.msg.*;
-import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.handler.api.AbstractBusinessHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,16 +23,10 @@ import java.util.concurrent.TimeUnit;
  * @since 2020-08-08
  */
 public class SmppBusinessHandler extends AbstractBusinessHandler {
-
-    private static RedisService redisService = ApplicationContextUtil.getApplicationContext().getBean(RedisService.class);
     private static Logger logger = LoggerFactory.getLogger(SmppBusinessHandler.class);
-    private SmsDetailsMapper smsDetailsMapper;
-    private SmsCollectMapper smsCollectMapper;
-
-    public SmppBusinessHandler(SmsDetailsMapper smsDetailsMapper, SmsCollectMapper smsCollectMapper) {
-        this.smsDetailsMapper = smsDetailsMapper;
-        this.smsCollectMapper = smsCollectMapper;
-    }
+    private RedisService redisService = ApplicationContextUtil.getApplicationContext().getBean(RedisService.class);
+    private SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
+    private SmsCollectMapper smsCollectMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsCollectMapper.class);
 
     @Override
     public String name() {

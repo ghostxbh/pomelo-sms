@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +30,6 @@ public class SmsAccountService {
     private static Logger logger = LoggerFactory.getLogger(SmsAccountService.class);
     @Autowired
     private SmsAccountMapper smsAccountMapper;
-    @Autowired
-    private SmsDetailsMapper smsDetailsMapper;
-    @Autowired
-    private SmsCollectMapper smsCollectMapper;
 
     public void add(SmsAccount account) {
         smsAccountMapper.insert(account);
@@ -135,7 +132,7 @@ public class SmsAccountService {
         entity.setReSendFailMsg(false);
 
         List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
-        businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
+        businessHandlers.add(new SmppBusinessHandler());
 
         entity.setBusinessHandlerSet(businessHandlers);
 
