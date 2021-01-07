@@ -1,6 +1,7 @@
 package com.uzykj.sms.core.controller.api;
 
 import com.uzykj.sms.core.common.json.JsonResult;
+import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.dto.SmsSendDTO;
 import com.uzykj.sms.core.enums.ResponseCode;
@@ -8,13 +9,12 @@ import com.uzykj.sms.core.util.DateUtils;
 import com.uzykj.sms.module.smpp.business.SmsSendBusiness;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.OpenOption;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ghostxbh
@@ -24,6 +24,8 @@ import java.util.*;
 @RequestMapping("/sms")
 public class SmsSmppController {
 
+    @Autowired
+    private RedisService redisService;
 
     @PostMapping("/send")
     public JsonResult<String> test(@RequestBody SmsSendDTO smsSendDTO) {
@@ -60,5 +62,13 @@ public class SmsSmppController {
         } catch (Exception e) {
             return JsonResult.error(ResponseCode.PARAM_ERROR);
         }
+    }
+
+    @GetMapping("/redis")
+    public JsonResult<String> testRedis(@RequestParam String name) {
+        redisService.setCacheObject(0, "test", name, 20, TimeUnit.SECONDS);
+        redisService.setCacheObject(1, "test", name, 20, TimeUnit.SECONDS);
+        redisService.setCacheObject(2, "test", name, 20, TimeUnit.SECONDS);
+        return new JsonResult(name);
     }
 }
