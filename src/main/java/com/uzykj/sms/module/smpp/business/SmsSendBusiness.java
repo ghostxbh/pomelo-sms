@@ -55,7 +55,7 @@ public class SmsSendBusiness {
         if (cacheObject != null) {
             return;
         } else {
-            redisService.setCacheObject(key, 1, 2, TimeUnit.HOURS);
+            redisService.setCacheObject(0, key, 1, 2, TimeUnit.HOURS);
         }
 
         SubmitSm submitSm = new SubmitSm();
@@ -80,9 +80,9 @@ public class SmsSendBusiness {
             log.info("send sms obj: {}} ", submitSm);
             Object obj = redisService.getCacheObject(batchId);
             if (obj != null)
-                redisService.setCacheObject(batchId, Integer.parseInt(obj.toString()) + 1, 4, TimeUnit.HOURS);
+                redisService.setCacheObject(0, batchId, Integer.parseInt(obj.toString()) + 1, 4, TimeUnit.HOURS);
             else
-                redisService.setCacheObject(batchId, 1, 4, TimeUnit.HOURS);
+                redisService.setCacheObject(0, batchId, 1, 4, TimeUnit.HOURS);
             ChannelUtil.asyncWriteToEntity(entity.getId(), submitSm);
         } catch (Exception e) {
             logger.error("发送短信异常", e);

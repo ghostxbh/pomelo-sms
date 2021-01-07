@@ -1,7 +1,9 @@
 package com.uzykj.sms.module.smpp.hanlder;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.uzykj.sms.core.common.ApplicationContextUtil;
 import com.uzykj.sms.core.common.Globle;
+import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.enums.SmsEnum;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ghostxbh
@@ -25,8 +28,8 @@ import java.util.UUID;
  */
 public class SmppBusinessHandler extends AbstractBusinessHandler {
 
+    private static RedisService redisService = ApplicationContextUtil.getApplicationContext().getBean(RedisService.class);
     private static Logger logger = LoggerFactory.getLogger(SmppBusinessHandler.class);
-
     private SmsDetailsMapper smsDetailsMapper;
     private SmsCollectMapper smsCollectMapper;
 
@@ -72,26 +75,31 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     updateEntity.setStatus(sendStatus);
                     smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
 
-                    SmsDetails details = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
-                    SmsCollect collect = smsCollectMapper.selectOne(new QueryWrapper<SmsCollect>().eq("collect_id", details.getCollectId()));
-
-                    logger.info("handler details: " + details.toString() + " , collect: " + collect.toString());
-                    SmsCollect set = new SmsCollect();
-                    if (collect.getPendingNum() > 0) {
-                        set.setPendingNum(collect.getPendingNum() - 1);
-                        if (collect.getPendingNum() == 1) {
-                            set.setStatus(SmsEnum.SUCCESS.getStatus());
+                    SmsDetails details = redisService.getCacheObject(2, id);
+                    if (details != null) {
+                        SmsCollect collect = redisService.getCacheObject(1, details.getCollectId());
+                        logger.info("handler details: " + details.toString() + " , collect: " + collect.toString());
+                        SmsCollect set = new SmsCollect();
+                        if (collect.getPendingNum() > 0) {
+                            set.setPendingNum(collect.getPendingNum() - 1);
+                            if (collect.getPendingNum() == 1) {
+                                set.setStatus(SmsEnum.SUCCESS.getStatus());
+                            }
                         }
+                        if (sendStatus == 2) {
+                            logger.info("回调更新, id: {} 发送中", collect.getId());
+                            // 向 SMSC 发送短信已送达响应信息
+                            DeliverSmResp deliverSmResp = deliverSm.createResponse();
+                            ctx.channel().writeAndFlush(deliverSmResp);
+                            return;
+                        } else if (sendStatus == 10) {
+                            set.setSuccessNum(collect.getSuccessNum() + 1);
+                        } else {
+                            set.setFailNum(collect.getFailNum() + 1);
+                        }
+                        logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
+                        smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
                     }
-                    if (sendStatus == 2) {
-                        logger.info("回调更新, id: {} 发送中", collect.getId());
-                    } else if (sendStatus == 10) {
-                        set.setSuccessNum(collect.getSuccessNum() + 1);
-                    } else {
-                        set.setFailNum(collect.getFailNum() + 1);
-                    }
-                    logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
-                    smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
                 }
 
                 // 向 SMSC 发送短信已送达响应信息
@@ -107,13 +115,21 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 String msisdn = request.getDestAddress().getAddress();
                 String messageId = (String) request.getReferenceObject();
                 logger.info("SMSC SubmitSm 消息响应, 目的地号码: {}, 短信ID: {}", msisdn, messageId);
-                SmsDetails smsDetails = smsDetailsMapper.selectOne(new QueryWrapper<SmsDetails>().eq("details_id", messageId));
+
+                SmsDetails smsDetails = redisService.getCacheObject(2, messageId);
                 if (smsDetails != null) {
                     int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 3 : -1;
                     SmsDetails updateEntity = new SmsDetails();
                     updateEntity.setStatus(sendStatus);
                     updateEntity.setRespMessageId(respMessageId);
                     smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("details_id", messageId));
+
+                    // 添加缓存
+                    smsDetails.setStatus(sendStatus);
+                    smsDetails.setRespMessageId(respMessageId);
+                    redisService.setCacheObject(2, respMessageId, smsDetails, 1, TimeUnit.DAYS);
+                    // 删除重复
+                    redisService.deleteObject(2, messageId);
                 }
             }
         } catch (Exception e) {
