@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -77,7 +78,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
 
                     SmsDetails details = redisService.getCacheObject(2, id);
                     if (details != null) {
-                        SmsCollect collect = redisService.getCacheObject(1, details.getCollectId());
+                        SmsCollect collect = redisService.getCacheObject(1, details.getCollectId(), SmsCollect.class);
                         logger.info("handler details: " + details.toString() + " , collect: " + collect.toString());
                         SmsCollect set = new SmsCollect();
                         if (collect.getPendingNum() > 0) {
@@ -99,6 +100,16 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                         }
                         logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
                         smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
+
+                        if (Objects.nonNull(set.getStatus()))
+                            collect.setStatus(set.getStatus());
+                        if (Objects.nonNull(set.getPendingNum()))
+                            collect.setPendingNum(set.getPendingNum());
+                        if (Objects.nonNull(set.getSuccessNum()))
+                            collect.setSuccessNum(set.getSuccessNum());
+                        if (Objects.nonNull(set.getFailNum()))
+                            collect.setFailNum(set.getFailNum());
+                        redisService.setCacheObject(1, details.getCollectId(), collect, 1, TimeUnit.DAYS);
                     }
                 }
 

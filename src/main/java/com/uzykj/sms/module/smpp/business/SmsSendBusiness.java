@@ -51,7 +51,7 @@ public class SmsSendBusiness {
         }
         String batchId = details.getBatchId();
         String key = batchId + details.getPhone();
-        Object cacheObject = redisService.getCacheObject(key);
+        Object cacheObject = redisService.getCacheObject(0, key);
         if (cacheObject != null) {
             return;
         } else {
@@ -78,7 +78,7 @@ public class SmsSendBusiness {
         logger.info("待发送短信 sequenceNo: {}", submitSm.getSequenceNo());
         try {
             log.info("send sms obj: {}} ", submitSm);
-            Object obj = redisService.getCacheObject(batchId);
+            Object obj = redisService.getCacheObject(0, batchId);
             if (obj != null)
                 redisService.setCacheObject(0, batchId, Integer.parseInt(obj.toString()) + 1, 4, TimeUnit.HOURS);
             else
