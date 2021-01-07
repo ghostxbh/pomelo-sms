@@ -49,7 +49,7 @@ public class RedisService
     public <T> void setCacheObject(final Integer db, final String key, final T value, final Integer timeout, final TimeUnit timeUnit)
     {
         redisDBChangeUtil.setDataBase(db);
-        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(value), timeout, timeUnit);
+        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
     /**

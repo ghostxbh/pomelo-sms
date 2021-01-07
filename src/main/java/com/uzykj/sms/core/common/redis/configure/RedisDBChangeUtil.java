@@ -22,6 +22,7 @@ public class RedisDBChangeUtil {
         LettuceConnectionFactory connectionFactory = (LettuceConnectionFactory) redisTemplate.getConnectionFactory();
         if (connectionFactory != null && num != connectionFactory.getDatabase()) {
             connectionFactory.setDatabase(num);
+            connectionFactory.setValidateConnection(true);
             this.redisTemplate.setConnectionFactory(connectionFactory);
             connectionFactory.resetConnection();
         }
