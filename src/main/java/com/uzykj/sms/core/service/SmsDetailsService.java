@@ -51,6 +51,8 @@ public class SmsDetailsService {
             collect.setTotal(phoneList.size());
             collect.setPendingNum(phoneList.size());
             collect.setStatus(SmsEnum.PENDING.getStatus());
+            collect.setSuccessNum(0);
+            collect.setFailNum(0);
 
             log.info("添加汇总记录：" + collect.toString());
             smsCollectMapper.insert(collect);
@@ -85,8 +87,11 @@ public class SmsDetailsService {
                     } else {
                         setContent = content;
                     }
-                    String phonePrefix = !StringUtils.isEmpty(user.getPhonePrefix().trim()) ? user.getPhonePrefix().trim() : "86";
-                    children = phonePrefix + children;
+
+                    if (!"86".equals(children.substring(0, 2))) {
+                        String phonePrefix = !StringUtils.isEmpty(user.getPhonePrefix().trim()) ? user.getPhonePrefix().trim() : "86";
+                        children = phonePrefix + children;
+                    }
 
                     SysUser sysUser = Globle.USER_CACHE.get(user.getId());
                     SmsDetails details = SmsDetails.builder()
