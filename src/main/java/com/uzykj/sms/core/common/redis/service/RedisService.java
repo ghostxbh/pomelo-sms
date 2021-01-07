@@ -1,8 +1,8 @@
 package com.uzykj.sms.core.common.redis.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.uzykj.sms.core.common.redis.configure.RedisDBChangeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * spring redis 工具类
- * 
+ *
  * @author ghostxbh
  **/
 @SuppressWarnings(value = { "unchecked", "rawtypes" })
@@ -25,6 +25,8 @@ public class RedisService
 {
     @Autowired
     public RedisTemplate redisTemplate;
+    @Autowired
+    public RedisDBChangeUtil redisDBChangeUtil;
 
     /**
      * 缓存基本的对象，Integer、String、实体类等
@@ -35,6 +37,19 @@ public class RedisService
     public <T> void setCacheObject(final String key, final T value)
     {
         redisTemplate.opsForValue().set(key, value);
+    }
+    /**
+     * 缓存基本的对象，Integer、String、实体类等
+     *
+     * @param key 缓存的键值
+     * @param value 缓存的值
+     * @param timeout 时间
+     * @param timeUnit 时间颗粒度
+     */
+    public <T> void setCacheObject(final Integer db, final String key, final T value, final Integer timeout, final TimeUnit timeUnit)
+    {
+        redisDBChangeUtil.setDataBase(db);
+        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(value), timeout, timeUnit);
     }
 
     /**
@@ -49,7 +64,6 @@ public class RedisService
     {
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
-
     /**
      * 设置有效时间
      *
@@ -87,6 +101,13 @@ public class RedisService
         return operation.get(key);
     }
 
+    public <T> T getCacheObject(final Integer db, final String key)
+    {
+        redisDBChangeUtil.setDataBase(db);
+        ValueOperations<String, T> operation = redisTemplate.opsForValue();
+        return operation.get(key);
+    }
+
     /**
      * 删除单个对象
      *
@@ -94,6 +115,12 @@ public class RedisService
      */
     public boolean deleteObject(final String key)
     {
+        return redisTemplate.delete(key);
+    }
+
+    public boolean deleteObject(final Integer db, final String key)
+    {
+        redisDBChangeUtil.setDataBase(db);
         return redisTemplate.delete(key);
     }
 
@@ -219,7 +246,7 @@ public class RedisService
 
     /**
      * 获得缓存的基本对象列表
-     * 
+     *
      * @param pattern 字符串前缀
      * @return 对象列表
      */
