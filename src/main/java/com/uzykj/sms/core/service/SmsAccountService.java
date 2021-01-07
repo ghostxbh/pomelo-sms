@@ -37,8 +37,7 @@ public class SmsAccountService {
     public void add(SmsAccount account) {
         smsAccountMapper.insert(account);
         if (account.getChannelType().equals(ChannelTypeEnum.SMPP)) {
-            SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
-            clientInit.rebot();
+            SmppClientInit.getInstance().rebot();
         }
         Globle.updateCache();
     }
@@ -46,16 +45,14 @@ public class SmsAccountService {
     public void update(SmsAccount account) {
         smsAccountMapper.updateById(account);
         if (account.getChannelType().equals(ChannelTypeEnum.SMPP)) {
-            SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
-            clientInit.rebot();
+            SmppClientInit.getInstance().rebot();
         }
         Globle.updateCache();
     }
 
     public void del(int id) {
         smsAccountMapper.deleteById(id);
-        SmppClientInit clientInit = new SmppClientInit(smsAccountMapper, smsDetailsMapper);
-        clientInit.rebot();
+        SmppClientInit.getInstance().rebot();
         Globle.updateCache();
     }
 

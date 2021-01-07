@@ -1,11 +1,14 @@
 package com.uzykj.sms.module.smpp.init;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.uzykj.sms.core.common.ApplicationContextUtil;
+import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import com.uzykj.sms.core.mapper.SmsAccountMapper;
 import com.uzykj.sms.core.mapper.SmsCollectMapper;
 import com.uzykj.sms.core.mapper.SmsDetailsMapper;
+import com.uzykj.sms.module.sender.SMPPFastRunner;
 import com.uzykj.sms.module.smpp.hanlder.SmppBusinessHandler;
 import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.connect.manager.EndpointManager;
@@ -26,21 +29,13 @@ import java.util.Optional;
  */
 @Component
 public class SmppClientInit {
+    private static SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
+    private static SmsCollectMapper smsCollectMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsCollectMapper.class);
+    private static SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
 
     public static EndpointManager manager = EndpointManager.INS;
 
-    @Autowired
-    private SmsAccountMapper smsAccountMapper;
-    @Autowired
-    private SmsDetailsMapper smsDetailsMapper;
-    @Autowired
-    private SmsCollectMapper smsCollectMapper;
-
-    public SmppClientInit(SmsAccountMapper smsAccountMapper, SmsDetailsMapper smsDetailsMapper) {
-        this.smsAccountMapper = smsAccountMapper;
-        this.smsDetailsMapper = smsDetailsMapper;
-    }
-
+    private volatile static SmppClientInit instance;
     @PostConstruct
     public void init() {
         QueryWrapper<SmsAccount> queryWrapper = new QueryWrapper<SmsAccount>().eq("enabled", 1).eq("channel_type", ChannelTypeEnum.SMPP);
@@ -66,7 +61,7 @@ public class SmppClientInit {
                     entity.setRetryWaitTimeSec((short) 100);
                     entity.setUseSSL(false);
                     entity.setReSendFailMsg(false);
-//                    entity.setInterfaceVersion((byte) 32);
+                    // entity.setInterfaceVersion((byte) 32);
 
                     List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
                     businessHandlers.add(new SmppBusinessHandler(smsDetailsMapper, smsCollectMapper));
@@ -81,6 +76,17 @@ public class SmppClientInit {
                     }
                     manager.startConnectionCheckTask();
                 });
+    }
+
+    public static SmppClientInit getInstance() {
+        if (instance == null) {
+            synchronized (SmppClientInit.class) {
+                if (instance == null) {
+                    instance = new SmppClientInit();
+                }
+            }
+        }
+        return instance;
     }
 
     public void rebot() {
