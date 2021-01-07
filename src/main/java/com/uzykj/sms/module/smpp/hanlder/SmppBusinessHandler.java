@@ -78,7 +78,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
 
                     SmsDetails details = redisService.getCacheObject(2, id);
                     if (details != null) {
-                        SmsCollect collect = redisService.getCacheObject(1, details.getCollectId(), SmsCollect.class);
+                        SmsCollect collect = redisService.getCacheObject(1, details.getCollectId());
                         logger.info("handler details: " + details.toString() + " , collect: " + collect.toString());
                         SmsCollect set = new SmsCollect();
                         if (collect.getPendingNum() > 0) {
