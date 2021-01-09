@@ -6,6 +6,7 @@ import com.uzykj.sms.core.controller.BaseController;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.SysUser;
 import com.uzykj.sms.core.domain.dto.PageDto;
+import com.uzykj.sms.core.domain.dto.SendPhoneDTO;
 import com.uzykj.sms.core.domain.dto.SmsDetailsDto;
 import com.uzykj.sms.core.enums.CommenEnum;
 import com.uzykj.sms.core.enums.SmsEnum;
@@ -98,8 +99,10 @@ public class SmsController extends BaseController {
 
     @PostMapping("/batchAdd")
     @ResponseBody
-    public JsonResult<?> batchAdd(@RequestParam("phoneList[]") List<String> phoneList, String content, HttpSession session) {
+    public JsonResult<?> batchAdd(@RequestBody SendPhoneDTO sendPhoneDTO, HttpSession session) {
         long startTime = System.currentTimeMillis();
+        List<String> phoneList = sendPhoneDTO.getPhoneList();
+        String content = sendPhoneDTO.getContent();
         try {
             SysUser user = checkUser(session);
             SysUser smsUser = sysUserService.get(user.getId());

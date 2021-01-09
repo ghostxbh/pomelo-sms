@@ -15,6 +15,8 @@ function add() {
     if (tab1) {
         url = '/sms/batchAdd';
         data = {"phoneList": phoneList, "content": content};
+        data = JSON.stringify(data);
+        option.contentType = "application/json;charset=UTF-8";
     } else if (tab2) {
         data = new FormData();
         url = '/sms/fileAdd';
