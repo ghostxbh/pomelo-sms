@@ -29,8 +29,8 @@ import java.util.*;
 @Controller
 @RequestMapping("/sms")
 public class SmsController extends BaseController {
-    private static final int MAXBATCHSENDNUM = 10 * 1000;
-    private static final int MAXFILESENDNUM = 20 * 1000;
+    private static final int MAXBATCHSENDNUM = 50 * 1000;
+    private static final int MAXFILESENDNUM = 100 * 1000;
 
     @Autowired
     private SmsDetailsService smsDetailsService;
