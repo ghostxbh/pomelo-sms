@@ -30,7 +30,7 @@ import java.util.Optional;
  * @since 2020-08-08
  */
 public class SmppClientInit {
-    private SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
+    private static SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
 
     public static EndpointManager manager = EndpointManager.INS;
 
@@ -61,7 +61,7 @@ public class SmppClientInit {
                     entity.setRetryWaitTimeSec((short) 100);
                     entity.setUseSSL(false);
                     entity.setReSendFailMsg(false);
-//                    entity.setInterfaceVersion((byte) 34);
+                    entity.setInterfaceVersion((byte) 34);
 
                     List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
                     businessHandlers.add(new SmppBusinessHandler());

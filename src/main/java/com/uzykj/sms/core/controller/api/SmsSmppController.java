@@ -2,6 +2,7 @@ package com.uzykj.sms.core.controller.api;
 
 import com.google.common.collect.Maps;
 import com.uzykj.sms.core.common.json.JsonResult;
+import com.uzykj.sms.core.common.redis.configure.RedisDBChangeUtil;
 import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.domain.dto.SmsSendDTO;
@@ -28,6 +29,8 @@ public class SmsSmppController {
 
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private RedisDBChangeUtil redisDBChangeUtil;
 
     @PostMapping("/send")
     public JsonResult<String> test(@RequestBody SmsSendDTO smsSendDTO) {
@@ -68,9 +71,12 @@ public class SmsSmppController {
 
     @GetMapping("/redis/set")
     public JsonResult<String> getSetRedis(@RequestParam String key, @RequestParam String value) {
-        redisService.setCacheObject(15, key, value, 2, TimeUnit.MINUTES);
-        redisService.setCacheObject(14, key, value, 2, TimeUnit.MINUTES);
-        redisService.setCacheObject(13, key, value, 2, TimeUnit.MINUTES);
+        redisDBChangeUtil.setDataBase(15);
+        redisService.setCacheObject(key, value, 2, TimeUnit.MINUTES);
+        redisDBChangeUtil.setDataBase(14);
+        redisService.setCacheObject(key, value, 2, TimeUnit.MINUTES);
+        redisDBChangeUtil.setDataBase(13);
+        redisService.setCacheObject(key, value, 2, TimeUnit.MINUTES);
 
         HashMap<String, String> map = Maps.newHashMap();
         map.put("key", key);
@@ -80,17 +86,23 @@ public class SmsSmppController {
 
     @PostMapping("/redis/set")
     public JsonResult<String> postSetRedis(@RequestBody Map<String, Object> params) {
-        redisService.setCacheObject(15, params.get("key").toString(), params.get("value"), 2, TimeUnit.MINUTES);
-        redisService.setCacheObject(14, params.get("key").toString(), params.get("value"), 2, TimeUnit.MINUTES);
-        redisService.setCacheObject(13, params.get("key").toString(), params.get("value"), 2, TimeUnit.MINUTES);
+        redisDBChangeUtil.setDataBase(15);
+        redisService.setCacheObject(params.get("key").toString(), params.get("value"), 2, TimeUnit.MINUTES);
+        redisDBChangeUtil.setDataBase(14);
+        redisService.setCacheObject(params.get("key").toString(), params.get("value"), 2, TimeUnit.MINUTES);
+        redisDBChangeUtil.setDataBase(13);
+        redisService.setCacheObject(params.get("key").toString(), params.get("value"), 2, TimeUnit.MINUTES);
         return new JsonResult(params);
     }
 
     @GetMapping("/redis/get")
     public JsonResult<String> getRedis(@RequestParam String key) {
-        Object value1 = redisService.getCacheObject(15, key);
-        Object value2 = redisService.getCacheObject(14, key);
-        Object value3 = redisService.getCacheObject(13, key);
+        redisDBChangeUtil.setDataBase(15);
+        Object value1 = redisService.getCacheObject(key);
+        redisDBChangeUtil.setDataBase(14);
+        Object value2 = redisService.getCacheObject(key);
+        redisDBChangeUtil.setDataBase(13);
+        Object value3 = redisService.getCacheObject(key);
 
         List<Object> list = Lists.newArrayList();
         list.add(key);

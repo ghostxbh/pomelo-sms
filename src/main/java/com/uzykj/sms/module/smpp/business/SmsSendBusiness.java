@@ -52,11 +52,11 @@ public class SmsSendBusiness {
         }
         String batchId = details.getBatchId();
         String key = batchId + details.getPhone();
-        Object cacheObject = redisService.getCacheObject(0, key);
+        Object cacheObject = redisService.getCacheObject(key);
         if (cacheObject != null) {
             return;
         } else {
-            redisService.setCacheObject(0, key, 1, 2, TimeUnit.HOURS);
+            redisService.setCacheObject(key, 1, 30, TimeUnit.MINUTES);
         }
 
         SubmitSm submitSm = new SubmitSm();
@@ -79,11 +79,11 @@ public class SmsSendBusiness {
         logger.info("待发送短信 sequenceNo: {}", submitSm.getSequenceNo());
         try {
             log.info("send sms obj: {}} ", submitSm);
-            Object obj = redisService.getCacheObject(0, batchId);
+            Object obj = redisService.getCacheObject(batchId);
             if (obj != null)
-                redisService.setCacheObject(0, batchId, Integer.parseInt(obj.toString()) + 1, 4, TimeUnit.HOURS);
+                redisService.setCacheObject(batchId, Integer.parseInt(obj.toString()) + 1, 2, TimeUnit.HOURS);
             else
-                redisService.setCacheObject(0, batchId, 1, 4, TimeUnit.HOURS);
+                redisService.setCacheObject(batchId, 1, 2, TimeUnit.HOURS);
             ChannelUtil.asyncWriteToEntity(entity.getId(), submitSm);
         } catch (Exception e) {
             logger.error("发送短信异常", e);

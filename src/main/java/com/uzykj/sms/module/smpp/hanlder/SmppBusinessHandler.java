@@ -65,9 +65,9 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     updateEntity.setStatus(sendStatus);
                     smsDetailsMapper.update(updateEntity, new QueryWrapper<SmsDetails>().eq("resp_message_id", id));
 
-                    SmsDetails details = redisService.getCacheObject(2, id);
+                    SmsDetails details = redisService.getCacheObject(id);
                     if (details != null) {
-                        SmsCollect collect = redisService.getCacheObject(1, details.getCollectId());
+                        SmsCollect collect = redisService.getCacheObject(details.getCollectId());
                         logger.info("handler details: " + details.toString() + " , collect: " + collect.toString());
                         SmsCollect set = new SmsCollect();
                         if (collect.getPendingNum() > 0) {
@@ -87,9 +87,12 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                         } else {
                             set.setFailNum(collect.getFailNum() + 1);
                         }
-                        logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
-                        smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
 
+                        // 删除短信详情缓存
+                        redisService.deleteObject(id);
+
+                        logger.info("汇总回调更新汇总, id: {}, set: {}", collect.getId(), set);
+                        smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
                         if (Objects.nonNull(set.getStatus()))
                             collect.setStatus(set.getStatus());
                         if (Objects.nonNull(set.getPendingNum()))
@@ -98,7 +101,8 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                             collect.setSuccessNum(set.getSuccessNum());
                         if (Objects.nonNull(set.getFailNum()))
                             collect.setFailNum(set.getFailNum());
-                        redisService.setCacheObject(1, details.getCollectId(), collect, 1, TimeUnit.DAYS);
+
+                        redisService.setCacheObject(details.getCollectId(), collect, 1, TimeUnit.DAYS);
                     }
                 }
 
@@ -116,7 +120,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 String messageId = (String) request.getReferenceObject();
                 logger.info("SMSC SubmitSm 消息响应, 目的地号码: {}, 短信ID: {}", msisdn, messageId);
 
-                SmsDetails smsDetails = redisService.getCacheObject(2, messageId);
+                SmsDetails smsDetails = redisService.getCacheObject(messageId);
                 if (smsDetails != null) {
                     int sendStatus = "OK".equals(submitSmResp.getResultMessage()) ? 3 : -1;
                     SmsDetails updateEntity = new SmsDetails();
@@ -127,9 +131,9 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     // 添加缓存
                     smsDetails.setStatus(sendStatus);
                     smsDetails.setRespMessageId(respMessageId);
-                    redisService.setCacheObject(2, respMessageId, smsDetails, 1, TimeUnit.DAYS);
+                    redisService.setCacheObject(respMessageId, smsDetails, 1, TimeUnit.DAYS);
                     // 删除重复
-                    redisService.deleteObject(2, messageId);
+                    redisService.deleteObject(messageId);
                 }
             }
         } catch (Exception e) {
