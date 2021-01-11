@@ -56,6 +56,9 @@ public class StringUtil {
     public static void main(String[] args) {
 //        String nl = getVercode("ULN", 32);
 //        System.out.println(nl);
-        System.out.println(isUUID("21dba-51bb-8b79-e5d97d2f1e52"));
+//        System.out.println(isUUID("21dba-51bb-8b79-e5d97d2f1e52"));
+        for (int i = 0; i < 20000; i++) {
+            System.out.println("13" + getVercode("N", 9));
+        }
     }
 }
