@@ -3,6 +3,7 @@ package com.uzykj.sms.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.common.Globle;
 import com.uzykj.sms.core.common.json.JsonResult;
+import com.uzykj.sms.core.common.redis.service.RedisPrefix;
 import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsCollect;
 import com.uzykj.sms.core.domain.SmsDetails;
@@ -59,7 +60,7 @@ public class SmsDetailsService {
             log.info("添加汇总记录：" + collect.toString());
             smsCollectMapper.insert(collect);
 
-            redisService.setCacheObject(collect.getCollectId(), collect, 1, TimeUnit.DAYS);
+            redisService.setCacheObject(RedisPrefix.COLLECT + collect.getCollectId(), collect, 1, TimeUnit.DAYS);
         } catch (Exception e) {
             log.log(Level.WARNING, "添加汇总记录错误", e);
             return JsonResult.toError("添加汇总记录错误");
@@ -110,7 +111,7 @@ public class SmsDetailsService {
                             .build();
                     smsDetailsMapper.insert(details);
 
-                    redisService.setCacheObject(details.getDetailsId(), details, 1, TimeUnit.DAYS);
+                    redisService.setCacheObject(RedisPrefix.DETAIL + details.getDetailsId(), details, 1, TimeUnit.DAYS);
                 }
             }
             log.info("批量短信使用时间：" + (System.currentTimeMillis() - startTime) + "ms");

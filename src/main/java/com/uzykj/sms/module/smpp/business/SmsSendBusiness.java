@@ -2,6 +2,7 @@ package com.uzykj.sms.module.smpp.business;
 
 
 import com.uzykj.sms.core.common.ApplicationContextUtil;
+import com.uzykj.sms.core.common.redis.service.RedisPrefix;
 import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsDetails;
 import com.uzykj.sms.core.mapper.SmsCollectMapper;
@@ -51,12 +52,12 @@ public class SmsSendBusiness {
             throw new RuntimeException("smpp链接异常");
         }
         String batchId = details.getBatchId();
-        String key = batchId + details.getPhone();
-        Object cacheObject = redisService.getCacheObject(key);
-        if (cacheObject != null) {
+        String detailsId = details.getDetailsId();
+        Boolean existSetCacheObject = redisService.existSetCacheObject(RedisPrefix.BATCH + batchId, detailsId);
+        if (existSetCacheObject != null && existSetCacheObject) {
             return;
         } else {
-            redisService.setCacheObject(key, 1, 30, TimeUnit.MINUTES);
+            redisService.addSetCacheObject(RedisPrefix.BATCH + batchId, detailsId);
         }
 
         SubmitSm submitSm = new SubmitSm();
@@ -79,11 +80,6 @@ public class SmsSendBusiness {
         logger.info("待发送短信 sequenceNo: {}", submitSm.getSequenceNo());
         try {
             log.info("send sms obj: {}} ", submitSm);
-            Object obj = redisService.getCacheObject(batchId);
-            if (obj != null)
-                redisService.setCacheObject(batchId, Integer.parseInt(obj.toString()) + 1, 2, TimeUnit.HOURS);
-            else
-                redisService.setCacheObject(batchId, 1, 2, TimeUnit.HOURS);
             ChannelUtil.asyncWriteToEntity(entity.getId(), submitSm);
         } catch (Exception e) {
             logger.error("发送短信异常", e);

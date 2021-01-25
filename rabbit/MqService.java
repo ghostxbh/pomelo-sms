@@ -23,7 +23,7 @@ import java.util.UUID;
  * @Description 消息队列测试
  * @Version 1.0
  **/
-@Component
+//@Component
 @Slf4j
 public class MqService implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnCallback {
 

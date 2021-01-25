@@ -5,6 +5,7 @@ import com.uzykj.sms.core.common.redis.configure.RedisDBChangeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
@@ -208,5 +209,53 @@ public class RedisService {
      */
     public Collection<String> keys(final String pattern) {
         return redisTemplate.keys(pattern);
+    }
+
+    /**
+     * 判断集合key中是否存在member元素
+     *
+     * @param key    Redis键
+     * @param member 元素
+     * @return boolean
+     */
+    public Boolean existSetCacheObject(final String key, final String member) {
+        SetOperations setOperations = redisTemplate.opsForSet();
+        return setOperations.isMember(key, member);
+    }
+
+    /**
+     * 添加集合key的单个member元素
+     *
+     * @param key    Redis键
+     * @param member 元素
+     * @return boolean
+     */
+    public Long addSetCacheObject(final String key, final String member) {
+        SetOperations setOperations = redisTemplate.opsForSet();
+        return setOperations.add(key, member);
+    }
+
+    /**
+     * 添加集合key的单个member元素
+     *
+     * @param key    Redis键
+     * @param members 元素
+     * @return boolean
+     */
+    public Long addSetCacheObjects(final String key, final List<String> members) {
+        SetOperations setOperations = redisTemplate.opsForSet();
+        return setOperations.add(key, members);
+    }
+
+    /**
+     * 删除集合key的单个member元素
+     *
+     * @param key    Redis键
+     * @param member 元素
+     * @return boolean
+     */
+    public Long delSetCacheObject(final String key, final String member) {
+        SetOperations setOperations = redisTemplate.opsForSet();
+        return setOperations.remove(key, member);
     }
 }

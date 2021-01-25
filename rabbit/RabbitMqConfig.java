@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * @ClassName RabbitMqConfig
  * @Description rabbitMq配置类
  **/
-@Configuration
+//@Configuration
 public class RabbitMqConfig {
 
     public final static String DIRECT_QUEUE = "directQueue";
