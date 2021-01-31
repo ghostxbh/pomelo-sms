@@ -12,6 +12,7 @@ import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.zx.sms.codec.smpp.msg.*;
 import com.zx.sms.handler.api.AbstractBusinessHandler;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +93,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                         // 删除短信详情缓存
                         redisService.deleteObject(RedisPrefix.RESP + id);
 
-                        logger.info("汇总回调更新汇总, id: {}, set: {}", collect.getId(), set);
+                        logger.info("回调更新汇总, id: {}, set: {}", collect.getId(), set);
                         smsCollectMapper.update(set, new QueryWrapper<SmsCollect>().eq("id", collect.getId()));
                         if (Objects.nonNull(set.getStatus()))
                             collect.setStatus(set.getStatus());
@@ -119,7 +120,7 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                 String respMessageId = submitSmResp.getMessageId();
                 String msisdn = request.getDestAddress().getAddress();
                 String messageId = (String) request.getReferenceObject();
-                logger.info("SMSC SubmitSm 消息响应, 目的地号码: {}, 短信ID: {}", msisdn, messageId);
+                logger.info("SMSC SubmitSm 消息响应, 目的地号码: {}, 短信ID: {}, respID: {}", msisdn, messageId, respMessageId);
 
                 SmsDetails smsDetails = redisService.getCacheObject(RedisPrefix.DETAIL + messageId);
                 if (smsDetails != null) {
@@ -132,9 +133,13 @@ public class SmppBusinessHandler extends AbstractBusinessHandler {
                     // 添加缓存
                     smsDetails.setStatus(sendStatus);
                     smsDetails.setRespMessageId(respMessageId);
-                    redisService.setCacheObject(RedisPrefix.RESP + respMessageId, smsDetails, 1, TimeUnit.DAYS);
-                    // 删除重复
-                    redisService.deleteObject(RedisPrefix.DETAIL + messageId);
+                    if (!StringUtils.isEmpty(respMessageId)) {
+                        redisService.setCacheObject(RedisPrefix.RESP + respMessageId, smsDetails, 1, TimeUnit.DAYS);
+                        // 删除重复
+                        redisService.deleteObject(RedisPrefix.DETAIL + messageId);
+                        return;
+                    }
+                    logger.warn("不存在发送响应ID, 短信ID: {}", messageId);
                 }
             }
         } catch (Exception e) {

@@ -2,25 +2,18 @@ package com.uzykj.sms.module.smpp.init;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.uzykj.sms.core.common.ApplicationContextUtil;
-import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import com.uzykj.sms.core.mapper.SmsAccountMapper;
-import com.uzykj.sms.core.mapper.SmsCollectMapper;
-import com.uzykj.sms.core.mapper.SmsDetailsMapper;
-import com.uzykj.sms.module.sender.SMPPFastRunner;
 import com.uzykj.sms.module.smpp.hanlder.SmppBusinessHandler;
 import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.connect.manager.EndpointManager;
 import com.zx.sms.connect.manager.smpp.SMPPClientEndpointEntity;
 import com.zx.sms.handler.api.BusinessHandlerInterface;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +22,7 @@ import java.util.Optional;
  * @author ghostxbh
  * @since 2020-08-08
  */
+@Component
 public class SmppClientInit {
     private static SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
 
