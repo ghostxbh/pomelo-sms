@@ -24,9 +24,9 @@ import java.util.Optional;
  */
 @Component
 public class SmppClientInit {
-    private static SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
+    private SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
 
-    public static EndpointManager manager = EndpointManager.INS;
+    public EndpointManager manager = EndpointManager.INS;
 
     private volatile static SmppClientInit instance;
 

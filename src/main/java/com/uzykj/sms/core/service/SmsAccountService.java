@@ -99,7 +99,7 @@ public class SmsAccountService {
     }
 
     public boolean check(String code) {
-        EndpointManager manager = SmppClientInit.manager;
+        EndpointManager manager = SmppClientInit.getInstance().manager;
         EndpointEntity endpointEntity = manager.getEndpointEntity(code);
         logger.info("SMPP is running, {}", endpointEntity);
         return endpointEntity != null && endpointEntity.getId() != null;
@@ -110,7 +110,7 @@ public class SmsAccountService {
         set.setEnabled(1);
         smsAccountMapper.update(set, new QueryWrapper<SmsAccount>().eq("code", code));
 
-        EndpointManager manager = SmppClientInit.manager;
+        EndpointManager manager = SmppClientInit.getInstance().manager;
         SMPPClientEndpointEntity entity = new SMPPClientEndpointEntity();
 
         SmsAccount account = Globle.ACCOUNT_CACHE.get(code);
@@ -152,7 +152,7 @@ public class SmsAccountService {
         set.setEnabled(0);
         smsAccountMapper.update(set, new QueryWrapper<SmsAccount>().eq("code", code));
 
-        EndpointManager manager = SmppClientInit.manager;
+        EndpointManager manager = SmppClientInit.getInstance().manager;
         EndpointEntity endpointEntity = manager.getEndpointEntity(code);
         if (endpointEntity != null) {
             manager.remove(code);
