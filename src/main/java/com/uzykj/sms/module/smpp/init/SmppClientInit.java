@@ -10,6 +10,7 @@ import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.connect.manager.EndpointManager;
 import com.zx.sms.connect.manager.smpp.SMPPClientEndpointEntity;
 import com.zx.sms.handler.api.BusinessHandlerInterface;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -30,7 +31,7 @@ public class SmppClientInit {
 
     private volatile static SmppClientInit instance;
 
-    @PostConstruct
+    @Bean
     public void init() {
         QueryWrapper<SmsAccount> queryWrapper = new QueryWrapper<SmsAccount>().eq("enabled", 1).eq("channel_type", ChannelTypeEnum.SMPP);
         List<SmsAccount> availableAccounts = smsAccountMapper.selectList(queryWrapper);

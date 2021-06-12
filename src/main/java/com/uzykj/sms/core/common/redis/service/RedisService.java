@@ -1,7 +1,5 @@
 package com.uzykj.sms.core.common.redis.service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.uzykj.sms.core.common.redis.configure.RedisDBChangeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
