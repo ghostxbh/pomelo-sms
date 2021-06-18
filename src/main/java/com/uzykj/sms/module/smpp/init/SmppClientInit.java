@@ -25,7 +25,7 @@ import java.util.Optional;
  * @since 2020-08-08
  */
 @Component
-@Order(50)
+@Order(99)
 public class SmppClientInit {
     private SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
 
