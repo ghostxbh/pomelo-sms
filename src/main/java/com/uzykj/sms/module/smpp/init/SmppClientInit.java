@@ -1,7 +1,6 @@
 package com.uzykj.sms.module.smpp.init;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.uzykj.sms.core.common.ApplicationContextUtil;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import com.uzykj.sms.core.mapper.SmsAccountMapper;
@@ -10,11 +9,11 @@ import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.connect.manager.EndpointManager;
 import com.zx.sms.connect.manager.smpp.SMPPClientEndpointEntity;
 import com.zx.sms.handler.api.BusinessHandlerInterface;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +24,8 @@ import java.util.Optional;
  */
 @Component
 public class SmppClientInit {
-    private SmsAccountMapper smsAccountMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsAccountMapper.class);
+    @Resource
+    private SmsAccountMapper smsAccountMapper;
 
     public EndpointManager manager = EndpointManager.INS;
 

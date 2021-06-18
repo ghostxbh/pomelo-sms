@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 <!--    本地log配置-->
-<!--    <property name="LOG_HOME" value="./logs"/>-->
-    <property name="LOG_HOME" value="/www/prod/logs/"/>
+    <property name="LOG_HOME" value="./logs"/>
+<!--    <property name="LOG_HOME" value="/www/prod/logs/"/>-->
 <!--    <springProperty scope="context" name="LOG_HOME" source="log.path"/>-->
     <conversionRule conversionWord="ip" converterClass="com.uzykj.sms.core.config.IPLogConfig" />
 
