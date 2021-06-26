@@ -6,7 +6,7 @@ function resetChannel() {
     $("#channel_password").val('');
     $("#channel_type").val('');
     $("#channel_channelPwd").val('');
-    $("#channel_enable").val(1);
+    // $("#channel_enable").val(1);
     $("#channel_description").val('');
     $("#channel_remark").val('');
 }
@@ -20,7 +20,7 @@ function addChannel() {
     var password = $.trim($("#channel_password").val());
     var channelType = $.trim($("#channel_type").val());
     var channelPwd = $.trim($("#channel_channelPwd").val());
-    var enabled = $.trim($("#channel_enable").val());
+    // var enabled = $.trim($("#channel_enable").val());
     var description = $.trim($("#channel_description").val());
     var remark = $.trim($("#channel_remark").val());
     if (!code && !url && !port && !systemId && !password && !channelType && !channelEnable) {
@@ -44,7 +44,7 @@ function addChannel() {
         "password": password,
         "channelType": channelType,
         "channelPwd": channelPwd,
-        "enabled": enabled,
+        // "enabled": enabled,
         "description": description,
         "remark": remark
     };
