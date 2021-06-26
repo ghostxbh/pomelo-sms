@@ -16,7 +16,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -24,11 +26,15 @@ import java.util.concurrent.TimeUnit;
  * @author ghostxbh
  * @since 2020-08-08
  */
+@Component
 public class SmppBusinessHandler extends AbstractBusinessHandler {
     private static Logger logger = LoggerFactory.getLogger(SmppBusinessHandler.class);
-    private RedisService redisService = ApplicationContextUtil.getApplicationContext().getBean(RedisService.class);
-    private SmsDetailsMapper smsDetailsMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsDetailsMapper.class);
-    private SmsCollectMapper smsCollectMapper = ApplicationContextUtil.getApplicationContext().getBean(SmsCollectMapper.class);
+    @Resource
+    private RedisService redisService;
+    @Resource
+    private SmsDetailsMapper smsDetailsMapper;
+    @Resource
+    private SmsCollectMapper smsCollectMapper;
 
     @Override
     public String name() {
