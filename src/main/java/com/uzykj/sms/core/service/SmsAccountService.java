@@ -39,20 +39,18 @@ public class SmsAccountService {
     private SmsCollectMapper smsCollectMapper;
 
     public void add(SmsAccount account) {
-        account.setEnabled(0);
+        account.setEnabled(account.getChannelType().equals(ChannelTypeEnum.HTTP) ? 1 : 0);
         smsAccountMapper.insert(account);
         Globle.updateCache();
     }
 
     public void update(SmsAccount account) {
-        account.setEnabled(0);
         smsAccountMapper.updateById(account);
         Globle.updateCache();
     }
 
     public void del(int id) {
         smsAccountMapper.deleteById(id);
-//        SmppClientInit.getInstance().rebot();
         Globle.updateCache();
     }
 
