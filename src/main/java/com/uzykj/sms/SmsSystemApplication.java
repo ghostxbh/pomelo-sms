@@ -1,7 +1,7 @@
 package com.uzykj.sms;
 
 import com.uzykj.sms.core.common.Globle;
-import com.uzykj.sms.module.sender.*;
+import com.uzykj.sms.module.sender.SMPPQueueRunner;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,6 +23,6 @@ public class SmsSystemApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         Globle.initCache();
-        SMPPFastRunner.getInstance().start();
+        SMPPQueueRunner.getInstance().start();
     }
 }
