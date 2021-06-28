@@ -26,15 +26,17 @@ import java.util.concurrent.TimeUnit;
  * @author ghostxbh
  * @since 2020-08-08
  */
-@Component
 public class SmppBusinessHandler extends AbstractBusinessHandler {
     private static Logger logger = LoggerFactory.getLogger(SmppBusinessHandler.class);
-    @Resource
     private RedisService redisService;
-    @Resource
     private SmsDetailsMapper smsDetailsMapper;
-    @Resource
     private SmsCollectMapper smsCollectMapper;
+
+    public SmppBusinessHandler(RedisService redisService, SmsDetailsMapper smsDetailsMapper, SmsCollectMapper smsCollectMapper) {
+        this.redisService = redisService;
+        this.smsDetailsMapper = smsDetailsMapper;
+        this.smsCollectMapper = smsCollectMapper;
+    }
 
     @Override
     public String name() {

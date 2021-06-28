@@ -3,6 +3,7 @@ package com.uzykj.sms.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.uzykj.sms.core.common.Globle;
+import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.domain.dto.PageDto;
 import com.uzykj.sms.core.domain.dto.SmsAccountDto;
@@ -30,6 +31,12 @@ public class SmsAccountService {
     private static Logger logger = LoggerFactory.getLogger(SmsAccountService.class);
     @Autowired
     private SmsAccountMapper smsAccountMapper;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private SmsDetailsMapper smsDetailsMapper;
+    @Autowired
+    private SmsCollectMapper smsCollectMapper;
 
     public void add(SmsAccount account) {
         account.setEnabled(0);
@@ -128,7 +135,7 @@ public class SmsAccountService {
         entity.setReSendFailMsg(false);
 
         List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
-        businessHandlers.add(new SmppBusinessHandler());
+        businessHandlers.add(new SmppBusinessHandler(redisService, smsDetailsMapper, smsCollectMapper));
 
         entity.setBusinessHandlerSet(businessHandlers);
 

@@ -1,14 +1,18 @@
 package com.uzykj.sms.module.smpp.init;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.uzykj.sms.core.common.redis.service.RedisService;
 import com.uzykj.sms.core.domain.SmsAccount;
 import com.uzykj.sms.core.enums.ChannelTypeEnum;
 import com.uzykj.sms.core.mapper.SmsAccountMapper;
+import com.uzykj.sms.core.mapper.SmsCollectMapper;
+import com.uzykj.sms.core.mapper.SmsDetailsMapper;
 import com.uzykj.sms.module.smpp.hanlder.SmppBusinessHandler;
 import com.zx.sms.connect.manager.EndpointEntity;
 import com.zx.sms.connect.manager.EndpointManager;
 import com.zx.sms.connect.manager.smpp.SMPPClientEndpointEntity;
 import com.zx.sms.handler.api.BusinessHandlerInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,8 +28,14 @@ import java.util.Optional;
  */
 @Component
 public class SmppClientInit {
-    @Resource
+    @Autowired
     private SmsAccountMapper smsAccountMapper;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private SmsDetailsMapper smsDetailsMapper;
+    @Autowired
+    private SmsCollectMapper smsCollectMapper;
 
     public EndpointManager manager = EndpointManager.INS;
 
@@ -59,7 +69,7 @@ public class SmppClientInit {
 //                    entity.setInterfaceVersion((byte) 34);
 
                     List<BusinessHandlerInterface> businessHandlers = new ArrayList<BusinessHandlerInterface>();
-                    businessHandlers.add(new SmppBusinessHandler());
+                    businessHandlers.add(new SmppBusinessHandler(redisService, smsDetailsMapper, smsCollectMapper));
 
                     entity.setBusinessHandlerSet(businessHandlers);
 
