@@ -1,17 +1,10 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 203Customer
  Source Server Type    : MySQL
  Source Server Version : 50731
- Source Host           : 203.189.232.25:3306
- Source Schema         : sms_system
-
- Target Server Type    : MySQL
- Target Server Version : 50731
+ Source Schema         : pomelo_sms
  File Encoding         : 65001
-
- Date: 28/08/2020 10:10:05
 */
 
 SET NAMES utf8mb4;
