@@ -8,8 +8,8 @@ RUN apk update && apk add /bin/sh
 RUN mkdir -p /opt/app
 ENV PROJECT_HOME /opt/app
 
-COPY target/sms-system.jar $PROJECT_HOME/sms-system.jar
+COPY pomelo-sms-admin/target/pomelo-sms-admin.jar $PROJECT_HOME/pomelo-sms-admin.jar
 
 WORKDIR $PROJECT_HOME
 
-CMD ["java","-jar","./sms-system.jar"]
+CMD ["java","-jar","./pomelo-sms-admin.jar"]
