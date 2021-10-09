@@ -1,0 +1,69 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pomelo-sms-deploy
+  namespace: pomelo
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  minReadySeconds: 15
+  template:
+    metadata:
+      labels:
+        app: pomelo-sms
+        env: dev
+    spec:
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+            - "local-api-test"
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: pipeline-docker-registry
+      containers:
+        - name: pomelo-sms-pod
+          image: hub.docker.com/ghostxbh/pomelo-sms
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8081
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 1
+            httpGet:
+              path: /pomelo-sms/api/health
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            httpGet:
+              path: /pomelo-sms/api/health
+              port: http
+        resources:
+          limits:
+            cpu: 50m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pomelo-sms-service
+  namespace: pomelo
+spec:
+  type: NodePort
+  selector:
+    app: pomelo-sms
+    env: dev
+  ports:
+    - port: 80
+      targetPort: 8081
