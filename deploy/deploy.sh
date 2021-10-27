@@ -22,30 +22,6 @@ if [ $(whoami) != "root" ];then
 	exit 1
 fi
 
-download()
-{
-  if [ -f "${rootPath}" ]; then
-     cd ${rootPath}
-  else
-     mkdir /web
-     mkdir /web/server
-     mkdir /web/app
-     mkdir /web/app/pomelo-sms
-
-     cd ${rootPath}
-  fi
-
-  local gitee=https://gitee.com/ghostxbh/pomelo-sms.git
-  local github=https://github.com/ghostxbh/pomelo-sms.git
-
-  local ret_code=$(curl -I -s --connect-timeout 5 ${gitee} -w %{http_code} | tail -n1)
-  if [ "x$ret_code" = "x200" ]; then
-    git clone ${gitee}
-  else
-    git clone ${gitee}
-  fi
-}
-
 start_app()
 {
   echo "启动 ${appName}"
@@ -97,10 +73,6 @@ reload_app()
 }
 
 case $1 in
-  'deploy')
-    download
-    start_app
-    ;;
   'start')
     start_app
     ;;
