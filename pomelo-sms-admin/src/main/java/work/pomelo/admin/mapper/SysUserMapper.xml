@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="work.pomelo.admin.mapper.SysUserMapper">
+
+    <sql id="Base_Column_List">
+        sys_user.id,
+        sys_user.name,
+        sys_user.account_id AS accountId,
+        sys_user.password,
+        sys_user.allowance,
+        sys_user.rate,
+        sys_user.role,
+        sys_user.mobile,
+        sys_user.remark,
+        sys_user.con_limit AS conLimit,
+        sys_user.send_limit AS sendLimit,
+        sys_user.create_time AS createTime
+    </sql>
+
+    <sql id="Account_Column_List">
+        sms_account.id AS "account.id",
+        sms_account.code AS "account.code",
+        sms_account.system_id AS "account.systemId",
+        sms_account.password AS "account.password",
+        sms_account.url AS "account.url",
+        sms_account.port AS "account.port",
+        sms_account.channel_pwd AS "account.channelPwd",
+        sms_account.description AS "account.description",
+        sms_account.enabled AS "account.enabled",
+        sms_account.is_invalid AS "account.isInvalid",
+        sms_account.remark AS "account.remark",
+        sms_account.create_time AS "account.createTime",
+        sms_account.update_time AS "account.updateTime"
+    </sql>
+
+    <select id="getAll" resultType="work.pomelo.admin.domain.SysUser"
+            parameterType="work.pomelo.admin.domain.SysUser">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        <include refid="Account_Column_List"/>
+        FROM sys_user
+        LEFT JOIN sms_account ON sys_user.account_id=sms_account.id
+        <where>
+            1=1
+            <if test="name != null">
+                AND sys_user.name=#{name}
+            </if>
+            <if test="mobile != null">
+                AND sys_user.mobile=#{mobile}
+            </if>
+        </where>
+        <if test="page != null">
+            LIMIT #{page.page}, #{page.pageSize}
+        </if>
+        ORDER BY sys_user.create_time DESC
+    </select>
+</mapper>

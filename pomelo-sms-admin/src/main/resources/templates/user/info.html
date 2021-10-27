@@ -1,0 +1,67 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<script src="/static/common/js/userInfo.js"></script>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <form id="data-form" name="data-form" class="form-horizontal"><input type="hidden" id="id" name="id">
+                    <div class="box-body">
+                        <div class="col-md-12">
+                            <input type="hidden" th:value="${userInfo.id}" id="userInfo_id">
+                            <div class="form-group">
+                                <label for="userInfo_name" class="col-sm-2 control-label">用户名称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" th:value="${userInfo.name}" class="form-control" name="userInfo_name" id="userInfo_name" placeholder="用户名称" datatype="*1-50" data-bv-notempty data-bv-notempty-message="名称不能为空" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="userInfo_company">公司名</label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" th:value="${userInfo.company}" type="text" name="company_name" id="userInfo_company" placeholder="公司名" ignore="ignore" datatype="*1-50">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="userInfo_contactor">联系人</label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" th:value="${userInfo.contactor}" type="text" name="contact_name" id="userInfo_contactor" placeholder="联系人" ignore="ignore" datatype="*1-50">
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="userInfo_mobile">联系手机</label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" th:value="${userInfo.mobile}" type="text" name="contact_mobile" id="userInfo_mobile" placeholder="联系手机" ignore="ignore" datatype="*1-50">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="userInfo_industry" class="col-sm-2 control-label">行业</label>
+                                <div class="col-sm-4">
+                                    <input type="text" th:value="${userInfo.industry}" class="form-control" name="userInfo_industry" id="userInfo_industry" placeholder="行业" ignore="ignore" datatype="*1-50">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="userInfo_address" class="col-sm-2 control-label">所属地区</label>
+                                <div class="col-sm-4">
+                                    <input class="form-control" th:value="${userInfo.address}" type="text" name="city_id" id="userInfo_address"  ignore="ignore" datatype="*1-50" placeholder="请选择所属地区">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="userInfo_remark">备注<i></i></label>
+                                <div class="col-sm-4">
+                                    <textarea class="form-control" style="height: 200px; width: 100%;" type="text" id="userInfo_remark" th:text="${userInfo.remark}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer text-center">
+                        <input type="button" id="userInfo_reset" class="btn btn-default" data-btn-type="save" value="重置">
+                        <!--以下两种方式提交验证,根据所需选择-->
+                        <input type="button" id="userInfo_submit" class="btn btn-primary" data-btn-type="save" value="提交">
+                    </div>
+                    <!-- /.box-footer -->
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

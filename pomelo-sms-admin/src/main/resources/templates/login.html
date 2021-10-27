@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="keywords" content="SMS国际管理平台">
+    <meta name="description" content="SMS国际管理平台">
+    <title>SMS国际管理平台 -- 登录</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!--icon-->
+    <link rel="shortcut icon" type="image/x-icon" href="https://file.uzykj.com/favicon.ico" media="screen"/>
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="/static/adminlte/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/common/libs/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="/static/adminlte/plugins/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/static/adminlte/dist/css/AdminLTE.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="/static/adminlte/plugins/iCheck/flat/orange.css">
+    <link rel="stylesheet" href="/static/adminlte/plugins/bootstrap-validator/css/bootstrap-validator.css"/>
+
+    <link rel="stylesheet" href="/static/common/css/login.css">
+
+    <link rel="stylesheet" type="text/css" href="/static/adminlte/plugins/supersized/css/supersized.css"/>
+</head>
+<body class="hold-transition login-page" style="overflow-y: hidden;">
+<div id="loading"></div>
+<div id="supersized"></div>
+<div class="login-box">
+    <div class="login-logo">
+        <a href="#" class="text-orange"><b></b>SMS国际管理平台</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        <form id="login-form">
+            <div class="form-group has-feedback name-class">
+                <input type="text" class="form-control" name="loginName" id="loginName" placeholder="请输入用户名"
+                       data-bv-notempty
+                       data-bv-notempty-message="用户名不能为空">
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback pwd-class">
+                <input type="password" class="form-control" name="loginPassword" id="loginPassword" placeholder="请输入密码"
+                       data-bv-notempty
+                       data-bv-notempty-message="密码不能为空">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-8 has-feedback code-class" style="padding-right:0">
+                        <input type="text" class="form-control" name="validCode" id="validCode" placeholder="请输入验证码"
+                               data-bv-notempty
+                               data-bv-notempty-message="验证码不能为空">
+                        <span class="glyphicon glyphicon-picture form-control-feedback"></span>
+                    </div>
+                    <div class="col-xs-4" style="padding-left:0">
+                        <img id="imgcode" src="/getCode" onclick="this.src='/getCode?v=' + Math.random()"
+                             height="34" style="border: 1px solid #ccc;border-left: 0;cursor: pointer;"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!--<div class="col-xs-6">
+                    <div class="checkbox icheck">
+                        <label>
+                            <input type="checkbox" name="rememberMe"><span class="">记住用户和密码</span>
+                        </label>
+                    </div>
+                </div>-->
+                <div class="col-xs-6">
+                    <div class="checkbox pull-right">
+                        <button class="btn btn-link" id="login_forget">忘记密码</button>
+                        <button class="btn btn-link" id="login_register">注册</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button class="btn btn-danger btn-block btn-flat" id="loginClient">登 录</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <!-- /.login-box-body -->
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="register_name" class="col-sm-2 control-label">用户名</label>
+                    <input type="text" class="form-control" id="register_name" placeholder="用户账号">
+                </div>
+                <div class="form-group">
+                    <label for="register_pwd" class="col-sm-2 control-label">密码</label>
+                    <input type="text" class="form-control" id="register_pwd" placeholder="密码: 建议大小写字母加数字">
+                </div>
+                <div class="form-group">
+                    <label for="register_pwd_two" class="col-sm-2 control-label">密码验证</label>
+                    <input type="text" class="form-control" id="register_pwd_two" placeholder="密码: 建议大小写字母加数字">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="userSave()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.login-box -->
+<!-- jQuery 2.2.3 -->
+<script src="/static/adminlte/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/static/adminlte/bootstrap/js/bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="/static/adminlte/plugins/iCheck/icheck.min.js"></script>
+<!-- supersized -->
+<script src="/static/adminlte/plugins/supersized/js/supersized.3.2.7.min.js"></script>
+<script src="/static/adminlte/plugins/supersized/js/supersized-init.js"></script>
+<!-- bootstrap-validator-->
+<script src="/static/adminlte/plugins/bootstrap-validator/js/bootstrap-validator.min.js"></script>
+<!--login.js-->
+<script src="/static/common/js/login.js"></script>
+<script>
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-orange',
+            radioClass: 'iradio_flat-orange',
+            increaseArea: '20%' // optional
+        });
+
+        fillbackLoginForm();
+        $("#login-form").bootstrapValidator({
+            submitHandler: function (valiadtor, loginForm, submitButton) {
+                rememberMe($("input[name='rememberMe']").is(":checked"));
+                valiadtor.defaultSubmit();
+            }
+        });
+
+    });
+
+    //使用本地缓存记住用户名密码
+    function rememberMe(rm_flag) {
+        //remember me
+        if (rm_flag) {
+            localStorage.userName = $("input[name='user_name']").val();
+            localStorage.password = $("input[name='user_pwd']").val();
+            localStorage.rememberMe = 1;
+        }
+        //delete remember msg
+        else {
+            localStorage.userName = null;
+            localStorage.password = null;
+            localStorage.rememberMe = 0;
+        }
+    }
+
+    //记住回填
+    function fillbackLoginForm() {
+        if (localStorage.rememberMe && localStorage.rememberMe == "1") {
+            $("input[name='user_name']").val(localStorage.userName);
+            $("input[name='user_pwd']").val(localStorage.password);
+            $("input[name='rememberMe']").iCheck('check');
+            $("input[name='rememberMe']").iCheck('update');
+        }
+    }
+</script>
+</body>
+</html>

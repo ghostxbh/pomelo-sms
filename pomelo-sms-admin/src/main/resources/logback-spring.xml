@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+<!--    本地log配置-->
+    <property name="LOG_HOME" value="./logs"/>
+<!--    <property name="LOG_HOME" value="/www/prod/logs/"/>-->
+<!--    <springProperty scope="context" name="LOG_HOME" source="log.path"/>-->
+    <conversionRule conversionWord="ip" converterClass="work.pomelo.admin.config.IPLogConfig" />
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%-5level：级别从左显示5个字符宽度, %thread表示线程名， %ip:ip, %msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread] %ip %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- spring -->
+    <logger name="org.springframework" additivity="true" level="INFO"/>
+
+    <!--输出到文件 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/app_log.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/app_log.log.%i-%d{yyyyMMdd}</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>100</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread] %ip %logger{50} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

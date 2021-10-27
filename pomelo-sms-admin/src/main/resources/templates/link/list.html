@@ -1,0 +1,115 @@
+<link rel="stylesheet" href="/static/common/css/page.css">
+<script src="/static/common/js/link-list.js" type="text/javascript"></script>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<section id="table" class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs pull-right">
+                    <li class="active"><a href="#tab-content-list" data-toggle="tab" id="nav-tab-list"><i
+                            class="fa fa-list-ul"></i></a></li>
+                    <li class="pull-left header"><i class="fa fa-bars"></i>
+                        <small>通道列表</small>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab-content-list">
+                        <div class="box">
+                            <!-- /.box-header -->
+                            <div class="dataTables_filter" id="searchDiv">
+                                <div class="btn-group pull-left">
+                                    <span>通道账号:</span>
+                                    <input type="text" size="20" placeholder="输入服务名称" id="searchName"
+                                           th:value="${searchName}">
+                                </div>
+                                <div class="btn-group pull-right">
+                                    <button type="button" class="btn btn-info" id="link_query_click">
+                                        <i class="fa fa-search"></i>查询
+                                    </button>
+                                    <button type="button" class="btn btn-default" id="link_reset_click">
+                                        <i class="fa fa-refresh"></i>重置
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div id="data-table_wrapper"
+                                     class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                    <div id="data-table_processing" class="dataTables_processing"
+                                         style="display: none;">处理中...
+                                    </div>
+                                    <table id="data-table"
+                                           class="table table-bordered table-striped table-hover dataTable no-footer responsive dtr-inline collapsed"
+                                           style="width: 100%;" role="grid" aria-describedby="data-table_info">
+                                        <thead>
+                                        <tr role="row">
+                                            <th class="text-center sorting_disabled" rowspan="1" colspan="1"
+                                                style="width: 5%;" aria-label="序号">序号
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 15%;" aria-label="编号">名称
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 30%;" aria-label="地址">地址
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 10%;" aria-label="账户">启停
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 20%;" aria-label="创建时间">创建时间
+                                            </th>
+                                            <th class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                style="width: 20%;" aria-label="操作">操作
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="odd" th:if="${page.records != null && page.records.size()>0}"
+                                            th:each="link:${page.records}">
+                                            <td class="text-center sorting_disabled" rowspan="1" colspan="1"
+                                                th:text="${link.id}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                th:text="${link.name}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1">
+                                                <a th:href="@{${link.url}}" th:text="${link.url}" target="_blank"></a>
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                th:text="${link.enable == 1 ? '是' : '否'}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                                th:text="${#dates.format(link.createTime,'yyyy-MM-dd HH:mm:ss')}">
+                                            </td>
+                                            <td class="sorting_disabled text-center" rowspan="1" colspan="1"
+                                            <button th:onclick="goInfo([[${link.id}]])">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </button>
+                                            <button th:onclick="del([[${link.id}]])">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </button>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${page.records == null || page.records.size() < 1}">
+                                            <td valign="top" colspan="9" class="dataTables_empty">未找到符合条件的数据</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <input type="hidden" th:value="${page.current}" name="current">
+                                    <input type="hidden" th:value="${page.pages}" name="pageCount">
+                                    <div>共 <span th:text="${page.total}"></span> 条</div>
+                                    <div class="information_page"></div>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+                        <!-- /.box -->
+                    </div>
+                </div>
+                <!-- /.tab-content -->
+            </div>
+            <!-- nav-tabs-task -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>

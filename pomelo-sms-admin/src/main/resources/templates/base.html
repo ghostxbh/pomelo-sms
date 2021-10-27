@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>SMS国际管理平台</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!--icon-->
+    <link rel="shortcut icon" type="image/x-icon" href="https://file.uzykj.com/favicon.ico" media="screen"/>
+    <link rel="stylesheet" href="/static/adminlte/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/static/common/libs/font-awesome/css/font-awesome.min.css">
+    <!-- Google Font -->
+    <link rel="stylesheet" href="/static/common/libs/font/font-google.css"/>
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="/static/adminlte/plugins/Ionicons/css/ionicons.min.css">
+
+    <!-- table and edit -->
+    <link rel="stylesheet" href="/static/adminlte/plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet"
+          href="/static/adminlte/plugins/datatables/extensions/Responsive/css/dataTables.responsive.css">
+    <link rel="stylesheet" href="/static/adminlte/plugins/datatables/select.bootstrap.min.css">
+    <link rel="stylesheet" href="/static/adminlte/plugins/magic-check/magic-check.min.css">
+    <link rel="stylesheet" href="/static/adminlte/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/adminlte/plugins/bootstrap-switch/css/bootstrap3/bootstrap-switch.min.css">
+    <link rel="stylesheet" href="/static/adminlte/plugins/bootstrap-datepicker/datepicker3.css">
+    <link rel="stylesheet"
+          href="/static/adminlte/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
+    <!--<link rel="stylesheet/less" type="text/css" href="/static/adminlte/plugins/bootstrap-timepicker/css/timepicker.less" />-->
+    <link rel="stylesheet" href="/static/adminlte/plugins/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/static/adminlte/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/static/adminlte/plugins/jquery-spinner/css/bootstrap-spinner.min.css">
+    <!-- treeview -->
+    <link rel="stylesheet" href="/static/adminlte/plugins/bootstrap-treeview/bootstrap-treeview.min.css"/>
+    <!-- fileinput -->
+    <link rel="stylesheet" href="/static/common/libs/fileinput/css/fileinput.min.css">
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/static/adminlte/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/adminlte/dist/css/skins/skin-black.css">
+
+    <link rel="stylesheet" href="/static/common/libs/layer/theme/default/layer.css">
+
+    <link rel="stylesheet" href="/static/common/css/global.css?28">
+    <link rel="stylesheet" href="/static/common/css/base.css?13">
+    <link rel="stylesheet" href="/static/common/css/ui.css?171">
+    <link rel="stylesheet" href="/static/common/css/index.css">
+    <style>
+        #mainDiv{
+            background-image: url("../static/common/images/content_back.jpg");
+        }
+    </style>
+</head>
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+
+<body class="hold-transition skin-black sidebar-mini fixed">
+<div class="wrapper" style="overflow:hidden;">
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <!-- Header Navbar -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <div class="navbar-left navbar-logo">
+                <img src="/static/common/images/logo.jpg" width="50" height="40">
+                <label style="font-size: 20px">SMS国际管理平台</label>
+            </div>
+
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+
+            <!-- Navbar Right Menu -->
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <li class="g-fz-16 g-ptb-15 g-plr-5">
+                        <i class="fa fa-user"></i>
+                        欢迎您，<span class="hidden-xs" th:text="${userName}"></span>
+                    </li>
+                    <li>
+                        <a href="/logout">
+                            <i class="fa fa-sign-out"></i> 退出
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-right">
+
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+
+            <!-- Sidebar Menu -->
+            <ul class="sidebar-menu" data-widget="tree">
+                <!-- Optionally, you can add icons to the links -->
+                <li class="active">
+                    <a href="#" data-main="/home">
+                        <i class="fa fa-home"></i> <span>首页</span>
+                    </a>
+                </li>
+            </ul>
+            <!-- /.sidebar-menu -->
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper" id="mainDiv">
+
+    </div>
+    <div class="modal fade" id="tispModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width:60%">
+            <div class="modal-content" style="margin-top: 0px;">
+
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        x
+                    </button>
+                    <script src="/static/adminlte/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+<script type="text/javascript">
+    var ctrlPath = "";//给js文件传递路径参数
+</script>
+<!-- jQuery 3 -->
+<script src="/static/adminlte/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/static/adminlte/bootstrap/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="/static/adminlte/plugins/fastclick/lib/fastclick.js"></script>
+<!-- Slimscroll -->
+<script src="/static/adminlte/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- layer -->
+<script src="/static/common/libs/layer/layer.js"></script>
+
+<!-- dataTable -->
+<script src="/static/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/static/adminlte/plugins/datatables/extensions/Responsive/js/dataTables.responsive.js"></script>
+<script src="/static/common/js/dataTables.js?02"></script>
+<!-- form -->
+<script src="/static/adminlte/plugins/jquery-form/jquery.form.min.js"></script>
+<script src="/static/common/js/Validform_min.js"></script>
+<script src="/static/adminlte/plugins/iCheck/icheck.min.js"></script>
+<script src="/static/adminlte/plugins/bootstrap-switch/js/bootstrap-switch3.min.js"></script>
+<!-- datepicker -->
+<script src="/static/adminlte/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="/static/adminlte/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+<!-- datetimepicker -->
+<script src="/static/adminlte/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/static/adminlte/plugins/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<!-- timepicker -->
+<!--<script src="/static/adminlte/plugins/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>-->
+<!-- daterangepicker -->
+<script src="/static/adminlte/plugins/moment/min/moment.min.js"></script>
+<script src="/static/adminlte/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+<!-- treeview -->
+<script src="/static/adminlte/plugins/bootstrap-treeview/bootstrap-treeview.min.js"></script>
+<!--select2-->
+<script src="/static/adminlte/plugins/select2/js/select2.full.min.js"></script>
+<script src="/static/adminlte/plugins/select2/js/i18n/zh-CN.js"></script>
+<!--jquery.spinner-->
+<script src="/static/adminlte/plugins/jquery-spinner/js/jquery.spinner.min.js"></script>
+<!--fileinput-->
+<script src="/static/common/libs/fileinput/js/fileinput.min.js"></script>
+<script src="/static/common/libs/fileinput/js/locales/zh.js"></script>
+<!--echarts-->
+<script src="/static/common/libs/echarts/echarts.min.js"></script>
+
+<!-- AdminLTE App -->
+<script src="/static/adminlte/dist/js/adminlte.min.js"></script>
+
+<script type="text/javascript" src="/static/common/js/base.js?30"></script>
+<script type="text/javascript" src="/static/common/js/base-modal.js?20"></script>
+<script type="text/javascript" src="/static/common/js/base-form.js?28"></script>
+<script type="text/javascript" src="/static/common/js/base-datasource.js"></script>
+<script type="text/javascript" src="/static/common/js/base-action.js?13"></script>
+<script type="text/javascript" src="/static/common/js/base-table-action.js?27"></script>
+<script type="text/javascript" src="/static/common/js/base-tree-action.js?3"></script>
+<script type="text/javascript" src="/static/common/js/base-file.js?21"></script>
+<script type="text/javascript" src="/static/common/js/util.js"></script>
+<script type="text/javascript" src="/static/common/js/number.js"></script>
+<script src="/static/common/js/page.js" type="text/javascript"></script>
+
+<!-- 加入页面的的脚本 -->
+<script>
+    var numberSize = "";
+    var ctrlPath = "/main";
+    var currentMenuUrl = "/main";
+    var currentUrl = "";
+    $(function () {
+
+        //加载菜单
+        var $li, $menu_f_ul, $menu_s;
+        ajaxPost("/main/menu/6057616cc5c04696b98d9fdb740b25cc", null, function (data) {
+            $.each(data, function (index, menu) {
+                $li = $('<li class="treeview"></li>');
+                var $menu_f = $('<a href="#">\n' +
+                    '<i class="' + menu.pms_ico + '"></i> <span>' + menu.pms_name + '</span>\n' +
+                    ' <span class="pull-right-container">\n' +
+                    '<i class="fa fa-angle-left pull-right"></i>\n' +
+                    '</span></a>');
+                $li.append($menu_f);
+                $menu_f_ul = $('<ul class="treeview-menu"></ul>');
+                $li.append($menu_f_ul);
+                $("ul.sidebar-menu").append($li);
+
+                $.each(menu.sub_permissions, function (index, item) {
+                    $menu_s = $('<li><a href="#" data-url="' + item.pms_url + '"><i class="' + item.pms_ico + '"></i>' + item.pms_name + '</a></li>');
+                    $menu_f_ul.append($menu_s);
+                });
+            });
+        });
+
+        //对navbar menu使用slimscroll
+        $(".navbar .menu").slimscroll({
+            height: "200px",
+            alwaysVisible: false,
+            size: "3px"
+        }).css("width", "100%");
+
+        //首页默认加载
+        loadPage("/home");
+        currentUrl = location.search;
+
+        $("a[data-url]").click(function (evt) {
+            $("ul.treeview-menu li").removeClass("active");
+            $(this).parent().addClass("active");
+
+            if (!$(this).offsetParent().hasClass("active")) {
+                $(".sidebar-menu>li").removeClass("active");
+                $(this).offsetParent().addClass("active");
+            }
+
+            loadPage($(this).data("url"));
+            historyPushState($(this).data("url"));
+
+            // 记录当前访问位置
+            currentMenuUrl = $(this).data('url');
+        });
+
+        $("a[data-main]").click(function (evt) {
+            $(".sidebar-menu li").removeClass("active");//所有li
+            $(this).parent().addClass("active");
+
+            loadPage($(this).data("main"));
+            historyPushState($(this).data("main"));
+
+            // 记录当前访问位置
+            currentMenuUrl = $(this).data('main');
+        });
+
+        if (!!(window.history && history.pushState)) {
+            $(window).on("popstate", function (event) {
+                //浏览器前进或者后退都会触发popstate事件
+                // 取得之前通过pushState保存的state object，我们并不打算使用它。
+                // jQuery对event做了一层包装，需要通过originalEvent取得原生event。
+                //var state = event.originalEvent.state;
+
+                // 直接取URL参数来处理
+                var historyUrl = window.location.search;
+                //console.log("1:" + currentUrl);
+                //console.log("2:" + historyUrl);
+                if (currentUrl != historyUrl) {
+                    //console.log("3:" + historyUrl.replace('?', ''));
+                    if (historyUrl != "") {
+                        loadPage(historyUrl.replace('?', ''));
+                    } else {
+                        loadPage("/main");
+                    }
+                    currentUrl = historyUrl;
+                }
+                //console.log("4:" + window.location.href);
+            });
+        }
+    });
+
+    function historyPushState(url) {
+        //history api 判断浏览器是否支持 pushState
+        if (!!(window.history && history.pushState)) {
+            history.pushState(null, "", "?" + url + "#");
+            currentUrl = window.location.search;
+        }
+    }
+
+</script>
+</body>
+</html>
