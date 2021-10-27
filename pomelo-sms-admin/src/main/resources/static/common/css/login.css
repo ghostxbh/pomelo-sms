@@ -1,7 +1,7 @@
 .cont {
   position: relative;
   height: 100%;
-  background-image: url("../images/login.jpg");
+  background-image: url("../images/banner_4k.png");
   background-size: cover;
   overflow: auto;
 }
