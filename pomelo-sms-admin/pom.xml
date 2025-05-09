@@ -19,13 +19,13 @@
         <mysql.version>8.0.28</mysql.version>
         <p6spy.version>3.9.0</p6spy.version>
         <esay-excel.version>3.1.0</esay-excel.version>
-        <poi.version>4.0.0</poi.version>
+        <poi.version>5.3.0</poi.version>
         <httpclient.version>4.5.13</httpclient.version>
         <guava.version>30.0-jre</guava.version>
         <sms-core.version>2.1.13.2</sms-core.version>
         <netty.version>4.1.45.Final</netty.version>
         <hutool.version>5.8.12</hutool.version>
-        <okhttp.version>4.9.2</okhttp.version>
+        <okhttp.version>4.12.0</okhttp.version>
     </properties>
 
     <dependencies>
