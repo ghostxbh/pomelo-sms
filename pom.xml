@@ -31,7 +31,7 @@
         <commons-io.version>2.6</commons-io.version>
         <collections4.version>4.3</collections4.version>
         <okhttp.version>3.10.0</okhttp.version>
-        <fastjson.version>1.2.7</fastjson.version>
+        <fastjson.version>1.2.83_noneautotype</fastjson.version>
         <jdom.version>1.1</jdom.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <hutool.version>5.3.10</hutool.version>
