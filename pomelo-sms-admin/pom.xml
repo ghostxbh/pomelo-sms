@@ -15,7 +15,7 @@
 
     <properties>
         <mybatis.version>2.3.1</mybatis.version>
-        <mybatis-plus-starter.version>3.5.4</mybatis-plus-starter.version>
+        <mybatis-plus-starter.version>3.5.8</mybatis-plus-starter.version>
         <mysql.version>8.0.28</mysql.version>
         <p6spy.version>3.9.0</p6spy.version>
         <esay-excel.version>3.1.0</esay-excel.version>
