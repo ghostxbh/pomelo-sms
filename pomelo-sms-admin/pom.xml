@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <mybatis.version>2.3.1</mybatis.version>
+        <mybatis.version>4.0.0</mybatis.version>
         <mybatis-plus-starter.version>3.5.4</mybatis-plus-starter.version>
         <mysql.version>8.0.28</mysql.version>
         <p6spy.version>3.9.0</p6spy.version>
